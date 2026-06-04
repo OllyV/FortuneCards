@@ -62,6 +62,7 @@ export class CreateDeckComponent {
 
   submit(): void {
     if (this.form.invalid) return;
+    this.error.set(null);
     this.submitting.set(true);
     const v = this.form.value;
     this.deckService.createDeck({
