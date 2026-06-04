@@ -1,0 +1,25 @@
+<div class="deck-list-page">
+  <h1>Fortune Card Decks</h1>
+  <button (click)="showCreateForm.set(!showCreateForm())">
+    {{ showCreateForm() ? 'Cancel' : '+ New Deck' }}
+  </button>
+
+  <app-create-deck
+    *ngIf="showCreateForm()"
+    (deckCreated)="onDeckCreated()">
+  </app-create-deck>
+
+  <p *ngIf="loading()">Loading...</p>
+  <p *ngIf="error()" class="error">{{ error() }}</p>
+
+  <p *ngIf="!loading() && decks().length === 0">No decks yet. Create one above!</p>
+
+  <div class="deck-grid">
+    <div *ngFor="let deck of decks()" class="deck-card" (click)="openDeck(deck.id)">
+      <h3>{{ deck.name }}</h3>
+      <p *ngIf="deck.description">{{ deck.description }}</p>
+      <small>{{ deck.cardCount }} card(s)</small>
+      <button class="delete-btn" (click)="deleteDeck(deck.id, $event)">Delete</button>
+    </div>
+  </div>
+</div>

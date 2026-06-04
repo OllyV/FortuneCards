@@ -1,0 +1,13 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>
+    Name *
+    <input formControlName="name" placeholder="Deck name" />
+  </label>
+  <label>
+    Description
+    <textarea formControlName="description" placeholder="Optional description"></textarea>
+  </label>
+  <button type="submit" [disabled]="form.invalid || submitting()">
+    {{ submitting() ? 'Creating...' : 'Create Deck' }}
+  </button>
+</form>

@@ -1,0 +1,13 @@
+<div class="drawn-card-page">
+  <button (click)="goBack()">← Back to Deck</button>
+
+  <p *ngIf="loading()">Drawing your card...</p>
+  <p *ngIf="error()" class="error">{{ error() }}</p>
+
+  <div *ngIf="card()" class="drawn-card">
+    <img [src]="card()!.imageUrl" [alt]="card()!.title" />
+    <h2>{{ card()!.title }}</h2>
+    <p class="fortune-text">{{ card()!.description }}</p>
+    <button (click)="draw()">Draw Again</button>
+  </div>
+</div>
