@@ -10,6 +10,9 @@
   --color-border: #f0e8dc;
   --color-border-light: #e0d5cc;
   --color-muted: #999;
+  --color-label: #666;
+  --color-label-muted: #bbb;
+  --shadow-btn-color: #FF6B6B44;
 
   /* Deck gradients (indices 0–4) */
   --gradient-0: linear-gradient(135deg, #FF6B6B, #FECA57);

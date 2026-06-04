@@ -35,7 +35,7 @@ body {
   font-family: var(--font);
   font-size: 14px;
   font-weight: 800;
-  box-shadow: var(--shadow-btn) #FF6B6B44;
+  box-shadow: var(--shadow-btn) var(--shadow-btn-color);
   cursor: pointer;
   letter-spacing: 0.3px;
 }
@@ -46,7 +46,7 @@ body {
   color: var(--color-coral);
   border: 2px solid var(--color-coral);
   border-radius: var(--radius-pill);
-  padding: 9px 20px;
+  padding: 10px 22px;
   font-family: var(--font);
   font-size: 14px;
   font-weight: 700;
@@ -69,12 +69,12 @@ body {
   display: block;
   font-size: 11px;
   font-weight: 800;
-  color: #666;
+  color: var(--color-label);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 6px;
 }
-.form-label span { font-weight: 400; text-transform: none; color: #bbb; }
+.form-label span { font-weight: 400; text-transform: none; color: var(--color-label-muted); }
 
 .form-input, .form-textarea {
   width: 100%;
