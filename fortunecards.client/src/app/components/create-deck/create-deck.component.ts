@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DeckService } from '../../services/deck.service';
@@ -14,6 +15,8 @@ export class CreateDeckComponent {
   readonly GRADIENTS = [0, 1, 2, 3, 4];
 
   form: FormGroup;
+
+  private readonly destroyRef = inject(DestroyRef);
 
   cardBackFile = signal<File | null>(null);
   cardBackPreview = signal<string | null>(null);
@@ -71,10 +74,11 @@ export class CreateDeckComponent {
       emoji: v.emoji ?? '🎴',
       colorIndex: v.colorIndex ?? 0,
       cardBackImage: this.cardBackFile() ?? undefined,
-    }).subscribe({
-      next: (deck) => this.router.navigate(['/decks', deck.id]),
-      error: () => { this.error.set('Failed to create deck.'); this.submitting.set(false); }
-    });
+    }).pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (deck) => this.router.navigate(['/decks', deck.id]),
+        error: () => { this.error.set('Failed to create deck.'); this.submitting.set(false); }
+      });
   }
 
   cancel(): void {

@@ -44,7 +44,10 @@ export class DrawnCardComponent implements OnInit {
 
   private pickRandom(deck: Deck): void {
     const cards = deck.cards ?? [];
-    if (!cards.length) return;
+    if (!cards.length) {
+      this.error.set('This deck has no cards yet.');
+      return;
+    }
     this.drawnCard.set(cards[Math.floor(Math.random() * cards.length)]);
     this.flipped.set(false);
   }

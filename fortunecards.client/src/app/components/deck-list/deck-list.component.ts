@@ -1,4 +1,5 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Deck } from '../../models/deck';
 import { DeckService } from '../../services/deck.service';
@@ -15,6 +16,8 @@ export class DeckListComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(private deckService: DeckService, private router: Router) {}
 
   ngOnInit(): void {
@@ -23,10 +26,12 @@ export class DeckListComponent implements OnInit {
 
   loadDecks(): void {
     this.loading.set(true);
-    this.deckService.getDecks().subscribe({
-      next: (decks) => { this.decks.set(decks); this.loading.set(false); },
-      error: () => { this.error.set('Failed to load decks.'); this.loading.set(false); }
-    });
+    this.deckService.getDecks()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (decks) => { this.decks.set(decks); this.loading.set(false); },
+        error: () => { this.error.set('Failed to load decks.'); this.loading.set(false); }
+      });
   }
 
   getDeckGradient(colorIndex: number): string {
@@ -40,13 +45,15 @@ export class DeckListComponent implements OnInit {
   deleteDeck(id: number, event: Event): void {
     event.stopPropagation();
     if (!confirm('Delete this deck and all its cards?')) return;
-    this.deckService.deleteDeck(id).subscribe({
-      next: () => this.decks.update(decks => decks.filter(d => d.id !== id)),
-      error: () => this.error.set('Failed to delete deck.')
-    });
+    this.deckService.deleteDeck(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.decks.update(decks => decks.filter(d => d.id !== id)),
+        error: () => this.error.set('Failed to delete deck.')
+      });
   }
 
   goToNew(): void {
-    this.router.navigate(['/decks/new']);
+    this.router.navigate(['/decks', 'new']);
   }
 }

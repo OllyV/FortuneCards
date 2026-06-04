@@ -28,10 +28,12 @@ export class DeckDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-      this.deckService.getDeck(Number(params['id'])).subscribe({
-        next: (deck) => { this.deck.set(deck); this.loading.set(false); },
-        error: () => { this.error.set('Failed to load deck.'); this.loading.set(false); }
-      });
+      this.deckService.getDeck(Number(params['id']))
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (deck) => { this.deck.set(deck); this.loading.set(false); },
+          error: () => { this.error.set('Failed to load deck.'); this.loading.set(false); }
+        });
     });
   }
 
@@ -63,14 +65,16 @@ export class DeckDetailComponent implements OnInit {
 
   deleteCard(cardId: number): void {
     if (!confirm('Remove this card from the deck?')) return;
-    this.cardService.deleteCard(cardId).subscribe({
-      next: () => {
-        this.deck.update(d => d ? {
-          ...d,
-          cards: (d.cards ?? []).filter(c => c.id !== cardId)
-        } : null);
-      },
-      error: () => this.error.set('Failed to delete card.')
-    });
+    this.cardService.deleteCard(cardId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.deck.update(d => d ? {
+            ...d,
+            cards: (d.cards ?? []).filter(c => c.id !== cardId)
+          } : null);
+        },
+        error: () => this.error.set('Failed to delete card.')
+      });
   }
 }
