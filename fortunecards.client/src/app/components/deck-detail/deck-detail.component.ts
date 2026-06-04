@@ -1,5 +1,6 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Deck } from '../../models/deck';
 import { DeckService } from '../../services/deck.service';
 import { CardService } from '../../services/card.service';
@@ -16,6 +17,8 @@ export class DeckDetailComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -24,7 +27,7 @@ export class DeckDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       this.deckService.getDeck(Number(params['id'])).subscribe({
         next: (deck) => { this.deck.set(deck); this.loading.set(false); },
         error: () => { this.error.set('Failed to load deck.'); this.loading.set(false); }
