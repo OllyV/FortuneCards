@@ -66,14 +66,13 @@ export class DrawnCardComponent implements OnInit {
 
   drawAnother(): void {
     const d = this.deck();
-    if (!d) return;
+    if (!d || !this.flipped()) return;
+    if (this.drawTimer !== null) clearTimeout(this.drawTimer);
     this.flipped.set(false);
-    if (this.drawTimer !== null) {
-      clearTimeout(this.drawTimer);
-    }
     this.drawTimer = setTimeout(() => {
       this.drawTimer = null;
-      this.pickRandom(d);
+      const current = this.deck();
+      if (current) this.pickRandom(current);
     }, 700);
   }
 
