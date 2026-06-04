@@ -48,8 +48,8 @@ export class DrawnCardComponent implements OnInit {
       this.error.set('This deck has no cards yet.');
       return;
     }
-    this.drawnCard.set(cards[Math.floor(Math.random() * cards.length)]);
     this.flipped.set(false);
+    this.drawnCard.set(cards[Math.floor(Math.random() * cards.length)]);
   }
 
   flipCard(): void {
@@ -59,7 +59,9 @@ export class DrawnCardComponent implements OnInit {
 
   drawAnother(): void {
     const d = this.deck();
-    if (d) this.pickRandom(d);
+    if (!d) return;
+    this.flipped.set(false);
+    setTimeout(() => this.pickRandom(d), 700);
   }
 
   backToDeck(): void {

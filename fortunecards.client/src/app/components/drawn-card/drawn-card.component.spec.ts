@@ -4,12 +4,15 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { vi } from 'vitest';
 import { DrawnCardComponent } from './drawn-card.component';
 import { Deck } from '../../models/deck';
 import { Card } from '../../models/card';
 
 const mockCard: Card = { id: 1, title: 'The Journey', description: 'Step forward', imageUrl: '', createdAt: '2026-01-01', deckId: 1 };
+const mockCard2: Card = { id: 2, title: 'The Return', description: 'Come back', imageUrl: '', createdAt: '2026-01-01', deckId: 1 };
 const mockDeck: Deck = { id: 1, name: 'Adventure', description: null, createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0, cardBackImageUrl: null, cards: [mockCard] };
+const mockDeckTwoCards: Deck = { ...mockDeck, cards: [mockCard, mockCard2] };
 
 describe('DrawnCardComponent', () => {
   let component: DrawnCardComponent;
@@ -52,5 +55,34 @@ describe('DrawnCardComponent', () => {
     component.flipped.set(true);
     component.drawAnother();
     expect(component.flipped()).toBe(false);
+  });
+
+  it('should keep flipped false and not update drawnCard until animation completes on drawAnother', () => {
+    vi.useFakeTimers();
+    try {
+      component.deck.set(mockDeckTwoCards);
+      component.drawnCard.set(mockCard);
+      component.flipped.set(true);
+
+      // Spy on pickRandom by tracking drawnCard changes
+      let cardChangedImmediately = false;
+      const originalSet = component.drawnCard.set.bind(component.drawnCard);
+      component.drawnCard.set = (val) => {
+        cardChangedImmediately = true;
+        originalSet(val);
+      };
+
+      component.drawAnother();
+
+      // Immediately after: flipped should be false, card should NOT have changed yet
+      expect(component.flipped()).toBe(false);
+      expect(cardChangedImmediately).toBe(false);
+
+      // After 700ms: card should now be updated
+      vi.advanceTimersByTime(700);
+      expect(cardChangedImmediately).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
