@@ -1,1 +1,106 @@
-/* You can add global styles to this file, and also import other style files */
+@import './styles/design-system.css';
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--color-cream);
+  color: var(--color-charcoal);
+  min-height: 100vh;
+}
+
+/* ── Shared nav bar ─────────────────────────────────── */
+.nav-bar {
+  background: white;
+  border-bottom: 2px solid var(--color-border);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.nav-title { font-size: 16px; font-weight: 800; color: var(--color-charcoal); }
+.nav-back  { font-size: 13px; font-weight: 700; color: var(--color-muted); cursor: pointer; background: none; border: none; font-family: var(--font); }
+.nav-actions { display: flex; gap: 8px; align-items: center; }
+
+/* ── Buttons ────────────────────────────────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-coral), var(--color-sunny));
+  color: white;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 10px 22px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: var(--shadow-btn) #FF6B6B44;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+}
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  background: white;
+  color: var(--color-coral);
+  border: 2px solid var(--color-coral);
+  border-radius: var(--radius-pill);
+  padding: 9px 20px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-ghost {
+  background: none;
+  border: none;
+  color: var(--color-muted);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+/* ── Form elements ──────────────────────────────────── */
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.form-label span { font-weight: 400; text-transform: none; color: #bbb; }
+
+.form-input, .form-textarea {
+  width: 100%;
+  background: white;
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--color-charcoal);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-input:focus, .form-textarea:focus { border-color: var(--color-coral); }
+.form-textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+/* ── Page shell ─────────────────────────────────────── */
+.page { display: flex; flex-direction: column; min-height: 100vh; }
+.page-content { padding: 20px 20px 40px; max-width: 900px; margin: 0 auto; width: 100%; }
+
+/* ── Loading / error states ─────────────────────────── */
+.state-loading, .state-error {
+  text-align: center;
+  padding: 48px 20px;
+  font-size: 15px;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+.state-error { color: var(--color-coral); }
