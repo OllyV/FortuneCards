@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="fortunecards.client/fortunecards.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="FortuneCards.Server/FortuneCards.Server.csproj" />
+</Solution>

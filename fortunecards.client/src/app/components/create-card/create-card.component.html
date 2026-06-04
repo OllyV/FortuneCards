@@ -1,0 +1,18 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>
+    Title *
+    <input formControlName="title" placeholder="Card title" />
+  </label>
+  <label>
+    Fortune Text *
+    <textarea formControlName="description" placeholder="Enter the fortune or wisdom text"></textarea>
+  </label>
+  <label>
+    Card Image *
+    <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+  </label>
+  <img *ngIf="previewUrl()" [src]="previewUrl()" alt="Preview" class="image-preview" />
+  <button type="submit" [disabled]="form.invalid || !selectedFile() || submitting()">
+    {{ submitting() ? 'Adding...' : 'Add Card' }}
+  </button>
+</form>

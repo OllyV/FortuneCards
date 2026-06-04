@@ -1,0 +1,33 @@
+<div *ngIf="loading()">Loading deck...</div>
+<p *ngIf="error()" class="error">{{ error() }}</p>
+
+<div *ngIf="deck()" class="deck-detail-page">
+  <button (click)="goBack()">← Back to Decks</button>
+  <h1>{{ deck()!.name }}</h1>
+  <p *ngIf="deck()!.description">{{ deck()!.description }}</p>
+
+  <div class="actions">
+    <button (click)="drawCard()">Draw a Card</button>
+    <button (click)="showAddCardForm.set(!showAddCardForm())">
+      {{ showAddCardForm() ? 'Cancel' : '+ Add Card' }}
+    </button>
+  </div>
+
+  <app-create-card
+    *ngIf="showAddCardForm()"
+    [deckId]="deck()!.id"
+    (cardCreated)="onCardAdded()">
+  </app-create-card>
+
+  <p *ngIf="deck()!.cards?.length === 0">No cards in this deck yet. Add some above!</p>
+
+  <div class="cards-grid">
+    <div *ngFor="let card of deck()!.cards" class="card-item">
+      <img [src]="card.imageUrl" [alt]="card.title" />
+      <h4>{{ card.title }}</h4>
+      <p>{{ card.description }}</p>
+      <button class="delete-btn" (click)="deleteCard(card.id)">Remove</button>
+    </div>
+  </div>
+</div>
+

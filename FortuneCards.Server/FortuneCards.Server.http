@@ -1,0 +1,6 @@
+@FortuneCards.Server_HostAddress = http://localhost:5199
+
+GET {{FortuneCards.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
