@@ -15,7 +15,7 @@
     <div *ngIf="loading() && decks().length === 0" class="state-loading">Loading decks…</div>
     <div *ngIf="error()" class="state-error">{{ error() }}</div>
 
-    <div class="deck-grid" *ngIf="!error()">
+    <div class="deck-grid" *ngIf="!loading() && !error()">
       <div
         class="deck-tile"
         *ngFor="let deck of decks()"
