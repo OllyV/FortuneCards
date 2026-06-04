@@ -1,17 +1,18 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { DeckService } from '../../services/deck.service';
 import { Deck } from '../../models/deck';
+import { DeckService } from '../../services/deck.service';
+import { getDeckGradientStyle, getDeckShadowStyle } from '../../utils/deck-colors';
 
 @Component({
   selector: 'app-deck-list',
   templateUrl: './deck-list.component.html',
-  standalone: false,
+  styleUrls: ['./deck-list.component.css'],
+  standalone: false
 })
 export class DeckListComponent implements OnInit {
   decks = signal<Deck[]>([]);
-  showCreateForm = signal(false);
-  loading = signal(false);
+  loading = signal(true);
   error = signal<string | null>(null);
 
   constructor(private deckService: DeckService, private router: Router) {}
@@ -28,21 +29,24 @@ export class DeckListComponent implements OnInit {
     });
   }
 
-  openDeck(id: number): void {
-    this.router.navigate(['/decks', id]);
+  getDeckGradient(colorIndex: number): string {
+    return getDeckGradientStyle(colorIndex);
+  }
+
+  getDeckShadow(colorIndex: number): string {
+    return getDeckShadowStyle(colorIndex);
   }
 
   deleteDeck(id: number, event: Event): void {
     event.stopPropagation();
     if (!confirm('Delete this deck and all its cards?')) return;
     this.deckService.deleteDeck(id).subscribe({
-      next: () => this.loadDecks(),
-      error: () => alert('Failed to delete deck.')
+      next: () => this.decks.update(decks => decks.filter(d => d.id !== id)),
+      error: () => this.error.set('Failed to delete deck.')
     });
   }
 
-  onDeckCreated(): void {
-    this.showCreateForm.set(false);
-    this.loadDecks();
+  goToNew(): void {
+    this.router.navigate(['/decks/new']);
   }
 }
