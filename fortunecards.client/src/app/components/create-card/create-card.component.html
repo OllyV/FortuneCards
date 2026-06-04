@@ -1,18 +1,68 @@
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <label>
-    Title *
-    <input formControlName="title" placeholder="Card title" />
-  </label>
-  <label>
-    Fortune Text *
-    <textarea formControlName="description" placeholder="Enter the fortune or wisdom text"></textarea>
-  </label>
-  <label>
-    Card Image *
-    <input type="file" accept="image/*" (change)="onFileSelected($event)" />
-  </label>
-  <img *ngIf="previewUrl()" [src]="previewUrl()" alt="Preview" class="image-preview" />
-  <button type="submit" [disabled]="form.invalid || !selectedFile() || submitting()">
-    {{ submitting() ? 'Adding...' : 'Add Card' }}
-  </button>
-</form>
+<div class="form-page">
+  <nav class="nav-bar">
+    <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
+    <span class="nav-title">Add Card</span>
+    <button
+      class="btn-ghost btn-ghost--action"
+      [disabled]="form.invalid || !imageFile() || submitting()"
+      (click)="submit()"
+    >Save</button>
+  </nav>
+
+  <main class="form-content">
+    <form (ngSubmit)="submit()" [formGroup]="form">
+
+      <!-- Card image upload — tarot proportioned -->
+      <div class="form-field image-field">
+        <label class="form-label">Card Image</label>
+        <div class="image-upload-area" [class.has-image]="imagePreview()">
+          <img *ngIf="imagePreview()" [src]="imagePreview()!" class="image-preview" alt="Card preview" />
+          <div *ngIf="!imagePreview()" class="image-placeholder">
+            <span class="image-placeholder-icon">🖼️</span>
+            <p class="image-placeholder-text">Tap to upload card image</p>
+            <label class="btn-secondary btn-file">
+              + Upload
+              <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
+            </label>
+          </div>
+          <button type="button" class="image-remove" *ngIf="imagePreview()" (click)="removeImage()">✕</button>
+        </div>
+      </div>
+
+      <!-- Title -->
+      <div class="form-field">
+        <label class="form-label" for="cardTitle">Card Title</label>
+        <input
+          id="cardTitle"
+          class="form-input"
+          formControlName="title"
+          placeholder="e.g. The Journey Begins"
+          maxlength="200"
+        />
+      </div>
+
+      <!-- Description -->
+      <div class="form-field">
+        <label class="form-label" for="cardDesc">Meaning / Description</label>
+        <textarea
+          id="cardDesc"
+          class="form-textarea"
+          formControlName="description"
+          placeholder="What does this card mean?"
+          maxlength="2000"
+          rows="4"
+        ></textarea>
+      </div>
+
+      <div *ngIf="error()" class="state-error">{{ error() }}</div>
+
+      <button
+        type="submit"
+        class="btn-primary btn-full"
+        [disabled]="form.invalid || !imageFile() || submitting()"
+      >
+        {{ submitting() ? 'Adding…' : '🎴 Add Card' }}
+      </button>
+    </form>
+  </main>
+</div>
