@@ -29,14 +29,16 @@ export class DrawnCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-      this.deckService.getDeck(Number(params['id'])).subscribe({
-        next: (deck) => {
-          this.deck.set(deck);
-          this.pickRandom(deck);
-          this.loading.set(false);
-        },
-        error: () => { this.error.set('Failed to load deck.'); this.loading.set(false); }
-      });
+      this.deckService.getDeck(Number(params['id']))
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (deck) => {
+            this.deck.set(deck);
+            this.pickRandom(deck);
+            this.loading.set(false);
+          },
+          error: () => { this.error.set('Failed to load deck.'); this.loading.set(false); }
+        });
     });
   }
 
@@ -48,7 +50,8 @@ export class DrawnCardComponent implements OnInit {
   }
 
   flipCard(): void {
-    if (!this.flipped()) this.flipped.set(true);
+    if (this.loading() || this.flipped()) return;
+    this.flipped.set(true);
   }
 
   drawAnother(): void {
