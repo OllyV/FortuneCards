@@ -103,7 +103,7 @@ Each card: white background, soft gradient tint in image area (cycling accent co
 
 **States:**
 
-1. **Face-down:** Tarot-proportioned card (220×330px) with Coral→Sunny→Blush gradient back, decorative inner border, 🎴 emoji, "Tap to reveal" label. Card pulses gently (scale + shadow animation) to invite interaction. Hint text above: "✨ Tap the card to reveal your fortune."
+1. **Face-down:** Tarot-proportioned card (220×330px). If the deck has a card back image, it fills the card back as a cover image. If not, the back shows the deck's color gradient with a decorative inner border and 🎴 emoji. Either way, "Tap to reveal" label is shown at the bottom. Card pulses gently (scale + shadow animation) to invite interaction. Hint text above: "✨ Tap the card to reveal your fortune."
 
 2. **Flip animation:** On tap/click, 3D CSS `rotateY(180deg)` flip, 0.7s cubic-bezier easing. Hint text fades out.
 
@@ -118,8 +118,9 @@ Each card: white background, soft gradient tint in image area (cycling accent co
 **Fields:**
 1. **Emoji picker** — large circular gradient preview tile, tap to change emoji. Centered at top.
 2. **Color** — row of 5 gradient swatches (one per deck gradient). Selected swatch has a ring indicator.
-3. **Deck Name** — text input, required, max 200 chars.
-4. **Description** — textarea, optional, max 1000 chars.
+3. **Card back image** — tarot-proportioned (2:3) upload area, optional. Label: "Card Back (optional)". Placeholder shows the selected color gradient as a live preview with a camera icon and "Upload a custom card back" hint. When an image is uploaded it replaces the gradient preview. This image is shown on the face-down side of every card in the deck during the flip reveal.
+4. **Deck Name** — text input, required, max 200 chars.
+5. **Description** — textarea, optional, max 1000 chars.
 
 **Submit:** "✨ Create Deck" primary button, full width.
 
@@ -163,8 +164,9 @@ Each card: white background, soft gradient tint in image area (cycling accent co
 **Backend changes required (small):**
 - Add `Emoji` (string, max 10, nullable, default `"🎴"`) to `Deck` model and EF migration.
 - Add `ColorIndex` (int, 0–4, default 0) to `Deck` model and EF migration.
-- Update `DeckSummary` and `DeckDetail` DTOs to include both fields.
-- Update `DecksController` POST to accept and persist both fields.
+- Add `CardBackImageUrl` (string, nullable) to `Deck` model and EF migration. Stored the same way as card images (`wwwroot/images/`).
+- Update `DeckSummary` and `DeckDetail` DTOs to include all three new fields.
+- Update `DecksController` POST to accept and persist emoji, color index, and optional card back image upload.
 
 **Pages to refactor (in order):**
 1. `DeckListComponent` — grid layout, tile styles
