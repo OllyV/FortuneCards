@@ -28,9 +28,9 @@ namespace FortuneCards.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateDeck([FromBody] CreateDeckRequest request)
+        public async Task<IActionResult> CreateDeck([FromForm] CreateDeckRequest request)
         {
-            var deck = await _decks.CreateAsync(request.Name, request.Description);
+            var deck = await _decks.CreateAsync(request.Name, request.Description, request.Emoji, request.ColorIndex, request.CardBackImage);
             return CreatedAtAction(nameof(GetDeck), new { id = deck.Id }, deck);
         }
 
@@ -54,7 +54,14 @@ namespace FortuneCards.Server.Controllers
         }
     }
 
-    public record CreateDeckRequest(string Name, string? Description);
+    public class CreateDeckRequest
+    {
+        public required string Name { get; set; }
+        public string? Description { get; set; }
+        public string Emoji { get; set; } = "🃏";
+        public int ColorIndex { get; set; } = 0;
+        public IFormFile? CardBackImage { get; set; }
+    }
 
     public class AddCardRequest
     {
