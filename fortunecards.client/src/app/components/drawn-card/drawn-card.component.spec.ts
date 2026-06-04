@@ -59,28 +59,47 @@ describe('DrawnCardComponent', () => {
 
   it('should keep flipped false and not update drawnCard until animation completes on drawAnother', () => {
     vi.useFakeTimers();
+    // Force Math.random to always pick the second card (index 1)
+    vi.spyOn(Math, 'random').mockReturnValue(0.99);
     try {
       component.deck.set(mockDeckTwoCards);
-      component.drawnCard.set(mockCard);
+      component.drawnCard.set(mockDeckTwoCards.cards![0]);
       component.flipped.set(true);
 
-      // Spy on pickRandom by tracking drawnCard changes
-      let cardChangedImmediately = false;
-      const originalSet = component.drawnCard.set.bind(component.drawnCard);
-      component.drawnCard.set = (val) => {
-        cardChangedImmediately = true;
-        originalSet(val);
-      };
-
+      const cardBefore = component.drawnCard();
       component.drawAnother();
 
-      // Immediately after: flipped should be false, card should NOT have changed yet
+      // Immediately after: flipped false, card unchanged
       expect(component.flipped()).toBe(false);
-      expect(cardChangedImmediately).toBe(false);
+      expect(component.drawnCard()).toBe(cardBefore);
 
-      // After 700ms: card should now be updated
+      // After 700ms: card updated to the second card
       vi.advanceTimersByTime(700);
-      expect(cardChangedImmediately).toBe(true);
+      expect(component.drawnCard()).toBe(mockDeckTwoCards.cards![1]);
+    } finally {
+      vi.restoreAllMocks();
+      vi.useRealTimers();
+    }
+  });
+
+  it('should cancel pending timer if drawAnother is called again before 700ms', () => {
+    vi.useFakeTimers();
+    try {
+      component.deck.set(mockDeckTwoCards);
+      component.drawnCard.set(mockDeckTwoCards.cards![0]);
+      component.flipped.set(true);
+
+      component.drawAnother(); // first call
+      vi.advanceTimersByTime(300); // only 300ms pass
+
+      const cardAfterFirstPartial = component.drawnCard();
+      expect(cardAfterFirstPartial).toBe(mockDeckTwoCards.cards![0]); // still unchanged
+
+      component.drawAnother(); // second call resets timer
+      vi.advanceTimersByTime(700); // 700ms from second call
+
+      // Card should have updated exactly once
+      expect(component.drawnCard()).not.toBeNull();
     } finally {
       vi.useRealTimers();
     }

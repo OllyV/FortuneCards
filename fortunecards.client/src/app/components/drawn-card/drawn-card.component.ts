@@ -20,12 +20,20 @@ export class DrawnCardComponent implements OnInit {
   error = signal<string | null>(null);
 
   private readonly destroyRef = inject(DestroyRef);
+  private drawTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private deckService: DeckService
-  ) {}
+  ) {
+    this.destroyRef.onDestroy(() => {
+      if (this.drawTimer !== null) {
+        clearTimeout(this.drawTimer);
+        this.drawTimer = null;
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
@@ -48,7 +56,6 @@ export class DrawnCardComponent implements OnInit {
       this.error.set('This deck has no cards yet.');
       return;
     }
-    this.flipped.set(false);
     this.drawnCard.set(cards[Math.floor(Math.random() * cards.length)]);
   }
 
@@ -61,7 +68,13 @@ export class DrawnCardComponent implements OnInit {
     const d = this.deck();
     if (!d) return;
     this.flipped.set(false);
-    setTimeout(() => this.pickRandom(d), 700);
+    if (this.drawTimer !== null) {
+      clearTimeout(this.drawTimer);
+    }
+    this.drawTimer = setTimeout(() => {
+      this.drawTimer = null;
+      this.pickRandom(d);
+    }, 700);
   }
 
   backToDeck(): void {
