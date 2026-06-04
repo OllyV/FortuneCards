@@ -24,7 +24,7 @@ export class CreateDeckComponent {
     if (this.form.invalid) return;
     this.submitting.set(true);
     const { name, description } = this.form.value as { name: string; description: string };
-    this.deckService.createDeck({ name, description: description || null }).subscribe({
+    this.deckService.createDeck({ name, description: description || null, emoji: '🃏', colorIndex: 0 }).subscribe({
       next: () => { this.submitting.set(false); this.deckCreated.emit(); },
       error: () => { this.submitting.set(false); alert('Failed to create deck.'); }
     });

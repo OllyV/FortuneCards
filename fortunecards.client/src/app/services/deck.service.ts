@@ -19,7 +19,15 @@ export class DeckService {
   }
 
   createDeck(payload: CreateDeckPayload): Observable<Deck> {
-    return this.http.post<Deck>(this.base, payload);
+    const form = new FormData();
+    form.append('name', payload.name);
+    if (payload.description) form.append('description', payload.description);
+    form.append('emoji', payload.emoji);
+    form.append('colorIndex', payload.colorIndex.toString());
+    if (payload.cardBackImage) {
+      form.append('cardBackImage', payload.cardBackImage, payload.cardBackImage.name);
+    }
+    return this.http.post<Deck>(this.base, form);
   }
 
   deleteDeck(id: number): Observable<void> {
@@ -32,9 +40,5 @@ export class DeckService {
     form.append('description', description);
     form.append('image', image, image.name);
     return this.http.post<Card>(`${this.base}/${deckId}/cards`, form);
-  }
-
-  getRandomCard(deckId: number): Observable<Card> {
-    return this.http.get<Card>(`${this.base}/${deckId}/random`);
   }
 }
