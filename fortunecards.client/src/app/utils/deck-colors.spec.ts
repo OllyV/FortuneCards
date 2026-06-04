@@ -14,7 +14,7 @@ describe('deck-colors', () => {
     it('returns coral for index 0', () => {
       expect(getDeckAccentColor(0)).toBe('#FF6B6B');
     });
-    it('returns coral for index 4', () => {
+    it('returns sunny for index 4', () => {
       expect(getDeckAccentColor(4)).toBe('#FECA57');
     });
   });

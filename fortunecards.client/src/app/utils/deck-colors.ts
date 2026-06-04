@@ -6,7 +6,7 @@ const DECK_GRADIENTS = [
   { from: '#FECA57', to: '#FF6B6B', shadow: '#FECA5733', accent: '#FECA57' },
 ] as const;
 
-const CARD_ACCENTS = ['#FF6B6B', '#FECA57', '#48DBFB', '#FF9FF3', '#A29BFE'];
+const CARD_ACCENTS = ['#FF6B6B', '#FECA57', '#48DBFB', '#FF9FF3', '#A29BFE'] as const;
 
 export function getDeckGradientStyle(colorIndex: number): string {
   const g = DECK_GRADIENTS[colorIndex % 5];
