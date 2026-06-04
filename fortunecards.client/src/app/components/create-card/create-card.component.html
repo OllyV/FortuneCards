@@ -16,7 +16,7 @@
       <div class="form-field image-field">
         <label class="form-label">Card Image</label>
         <div class="image-upload-area" [class.has-image]="imagePreview()">
-          <img *ngIf="imagePreview()" [src]="imagePreview()!" class="image-preview" alt="Card preview" />
+          <img *ngIf="imagePreview()" [src]="imagePreview()" class="image-preview" alt="Card preview" />
           <div *ngIf="!imagePreview()" class="image-placeholder">
             <span class="image-placeholder-icon">🖼️</span>
             <p class="image-placeholder-text">Tap to upload card image</p>

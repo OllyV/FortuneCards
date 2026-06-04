@@ -60,10 +60,12 @@ export class CreateCardComponent implements OnInit {
     this.error.set(null);
     this.submitting.set(true);
     const v = this.form.value;
-    this.deckService.addCard(this.deckId(), v.title!, v.description!, this.imageFile()!).subscribe({
-      next: () => this.router.navigate(['/decks', this.deckId()]),
-      error: () => { this.error.set('Failed to add card.'); this.submitting.set(false); }
-    });
+    this.deckService.addCard(this.deckId(), v.title!, v.description!, this.imageFile()!)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.router.navigate(['/decks', this.deckId()]),
+        error: () => { this.error.set('Failed to add card.'); this.submitting.set(false); }
+      });
   }
 
   cancel(): void {
