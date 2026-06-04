@@ -1,33 +1,54 @@
-<div *ngIf="loading()">Loading deck...</div>
-<p *ngIf="error()" class="error">{{ error() }}</p>
+<div class="page" *ngIf="deck() as d; else loadingOrError">
+  <nav class="nav-bar">
+    <div class="nav-actions">
+      <button class="nav-back" (click)="goBack()">← My Decks</button>
+      <span class="nav-sep">/</span>
+      <span class="nav-crumb">{{ d.name }}</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-secondary btn-sm" (click)="addCard()">+ Add Card</button>
+      <button class="btn-primary btn-sm" (click)="drawCard()">🎴 Draw a Card</button>
+    </div>
+  </nav>
 
-<div *ngIf="deck()" class="deck-detail-page">
-  <button (click)="goBack()">← Back to Decks</button>
-  <h1>{{ deck()!.name }}</h1>
-  <p *ngIf="deck()!.description">{{ deck()!.description }}</p>
-
-  <div class="actions">
-    <button (click)="drawCard()">Draw a Card</button>
-    <button (click)="showAddCardForm.set(!showAddCardForm())">
-      {{ showAddCardForm() ? 'Cancel' : '+ Add Card' }}
-    </button>
-  </div>
-
-  <app-create-card
-    *ngIf="showAddCardForm()"
-    [deckId]="deck()!.id"
-    (cardCreated)="onCardAdded()">
-  </app-create-card>
-
-  <p *ngIf="deck()!.cards?.length === 0">No cards in this deck yet. Add some above!</p>
-
-  <div class="cards-grid">
-    <div *ngFor="let card of deck()!.cards" class="card-item">
-      <img [src]="card.imageUrl" [alt]="card.title" />
-      <h4>{{ card.title }}</h4>
-      <p>{{ card.description }}</p>
-      <button class="delete-btn" (click)="deleteCard(card.id)">Remove</button>
+  <div class="deck-hero" [style.background]="getDeckGradient()">
+    <span class="hero-emoji">{{ d.emoji }}</span>
+    <div class="hero-info">
+      <h1 class="hero-name">{{ d.name }}</h1>
+      <p class="hero-meta">
+        <span *ngIf="d.description">{{ d.description }} · </span>
+        {{ (d.cards ?? []).length }} card{{ (d.cards ?? []).length === 1 ? '' : 's' }}
+      </p>
     </div>
   </div>
+
+  <main class="page-content">
+    <h2 class="section-title">Cards in this deck</h2>
+
+    <div class="card-grid">
+      <div
+        class="card-tile"
+        *ngFor="let card of (d.cards ?? []); let i = index"
+        [style.border-top-color]="getCardAccent(i)"
+      >
+        <div class="card-image" [style.background]="getCardAccent(i) + '18'">
+          <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.title" />
+          <span *ngIf="!card.imageUrl" class="card-placeholder">🃏</span>
+        </div>
+        <div class="card-body">
+          <p class="card-title">{{ card.title }}</p>
+          <button class="card-delete" (click)="deleteCard(card.id)" title="Remove card">✕</button>
+        </div>
+      </div>
+
+      <div class="card-tile card-tile--add" (click)="addCard()">
+        <div class="card-image card-image--add">+</div>
+      </div>
+    </div>
+  </main>
 </div>
 
+<ng-template #loadingOrError>
+  <div *ngIf="loading()" class="state-loading">Loading deck…</div>
+  <div *ngIf="error()" class="state-error">{{ error() }}</div>
+</ng-template>

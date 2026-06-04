@@ -1,13 +1,61 @@
-<div class="drawn-card-page">
-  <button (click)="goBack()">← Back to Deck</button>
+<div class="page" *ngIf="!loading() && !error()">
+  <nav class="nav-bar">
+    <button class="nav-back" (click)="backToDeck()">← {{ deck()?.name }}</button>
+    <span class="nav-title">Draw a Card</span>
+    <span></span>
+  </nav>
 
-  <p *ngIf="loading()">Drawing your card...</p>
-  <p *ngIf="error()" class="error">{{ error() }}</p>
+  <main class="draw-scene">
+    <p class="draw-hint" [class.hint-hidden]="flipped()">✨ Tap the card to reveal your fortune</p>
 
-  <div *ngIf="card()" class="drawn-card">
-    <img [src]="card()!.imageUrl" [alt]="card()!.title" />
-    <h2>{{ card()!.title }}</h2>
-    <p class="fortune-text">{{ card()!.description }}</p>
-    <button (click)="draw()">Draw Again</button>
-  </div>
+    <div
+      class="card-scene"
+      [class.flipped]="flipped()"
+      (click)="flipCard()"
+    >
+      <div class="card-flipper">
+
+        <!-- Back (face-down) -->
+        <div class="card-back">
+          <img
+            *ngIf="hasCustomBack()"
+            [src]="getCardBackImageUrl()"
+            class="card-back-img"
+            alt="Card back"
+          />
+          <div
+            *ngIf="!hasCustomBack()"
+            class="card-back-gradient"
+            [style.background]="getCardBackGradient()"
+          >
+            <div class="card-back-inner">
+              <span class="card-back-emoji">🎴</span>
+            </div>
+          </div>
+          <span class="card-back-label">Tap to reveal</span>
+        </div>
+
+        <!-- Face (revealed) -->
+        <div class="card-face" *ngIf="drawnCard() as card">
+          <div class="card-face-image">
+            <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.title" />
+            <span *ngIf="!card.imageUrl" class="card-face-placeholder">🃏</span>
+          </div>
+          <div class="card-face-body">
+            <h2 class="card-face-title">{{ card.title }}</h2>
+            <p class="card-face-desc">{{ card.description }}</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="draw-actions" [class.actions-visible]="flipped()">
+      <button class="btn-primary" (click)="drawAnother()">🎴 Draw Another</button>
+      <button class="btn-secondary" (click)="backToDeck()">← Back to Deck</button>
+    </div>
+  </main>
 </div>
+
+<div *ngIf="loading()" class="state-loading">Loading deck…</div>
+<div *ngIf="error()" class="state-error">{{ error() }}</div>

@@ -1,25 +1,38 @@
-<div class="deck-list-page">
-  <h1>Fortune Card Decks</h1>
-  <button (click)="showCreateForm.set(!showCreateForm())">
-    {{ showCreateForm() ? 'Cancel' : '+ New Deck' }}
-  </button>
+<div class="page">
+  <nav class="nav-bar">
+    <span class="nav-title">🎴 FortuneCards</span>
+    <button class="btn-primary" (click)="goToNew()">+ New Deck</button>
+  </nav>
 
-  <app-create-deck
-    *ngIf="showCreateForm()"
-    (deckCreated)="onDeckCreated()">
-  </app-create-deck>
-
-  <p *ngIf="loading()">Loading...</p>
-  <p *ngIf="error()" class="error">{{ error() }}</p>
-
-  <p *ngIf="!loading() && decks().length === 0">No decks yet. Create one above!</p>
-
-  <div class="deck-grid">
-    <div *ngFor="let deck of decks()" class="deck-card" (click)="openDeck(deck.id)">
-      <h3>{{ deck.name }}</h3>
-      <p *ngIf="deck.description">{{ deck.description }}</p>
-      <small>{{ deck.cardCount }} card(s)</small>
-      <button class="delete-btn" (click)="deleteDeck(deck.id, $event)">Delete</button>
+  <main class="page-content">
+    <div class="list-header">
+      <h1 class="list-title">My Decks ✨</h1>
+      <p class="list-subtitle" *ngIf="!loading()">
+        {{ decks().length }} deck{{ decks().length === 1 ? '' : 's' }}
+      </p>
     </div>
-  </div>
+
+    <div *ngIf="loading() && decks().length === 0" class="state-loading">Loading decks…</div>
+    <div *ngIf="error()" class="state-error">{{ error() }}</div>
+
+    <div class="deck-grid" *ngIf="!loading() && !error()">
+      <div
+        class="deck-tile"
+        *ngFor="let deck of decks()"
+        [style.background]="getDeckGradient(deck.colorIndex)"
+        [style.box-shadow]="getDeckShadow(deck.colorIndex)"
+        [routerLink]="['/decks', deck.id]"
+      >
+        <span class="deck-emoji">{{ deck.emoji }}</span>
+        <span class="deck-name">{{ deck.name }}</span>
+        <span class="deck-count">{{ deck.cardCount }} card{{ deck.cardCount === 1 ? '' : 's' }}</span>
+        <button class="deck-delete" (click)="deleteDeck(deck.id, $event)" title="Delete deck">✕</button>
+      </div>
+
+      <div class="deck-tile deck-tile--add" (click)="goToNew()">
+        <span class="deck-add-icon">+</span>
+        <span class="deck-add-label">New Deck</span>
+      </div>
+    </div>
+  </main>
 </div>

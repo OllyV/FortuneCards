@@ -1,0 +1,44 @@
+:root {
+  /* Brand colors */
+  --color-coral: #FF6B6B;
+  --color-sunny: #FECA57;
+  --color-sky: #48DBFB;
+  --color-blush: #FF9FF3;
+  --color-lavender: #A29BFE;
+  --color-cream: #FFF9F0;
+  --color-charcoal: #2C2C2C;
+  --color-border: #f0e8dc;
+  --color-border-light: #e0d5cc;
+  --color-muted: #999;
+  --color-label: #666;
+  --color-label-muted: #bbb;
+  --shadow-btn-color: #FF6B6B44;
+
+  /* Deck gradients (indices 0–4) */
+  --gradient-0: linear-gradient(135deg, #FF6B6B, #FECA57);
+  --gradient-1: linear-gradient(135deg, #48DBFB, #FF9FF3);
+  --gradient-2: linear-gradient(135deg, #A29BFE, #48DBFB);
+  --gradient-3: linear-gradient(135deg, #FF9FF3, #FECA57);
+  --gradient-4: linear-gradient(135deg, #FECA57, #FF6B6B);
+
+  /* Card accent colors (cycle per card position) */
+  --accent-0: #FF6B6B;
+  --accent-1: #FECA57;
+  --accent-2: #48DBFB;
+  --accent-3: #FF9FF3;
+  --accent-4: #A29BFE;
+
+  /* Typography */
+  --font: 'Nunito', sans-serif;
+
+  /* Shape */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-pill: 100px;
+
+  /* Shadows */
+  --shadow-card: 0 3px 12px rgba(0,0,0,0.09);
+  --shadow-tile: 0 6px 20px;
+  --shadow-btn: 0 4px 14px;
+}
