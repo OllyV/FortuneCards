@@ -1,33 +1,14 @@
-using Azure.Identity;
 using FortuneCards.Server.Data;
 using FortuneCards.Server.Services;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<FortuneCardsDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
-
-    if (!builder.Environment.IsDevelopment())
-    {
-        // Production: use Managed Identity — no password in config
-        var dataSource = new SqlConnectionStringBuilder(connectionString)
-        {
-            Authentication = SqlAuthenticationMethod.ActiveDirectoryManagedIdentity
-        };
-        options.UseSqlServer(dataSource.ConnectionString,
-            sql => sql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: null));
-    }
-    else
-    {
-        // Development: use explicit connection string from User Secrets
-        options.UseSqlServer(connectionString,
-            sql => sql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: null));
-    }
-});
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sql => sql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: null)));
 
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IDeckService, DeckService>();
