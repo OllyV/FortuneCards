@@ -10,7 +10,7 @@
 }
 
 .hero-emoji { font-size: 48px; }
-.hero-name  { font-size: 22px; font-weight: 800; color: white; }
+.hero-name  { font-size: 22px; font-weight: 800; color: white; text-align: left; }
 .hero-meta  { font-size: 13px; color: rgba(255,255,255,0.85); margin-top: 4px; }
 
 .section-title { font-size: 15px; font-weight: 800; margin-bottom: 14px; }
