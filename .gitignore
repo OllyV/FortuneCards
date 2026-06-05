@@ -26,3 +26,34 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+### C# ###
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+*.vs
+*.vscode
+*.superpowers
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+FortuneCards.Server/wwwroot
+fortunecards.client/test-output.log
+fortunecards.client/test_output.txt
+
+
