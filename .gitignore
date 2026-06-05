@@ -15,6 +15,9 @@
 # Environment files
 /.env
 
+# Local secrets — never commit connection strings or credentials
+**/appsettings.Development.json
+
 # Angular CLI and build artefacts
 /.angular-cli.json
 /.ng/
