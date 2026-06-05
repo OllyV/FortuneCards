@@ -11,7 +11,7 @@ Used claude plugins:
   
 The development to working solution took 3 days:
 - Day 1: Base protoype creation with Claude + Cursor. Azure Sql Server setup.
-- Day 2: UI redesign with Claude superpowers.
+- Day 2: UI redesign with Claude superpowers. ScreenShots before and after redesign can be found in UIScreenshots folder.
 - Day 3: Set up hosting on Azure App Services with GitHub actions, UI bugfix with Claude + Cursor
 
 It can: create decks of cards with image and description. Randomly pull out one card.
