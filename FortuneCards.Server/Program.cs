@@ -20,15 +20,16 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("EnableApiDocs"))
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
+
 app.UseDefaultFiles();
 app.UseStaticFiles();      // serves wwwroot/images/ (runtime-uploaded card images)
 app.MapStaticAssets();     // serves compiled Angular assets with optimized headers
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference();  // API UI available at /scalar/v1
-}
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
