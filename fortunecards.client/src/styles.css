@@ -9,22 +9,45 @@ body {
   min-height: 100vh;
 }
 
-/* ── Shared nav bar ─────────────────────────────────── */
-.nav-bar {
-  background: white;
-  border-bottom: 2px solid var(--color-border);
-  padding: 12px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+/* -Navigation- */
+
+.nav-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-charcoal);
 }
-.nav-title { font-size: 16px; font-weight: 800; color: var(--color-charcoal); }
-.nav-title-centered { font-size: 16px; font-weight: 800; color: var(--color-charcoal); position: absolute; left: 50%; transform: translateX(-50%); }
-.nav-back  { font-size: 13px; font-weight: 700; color: var(--color-muted); cursor: pointer; background: none; border: none; font-family: var(--font); }
-.nav-actions { display: flex; gap: 8px; align-items: center; }
+
+.nav-title-centered {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-charcoal);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+
+.nav-back {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font);
+}
+
+.nav-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-charcoal);
+}
 
 /* ── Buttons ────────────────────────────────────────── */
 .btn-primary {

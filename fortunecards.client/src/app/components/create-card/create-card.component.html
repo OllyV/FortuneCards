@@ -1,13 +1,13 @@
 <div class="form-page">
-  <nav class="nav-bar">
+  <navigation-bar>
     <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
     <span class="nav-title-centered">Add Card</span>
-    <button
-      class="btn-ghost btn-ghost--action"
-      [disabled]="form.invalid || !imageFile() || submitting()"
-      (click)="submit()"
-    >Save</button>
-  </nav>
+    <button class="btn-ghost btn-ghost--action"
+            [disabled]="form.invalid || !imageFile() || submitting()"
+            (click)="submit()">
+      Save
+    </button>
+  </navigation-bar>
 
   <main class="form-content">
     <form (ngSubmit)="submit()" [formGroup]="form">

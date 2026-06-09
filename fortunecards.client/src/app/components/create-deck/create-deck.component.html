@@ -1,13 +1,13 @@
 <div class="form-page">
-  <nav class="nav-bar">
+  <navigation-bar>
     <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
     <span class="nav-title-centered">New Deck</span>
-    <button
-      class="btn-ghost btn-ghost--action"
-      [disabled]="form.invalid || submitting()"
-      (click)="submit()"
-    >Create</button>
-  </nav>
+    <button class="btn-ghost btn-ghost--action"
+            [disabled]="form.invalid || submitting()"
+            (click)="submit()">
+      Create
+    </button>
+  </navigation-bar>
 
   <main class="form-content">
     <form (ngSubmit)="submit()" [formGroup]="form">
@@ -15,13 +15,11 @@
       <!-- Emoji input -->
       <div class="emoji-section">
         <div class="emoji-preview" [style.background]="getSelectedGradient()">
-          <input
-            class="emoji-input"
-            formControlName="emoji"
-            maxlength="10"
-            placeholder="🎴"
-            aria-label="Deck emoji"
-          />
+          <input class="emoji-input"
+                 formControlName="emoji"
+                 maxlength="10"
+                 placeholder="🎴"
+                 aria-label="Deck emoji" />
         </div>
         <p class="emoji-hint">Type or paste an emoji</p>
       </div>
@@ -30,14 +28,12 @@
       <div class="form-field">
         <label class="form-label">Color</label>
         <div class="swatch-row">
-          <button
-            type="button"
-            class="color-swatch"
-            *ngFor="let i of GRADIENTS"
-            [style.background]="getGradientStyle(i)"
-            [class.swatch--selected]="form.get('colorIndex')!.value === i"
-            (click)="selectColor(i)"
-          ></button>
+          <button type="button"
+                  class="color-swatch"
+                  *ngFor="let i of GRADIENTS"
+                  [style.background]="getGradientStyle(i)"
+                  [class.swatch--selected]="form.get('colorIndex')!.value === i"
+                  (click)="selectColor(i)"></button>
         </div>
       </div>
 
@@ -47,11 +43,9 @@
         <div class="card-back-row">
           <div class="card-back-preview">
             <img *ngIf="cardBackPreview()" [src]="cardBackPreview()!" alt="Card back preview" />
-            <div
-              *ngIf="!cardBackPreview()"
-              class="card-back-gradient"
-              [style.background]="getSelectedGradient()"
-            >
+            <div *ngIf="!cardBackPreview()"
+                 class="card-back-gradient"
+                 [style.background]="getSelectedGradient()">
               <span>🎴</span>
             </div>
           </div>
@@ -70,35 +64,29 @@
       <!-- Name -->
       <div class="form-field">
         <label class="form-label" for="deckName">Deck Name</label>
-        <input
-          id="deckName"
-          class="form-input"
-          formControlName="name"
-          placeholder="e.g. Adventure Deck"
-          maxlength="200"
-        />
+        <input id="deckName"
+               class="form-input"
+               formControlName="name"
+               placeholder="e.g. Adventure Deck"
+               maxlength="200" />
       </div>
 
       <!-- Description -->
       <div class="form-field">
         <label class="form-label" for="deckDesc">Description <span>(optional)</span></label>
-        <textarea
-          id="deckDesc"
-          class="form-textarea"
-          formControlName="description"
-          placeholder="What is this deck about?"
-          maxlength="1000"
-          rows="3"
-        ></textarea>
+        <textarea id="deckDesc"
+                  class="form-textarea"
+                  formControlName="description"
+                  placeholder="What is this deck about?"
+                  maxlength="1000"
+                  rows="3"></textarea>
       </div>
 
       <div *ngIf="error()" class="state-error">{{ error() }}</div>
 
-      <button
-        type="submit"
-        class="btn-primary btn-full"
-        [disabled]="form.invalid || submitting()"
-      >
+      <button type="submit"
+              class="btn-primary btn-full"
+              [disabled]="form.invalid || submitting()">
         {{ submitting() ? 'Creating…' : '✨ Create Deck' }}
       </button>
     </form>
