@@ -1,9 +1,9 @@
 <div class="page" *ngIf="!loading() && !error()">
-  <nav class="nav-bar">
+  <navigation-bar>
     <button class="nav-back" (click)="backToDeck()">← {{ deck()?.name }}</button>
     <span class="nav-title-centered">Draw a Card</span>
     <span></span>
-  </nav>
+  </navigation-bar>
 
   <main class="draw-scene">
     <p class="draw-hint" [class.hint-hidden]="flipped()">✨ Tap the card to reveal your fortune</p>

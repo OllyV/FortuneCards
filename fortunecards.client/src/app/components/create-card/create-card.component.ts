@@ -1,14 +1,17 @@
 import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
 import { DeckService } from '../../services/deck.service';
+import { NavigationBar } from '../navigation-bar/navigation-bar';
 
 @Component({
   selector: 'app-create-card',
   templateUrl: './create-card.component.html',
   styleUrls: ['./create-card.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, NavigationBar],
 })
 export class CreateCardComponent implements OnInit {
   deckId = signal(0);

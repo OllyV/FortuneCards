@@ -13,30 +13,49 @@
   --color-label: #666;
   --color-label-muted: #bbb;
   --shadow-btn-color: #FF6B6B44;
+  /* Deck gradients (indices 0–15, mirrors DECK_GRADIENTS in deck-colors.ts) */
+  --gradient-0:  linear-gradient(135deg, #B2FEFA, #A29BFE, #aab2ff);
+  --gradient-1:  linear-gradient(135deg, #48DBFB, #FF9FF3, #f492f0);
+  --gradient-2:  linear-gradient(135deg, #f0acf7, #acf7f0, #f7f0ac);
+  --gradient-3:  linear-gradient(135deg, #ddd6f3, #faaca8, #ED4264);
+  --gradient-4:  linear-gradient(135deg, #FF9FF3, #FECA57, #ff75c3);
+  --gradient-5:  linear-gradient(135deg, #f7f779, #ffa585, #f9b16e);
+  --gradient-6:  linear-gradient(135deg, #FECA57, #FF6B6B, #faff89);
+  --gradient-7:  linear-gradient(135deg, #FEAC5E, #C779D0, #4BC0C8);
+  --gradient-8:  linear-gradient(135deg, #57ebde, #ff8989, #ff8989);
+  --gradient-9:  linear-gradient(135deg, #a9ff68, #ff8989, #faff89);
+  --gradient-10: linear-gradient(135deg, #93cbf1, #87f4b5, #95ecb0);
+  --gradient-11: linear-gradient(135deg, #f0f9a7, #30c67c, #43b692);
+  --gradient-12: linear-gradient(135deg, #3b8d99, #aa4b6b, #ffa8bd);
+  --gradient-13: linear-gradient(135deg, #dc2430, #7b4397, #7b4397);
+  --gradient-14: linear-gradient(135deg, #159957, #155799, #007991);
+  --gradient-15: linear-gradient(135deg, #3b8d99, #360033, #3b8d99);
 
-  /* Deck gradients (indices 0–4) */
-  --gradient-0: linear-gradient(135deg, #FF6B6B, #FECA57);
-  --gradient-1: linear-gradient(135deg, #48DBFB, #FF9FF3);
-  --gradient-2: linear-gradient(135deg, #A29BFE, #48DBFB);
-  --gradient-3: linear-gradient(135deg, #FF9FF3, #FECA57);
-  --gradient-4: linear-gradient(135deg, #FECA57, #FF6B6B);
-
-  /* Card accent colors (cycle per card position) */
-  --accent-0: #FF6B6B;
-  --accent-1: #FECA57;
-  --accent-2: #48DBFB;
-  --accent-3: #FF9FF3;
-  --accent-4: #A29BFE;
+  /* Card accent colors (indices 0–15, mirrors accent field in DECK_GRADIENTS) */
+  --accent-0:  #B2FEFA;
+  --accent-1:  #48DBFB;
+  --accent-2:  #f0acf7;
+  --accent-3:  #faaca8;
+  --accent-4:  #FF9FF3;
+  --accent-5:  #f7f779;
+  --accent-6:  #FECA57;
+  --accent-7:  #4BC0C8;
+  --accent-8:  #a9ff68;
+  --accent-9:  #a9ff68;
+  --accent-10: #93cbf1;
+  --accent-11: #f0f9a7;
+  --accent-12: #3b8d99;
+  --accent-13: #dc2430;
+  --accent-14: #87f4b5;
+  --accent-15: #3b8d99;
 
   /* Typography */
   --font: 'Nunito', sans-serif;
-
   /* Shape */
   --radius-sm: 12px;
   --radius-md: 16px;
   --radius-lg: 20px;
   --radius-pill: 100px;
-
   /* Shadows */
   --shadow-card: 0 3px 12px rgba(0,0,0,0.09);
   --shadow-tile: 0 6px 20px;

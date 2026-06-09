@@ -1,18 +1,21 @@
 import { Component, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { DeckService } from '../../services/deck.service';
 import { getDeckGradientStyle } from '../../utils/deck-colors';
+import { NavigationBar } from '../navigation-bar/navigation-bar';
 
 @Component({
   selector: 'app-create-deck',
   templateUrl: './create-deck.component.html',
   styleUrls: ['./create-deck.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, NavigationBar],
 })
 export class CreateDeckComponent {
-  readonly GRADIENTS = [0, 1, 2, 3, 4];
+  readonly GRADIENTS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
   form: FormGroup;
 

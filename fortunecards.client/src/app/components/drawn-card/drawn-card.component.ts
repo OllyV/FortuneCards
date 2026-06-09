@@ -1,16 +1,19 @@
 import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
 import { Deck } from '../../models/deck';
 import { Card } from '../../models/card';
 import { DeckService } from '../../services/deck.service';
 import { getDeckGradientStyle } from '../../utils/deck-colors';
+import { NavigationBar } from '../navigation-bar/navigation-bar';
 
 @Component({
   selector: 'app-drawn-card',
   templateUrl: './drawn-card.component.html',
   styleUrls: ['./drawn-card.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [CommonModule, NavigationBar],
 })
 export class DrawnCardComponent implements OnInit {
   deck = signal<Deck | null>(null);
