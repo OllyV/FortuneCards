@@ -27,7 +27,7 @@ namespace FortuneCards.Server.Services
             var claims = new[]
             {
                 new Claim("userId", user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("email", user.Email),
                 new Claim("displayName", user.DisplayName)
             };
             var token = new JwtSecurityToken(
