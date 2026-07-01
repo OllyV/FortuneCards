@@ -22,41 +22,52 @@ namespace FortuneCards.Server.Services
             _env = env;
         }
 
-        public async Task<IEnumerable<DeckSummary>> GetAllAsync()
+        public async Task<IEnumerable<DeckSummary>> GetAllAsync(int? userId = null)
         {
-            if (_cache.TryGetValue(AllDecksKey, out IEnumerable<DeckSummary>? cached) && cached is not null)
-                return cached;
+            if (userId == null)
+            {
+                if (_cache.TryGetValue(AllDecksKey, out IEnumerable<DeckSummary>? cached) && cached is not null)
+                    return cached;
 
-            var decks = await _db.Decks
+                var publicDecks = await _db.Decks
+                    .Where(d => d.IsPublic)
+                    .Select(d => new DeckSummary(
+                        d.Id, d.Name, d.Description, d.CreatedAt, d.Cards.Count,
+                        d.Emoji, d.ColorIndex, d.CardBackImageUrl, true, false))
+                    .ToListAsync();
+
+                _cache.Set(AllDecksKey, publicDecks, CacheDuration);
+                return publicDecks;
+            }
+
+            return await _db.Decks
+                .Where(d => d.IsPublic || d.UserId == userId)
                 .Select(d => new DeckSummary(
                     d.Id, d.Name, d.Description, d.CreatedAt, d.Cards.Count,
-                    d.Emoji, d.ColorIndex, d.CardBackImageUrl))
+                    d.Emoji, d.ColorIndex, d.CardBackImageUrl, d.IsPublic, d.UserId == userId))
                 .ToListAsync();
-
-            _cache.Set(AllDecksKey, decks, CacheDuration);
-            return decks;
         }
 
-        public async Task<DeckDetail?> GetByIdAsync(int id)
+        public async Task<DeckDetail?> GetByIdAsync(int id, int? userId = null)
         {
-            if (_cache.TryGetValue(DeckKey(id), out DeckDetail? cached) && cached is not null)
+            if (userId == null && _cache.TryGetValue(DeckKey(id), out DeckDetail? cached) && cached is not null)
                 return cached;
 
             var deck = await _db.Decks
-                .Where(d => d.Id == id)
+                .Where(d => d.Id == id && (d.IsPublic || d.UserId == userId))
                 .Select(d => new DeckDetail(
                     d.Id, d.Name, d.Description, d.CreatedAt,
                     d.Cards.Select(c => new CardDto(c.Id, c.Title, c.Description, c.ImageUrl, c.CreatedAt)),
-                    d.Emoji, d.ColorIndex, d.CardBackImageUrl))
+                    d.Emoji, d.ColorIndex, d.CardBackImageUrl, d.IsPublic, d.UserId == userId))
                 .FirstOrDefaultAsync();
 
-            if (deck is not null)
+            if (deck is not null && userId == null)
                 _cache.Set(DeckKey(id), deck, CacheDuration);
 
             return deck;
         }
 
-        public async Task<DeckSummary> CreateAsync(string name, string? description, string emoji, int colorIndex, IFormFile? cardBackImage)
+        public async Task<DeckSummary> CreateAsync(string name, string? description, string emoji, int colorIndex, IFormFile? cardBackImage, int userId)
         {
             string? cardBackImageUrl = null;
             if (cardBackImage is { Length: > 0 })
@@ -76,20 +87,26 @@ namespace FortuneCards.Server.Services
                 Description = description,
                 Emoji = emoji,
                 ColorIndex = colorIndex,
-                CardBackImageUrl = cardBackImageUrl
+                CardBackImageUrl = cardBackImageUrl,
+                UserId = userId,
+                IsPublic = false
             };
             _db.Decks.Add(deck);
             await _db.SaveChangesAsync();
             _cache.Remove(AllDecksKey);
 
             return new DeckSummary(deck.Id, deck.Name, deck.Description, deck.CreatedAt, 0,
-                deck.Emoji, deck.ColorIndex, deck.CardBackImageUrl);
+                deck.Emoji, deck.ColorIndex, deck.CardBackImageUrl, false, true);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, int userId)
         {
             var deck = await _db.Decks.FindAsync(id);
-            if (deck is null) return false;
+            if (deck is null || deck.UserId != userId) return false;
+
+            if (deck.CardBackImageUrl is not null)
+                DeleteImage(deck.CardBackImageUrl);
+
             _db.Decks.Remove(deck);
             await _db.SaveChangesAsync();
             _cache.Remove(AllDecksKey);
@@ -97,8 +114,11 @@ namespace FortuneCards.Server.Services
             return true;
         }
 
-        public async Task<CardDto> AddCardAsync(int deckId, string title, string description, IFormFile image)
+        public async Task<CardDto?> AddCardAsync(int deckId, string title, string description, IFormFile image, int userId)
         {
+            var deck = await _db.Decks.FindAsync(deckId);
+            if (deck is null || deck.UserId != userId) return null;
+
             var imagesDir = Path.Combine(_env.WebRootPath, "images");
             Directory.CreateDirectory(imagesDir);
             var ext = Path.GetExtension(image.FileName);
@@ -119,6 +139,24 @@ namespace FortuneCards.Server.Services
             _cache.Remove(DeckKey(deckId));
 
             return new CardDto(card.Id, card.Title, card.Description, card.ImageUrl, card.CreatedAt);
+        }
+
+        public async Task<bool> ToggleVisibilityAsync(int deckId, bool isPublic, int userId)
+        {
+            var deck = await _db.Decks.FindAsync(deckId);
+            if (deck is null || deck.UserId != userId) return false;
+            deck.IsPublic = isPublic;
+            await _db.SaveChangesAsync();
+            _cache.Remove(AllDecksKey);
+            _cache.Remove(DeckKey(deckId));
+            return true;
+        }
+
+        private void DeleteImage(string imageUrl)
+        {
+            var fileName = Path.GetFileName(imageUrl);
+            var path = Path.Combine(_env.WebRootPath, "images", fileName);
+            if (File.Exists(path)) File.Delete(path);
         }
     }
 }
