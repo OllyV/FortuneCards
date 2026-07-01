@@ -10,5 +10,8 @@ namespace FortuneCards.Server.Models
         public string? CardBackImageUrl { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public ICollection<Card> Cards { get; set; } = new List<Card>();
+        public int? UserId { get; set; }
+        public bool IsPublic { get; set; } = false;
+        public User? User { get; set; }
     }
 }

@@ -1,0 +1,40 @@
+<navigation-bar></navigation-bar>
+
+<main class="profile-page">
+  @if (auth.currentUser(); as user) {
+    <section class="profile-header">
+      <div class="profile-avatar">{{ user.displayName[0] }}</div>
+      <div class="profile-info">
+        <h1>{{ user.displayName }}</h1>
+        <p class="profile-email">{{ user.email }}</p>
+        <button class="settings-link" (click)="goToSettings()">Account Settings →</button>
+      </div>
+    </section>
+  }
+
+  <section class="profile-decks">
+    <div class="profile-decks-header">
+      <h2>My Decks</h2>
+      <button class="new-deck-btn" (click)="goToNewDeck()">+ New Deck</button>
+    </div>
+
+    @if (loading()) {
+      <p class="profile-loading">Loading decks…</p>
+    } @else if (error()) {
+      <p class="profile-error">{{ error() }}</p>
+    } @else {
+      <div class="profile-deck-grid">
+        @for (deck of decks(); track deck.id) {
+          <div class="profile-deck-card" [style]="getDeckGradient(deck.colorIndex)" (click)="goToDeck(deck.id)">
+            <span class="profile-deck-emoji">{{ deck.emoji }}</span>
+            <span class="profile-deck-name">{{ deck.name }}</span>
+            <span class="profile-deck-badge" [class.public]="deck.isPublic" [class.private]="!deck.isPublic">
+              {{ deck.isPublic ? '🌐 Public' : '🔒 Private' }}
+            </span>
+          </div>
+        }
+        <div class="profile-deck-add" (click)="goToNewDeck()">+</div>
+      </div>
+    }
+  </section>
+</main>

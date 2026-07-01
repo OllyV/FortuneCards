@@ -1,3 +1,13 @@
 <nav class="nav-bar">
   <ng-content />
+  <!-- auth section -->
+  @if (!auth.isLoggedIn()) {
+    <button class="nav-login-btn" (click)="login()">Sign in with Google</button>
+  } @else {
+    <div class="nav-user">
+      <div class="nav-avatar" (click)="goToProfile()">{{ auth.currentUser()!.displayName[0] }}</div>
+      <span class="nav-username" (click)="goToProfile()">{{ auth.currentUser()!.displayName }}</span>
+      <button class="nav-logout-btn" (click)="logout()">Logout</button>
+    </div>
+  }
 </nav>

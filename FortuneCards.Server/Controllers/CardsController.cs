@@ -9,15 +9,13 @@ namespace FortuneCards.Server.Controllers
     {
         private readonly ICardService _cards;
 
-        public CardsController(ICardService cards)
-        {
-            _cards = cards;
-        }
+        public CardsController(ICardService cards) => _cards = cards;
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCard(int id)
         {
-            return await _cards.DeleteAsync(id) ? NoContent() : NotFound();
+            if (HttpContext.Items["UserId"] is not int userId) return Unauthorized();
+            return await _cards.DeleteAsync(id, userId) ? NoContent() : NotFound();
         }
     }
 }

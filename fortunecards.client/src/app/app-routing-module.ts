@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DeckListComponent } from './components/deck-list/deck-list.component';
 import { DeckDetailComponent } from './components/deck-detail/deck-detail.component';
+import { authGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/decks', pathMatch: 'full' },
@@ -19,6 +20,16 @@ const routes: Routes = [
   },
   { path: 'decks/:id', component: DeckDetailComponent },
   { path: 'decks', component: DeckListComponent },
+  {
+    path: 'profile/settings',
+    loadComponent: () => import('./pages/account-settings/account-settings.component').then((c) => c.AccountSettingsComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./pages/profile/profile.component').then((c) => c.ProfileComponent),
+    canActivate: [authGuard]
+  },
 ];
 
 @NgModule({
