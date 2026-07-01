@@ -13,10 +13,10 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(): void {
-    this.http.get<{ url: string }>('/api/auth/google/login').subscribe({
-      next: ({ url }) => window.location.href = url,
-      error: () => console.error('Failed to get OAuth URL')
-    });
+    fetch('/api/auth/google/login')
+      .then(r => r.json())
+      .then(({ url }: { url: string }) => { window.location.href = url; })
+      .catch(() => console.error('Failed to get OAuth URL'));
   }
 
   async logout(): Promise<void> {
