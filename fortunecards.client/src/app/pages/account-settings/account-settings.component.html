@@ -1,0 +1,26 @@
+<navigation-bar></navigation-bar>
+
+<main class="settings-page">
+  <div class="settings-header">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <h1>Account Settings</h1>
+  </div>
+
+  @if (auth.currentUser(); as user) {
+    <section class="settings-section">
+      <div class="settings-label">Connected Account</div>
+      <div class="settings-google-row">
+        <span class="google-badge">G Google</span>
+        <span class="settings-email">{{ user.email }}</span>
+      </div>
+    </section>
+
+    <section class="settings-section danger-zone">
+      <div class="settings-label danger">Danger Zone</div>
+      <p class="danger-desc">Deletes your account and all private decks. Public decks are kept as community decks.</p>
+      <button class="delete-account-btn" (click)="deleteAccount()" [disabled]="deleting()">
+        {{ deleting() ? 'Deleting…' : 'Delete Account' }}
+      </button>
+    </section>
+  }
+</main>

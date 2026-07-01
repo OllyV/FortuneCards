@@ -19,6 +19,14 @@ const routes: Routes = [
   },
   { path: 'decks/:id', component: DeckDetailComponent },
   { path: 'decks', component: DeckListComponent },
+  {
+    path: 'profile/settings',
+    loadComponent: () => import('./pages/account-settings/account-settings.component').then((c) => c.AccountSettingsComponent)
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./pages/profile/profile.component').then((c) => c.ProfileComponent)
+  },
 ];
 
 @NgModule({

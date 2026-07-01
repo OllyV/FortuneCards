@@ -1,0 +1,91 @@
+.settings-page {
+  max-width: 520px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.settings-header h1 { margin: 0; font-size: 22px; }
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.back-btn:hover { color: #ccc; }
+
+.settings-section {
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #333;
+}
+
+.settings-section:last-child { border-bottom: none; }
+
+.settings-label {
+  font-size: 13px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.settings-label.danger { color: #f76e6e; }
+
+.settings-google-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.google-badge {
+  background: #4285f4;
+  color: #fff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.settings-email {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.danger-zone {}
+
+.danger-desc {
+  font-size: 13px;
+  color: #888;
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.delete-account-btn {
+  background: none;
+  border: 1px solid #f76e6e;
+  color: #f76e6e;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.delete-account-btn:hover:not(:disabled) {
+  background: rgba(247, 110, 110, 0.1);
+}
+
+.delete-account-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
