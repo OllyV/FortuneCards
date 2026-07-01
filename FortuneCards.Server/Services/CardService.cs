@@ -1,4 +1,5 @@
 using FortuneCards.Server.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FortuneCards.Server.Services
@@ -19,17 +20,18 @@ namespace FortuneCards.Server.Services
             _env = env;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, int userId)
         {
-            var card = await _db.Cards.FindAsync(id);
-            if (card is null) return false;
+            var card = await _db.Cards
+                .Include(c => c.Deck)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (card is null || card.Deck?.UserId != userId) return false;
 
             var filePath = Path.Combine(
                 _env.WebRootPath,
                 card.ImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
-
-            if (File.Exists(filePath))
-                File.Delete(filePath);
+            if (File.Exists(filePath)) File.Delete(filePath);
 
             var deckId = card.DeckId;
             _db.Cards.Remove(card);
