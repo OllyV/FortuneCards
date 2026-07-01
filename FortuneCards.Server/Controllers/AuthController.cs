@@ -32,7 +32,7 @@ namespace FortuneCards.Server.Controllers
                       "&response_type=code" +
                       "&scope=openid%20email%20profile" +
                       "&access_type=online";
-            return Redirect(url);
+            return Ok(new { url });
         }
 
         [HttpGet("google/callback")]
