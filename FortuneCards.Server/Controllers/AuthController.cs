@@ -54,7 +54,11 @@ namespace FortuneCards.Server.Controllers
             GoogleJsonWebSignature.Payload payload;
             try
             {
-                payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+                payload = await GoogleJsonWebSignature.ValidateAsync(idToken,
+                    new GoogleJsonWebSignature.ValidationSettings
+                    {
+                        Audience = new[] { _config["Google:ClientId"]! }
+                    });
             }
             catch
             {
@@ -94,7 +98,11 @@ namespace FortuneCards.Server.Controllers
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            Response.Cookies.Delete("fortune_auth");
+            Response.Cookies.Delete("fortune_auth", new CookieOptions
+            {
+                SameSite = SameSiteMode.Strict,
+                Secure = true
+            });
             return Ok();
         }
 
@@ -105,8 +113,8 @@ namespace FortuneCards.Server.Controllers
                 return Unauthorized();
 
             // Transfer public decks to system user (id=1)
-            var publicDecks = db.Decks.Where(d => d.UserId == userId && d.IsPublic);
-            await publicDecks.ForEachAsync(d => d.UserId = 1);
+            var publicDecks = await db.Decks.Where(d => d.UserId == userId && d.IsPublic).ToListAsync();
+            publicDecks.ForEach(d => d.UserId = 1);
 
             // Delete private decks (cascade deletes their cards)
             var privateDecks = db.Decks.Where(d => d.UserId == userId && !d.IsPublic);
@@ -116,7 +124,11 @@ namespace FortuneCards.Server.Controllers
             if (user != null) db.Users.Remove(user);
 
             await db.SaveChangesAsync();
-            Response.Cookies.Delete("fortune_auth");
+            Response.Cookies.Delete("fortune_auth", new CookieOptions
+            {
+                SameSite = SameSiteMode.Strict,
+                Secure = true
+            });
             return Ok();
         }
 
