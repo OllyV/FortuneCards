@@ -10,6 +10,8 @@ export interface Deck {
   cardBackImageUrl: string | null;
   cardCount?: number;
   cards?: Card[];
+  isPublic: boolean;
+  isOwner: boolean;
 }
 
 export interface CreateDeckPayload {

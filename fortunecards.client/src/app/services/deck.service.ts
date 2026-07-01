@@ -41,4 +41,8 @@ export class DeckService {
     form.append('image', image, image.name);
     return this.http.post<Card>(`${this.base}/${deckId}/cards`, form);
   }
+
+  toggleVisibility(deckId: number, isPublic: boolean): Observable<void> {
+    return this.http.patch<void>(`${this.base}/${deckId}/visibility`, { isPublic });
+  }
 }
