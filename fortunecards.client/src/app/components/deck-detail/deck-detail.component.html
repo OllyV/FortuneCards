@@ -5,20 +5,22 @@
       <span class="nav-sep">/</span>
       <span class="nav-crumb">{{ d.name }}</span>
     </div>
-    <div class="nav-actions">
-      <button class="btn-secondary btn-sm" (click)="addCard()">+ Add Card</button>
-      <button class="btn-primary btn-sm" (click)="drawCard()">🎴 Draw a Card</button>
-    </div>
   </navigation-bar>
 
   <div class="deck-hero" [style.background]="getDeckGradient()">
-    <span class="hero-emoji">{{ d.emoji }}</span>
-    <div class="hero-info">
-      <h1 class="hero-name">{{ d.name }}</h1>
-      <p class="hero-meta">
-        <span *ngIf="d.description">{{ d.description }} · </span>
-        {{ (d.cards ?? []).length }} card{{ (d.cards ?? []).length === 1 ? '' : 's' }}
-      </p>
+    <div class="hero-left">
+      <span class="hero-emoji">{{ d.emoji }}</span>
+      <div class="hero-info">
+        <h1 class="hero-name">{{ d.name }}</h1>
+        <p class="hero-meta">
+          <span *ngIf="d.description">{{ d.description }} · </span>
+          {{ (d.cards ?? []).length }} card{{ (d.cards ?? []).length === 1 ? '' : 's' }}
+        </p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="addCard()">+ Add Card</button>
+      <button class="hero-btn" [style.background]="getDeckGradient()" (click)="drawCard()">🎴 Draw a Card</button>
     </div>
   </div>
 
@@ -35,11 +37,11 @@
         </div>
         <div class="card-body">
           <p class="card-title">{{ card.title }}</p>
-          <button class="card-delete" (click)="deleteCard(card.id)" title="Remove card">✕</button>
+          <button *ngIf="d.isOwner" class="card-delete" (click)="deleteCard(card.id)" title="Remove card">✕</button>
         </div>
       </div>
 
-      <div class="card-tile card-tile--add" (click)="addCard()">
+      <div *ngIf="d.isOwner" class="card-tile card-tile--add" (click)="addCard()">
         <div class="card-image card-image--add">+</div>
       </div>
     </div>

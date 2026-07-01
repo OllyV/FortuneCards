@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Deck } from '../../models/deck';
@@ -12,7 +12,7 @@ import { getDeckGradientStyle, getDeckShadowStyle } from '../../utils/deck-color
   styleUrls: ['./deck-list.component.css'],
   standalone: false
 })
-export class DeckListComponent implements OnInit {
+export class DeckListComponent {
   decks = signal<Deck[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
@@ -20,10 +20,11 @@ export class DeckListComponent implements OnInit {
   protected readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private deckService: DeckService, private router: Router) {}
-
-  ngOnInit(): void {
-    this.loadDecks();
+  constructor(private deckService: DeckService, private router: Router) {
+    effect(() => {
+      this.auth.currentUser();
+      this.loadDecks();
+    });
   }
 
   loadDecks(): void {

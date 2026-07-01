@@ -1,7 +1,6 @@
 <div class="page">
   <navigation-bar>
     <span class="nav-title">🎴 FortuneCards</span>
-    <button class="btn-primary" (click)="goToNew()">+ New Deck</button>
   </navigation-bar>
 
   <main class="page-content">
@@ -34,10 +33,12 @@
             <span class="deck-name">{{ deck.name }}</span>
             <span class="deck-count">{{ deck.cardCount }} card{{ deck.cardCount === 1 ? '' : 's' }}</span>
 
-            @if (deck.isPublic) {
-              <span class="deck-badge public">🌐 Public</span>
-            } @else {
-              <span class="deck-badge private">🔒 Private</span>
+            @if (deck.isOwner) {
+              @if (deck.isPublic) {
+                <span class="deck-badge public">🌐 Public</span>
+              } @else {
+                <span class="deck-badge private">🔒 Private</span>
+              }
             }
 
             @if (deck.isOwner) {

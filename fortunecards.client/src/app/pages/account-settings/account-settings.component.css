@@ -7,11 +7,17 @@
 .settings-header {
   display: flex;
   align-items: center;
-  gap: 14px;
+  position: relative;
   margin-bottom: 32px;
 }
 
-.settings-header h1 { margin: 0; font-size: 22px; }
+.settings-header h1 {
+  margin: 0;
+  font-size: 22px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
 .back-btn {
   background: none;

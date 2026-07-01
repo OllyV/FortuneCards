@@ -1,4 +1,6 @@
-<navigation-bar></navigation-bar>
+<navigation-bar>
+  <button class="back-btn" (click)="goBack()">← Decks</button>
+</navigation-bar>
 
 <main class="profile-page">
   @if (auth.currentUser(); as user) {
@@ -25,7 +27,7 @@
     } @else {
       <div class="profile-deck-grid">
         @for (deck of decks(); track deck.id) {
-          <div class="profile-deck-card" [style]="getDeckGradient(deck.colorIndex)" (click)="goToDeck(deck.id)">
+          <div class="profile-deck-card" [style.background]="getDeckGradient(deck.colorIndex)" (click)="goToDeck(deck.id)">
             <span class="profile-deck-emoji">{{ deck.emoji }}</span>
             <span class="profile-deck-name">{{ deck.name }}</span>
             <span class="profile-deck-badge" [class.public]="deck.isPublic" [class.private]="!deck.isPublic">

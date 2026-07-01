@@ -41,6 +41,10 @@ export class ProfileComponent {
     return getDeckGradientStyle(colorIndex);
   }
 
+  goBack(): void {
+    this.router.navigate(['/decks']);
+  }
+
   goToSettings(): void {
     this.router.navigate(['/profile/settings']);
   }

@@ -2,11 +2,6 @@
   <navigation-bar>
     <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
     <span class="nav-title-centered">New Deck</span>
-    <button class="btn-ghost btn-ghost--action"
-            [disabled]="form.invalid || submitting()"
-            (click)="submit()">
-      Create
-    </button>
   </navigation-bar>
 
   <main class="form-content">
