@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Deck } from '../../models/deck';
 import { DeckService } from '../../services/deck.service';
+import { AuthService } from '../../services/auth.service';
 import { getDeckGradientStyle, getDeckShadowStyle } from '../../utils/deck-colors';
 
 @Component({
@@ -16,6 +17,7 @@ export class DeckListComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
 
+  protected readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
   constructor(private deckService: DeckService, private router: Router) {}
@@ -50,6 +52,16 @@ export class DeckListComponent implements OnInit {
       .subscribe({
         next: () => this.decks.update(decks => decks.filter(d => d.id !== id)),
         error: () => this.error.set('Failed to delete deck.')
+      });
+  }
+
+  toggleVisibility(deck: Deck, isPublic: boolean, event: Event): void {
+    event.stopPropagation();
+    this.deckService.toggleVisibility(deck.id, isPublic)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.decks.update(decks => decks.map(d => d.id === deck.id ? { ...d, isPublic } : d)),
+        error: () => this.error.set('Failed to update visibility.')
       });
   }
 
