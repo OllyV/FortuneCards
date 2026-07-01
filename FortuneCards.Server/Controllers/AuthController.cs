@@ -31,7 +31,8 @@ namespace FortuneCards.Server.Controllers
                       $"&redirect_uri={Uri.EscapeDataString(redirectUri)}" +
                       "&response_type=code" +
                       "&scope=openid%20email%20profile" +
-                      "&access_type=online";
+                      "&access_type=online" +
+                      "&prompt=select_account";
             return Ok(new { url });
         }
 
