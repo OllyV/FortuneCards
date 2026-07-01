@@ -1,4 +1,5 @@
 using FortuneCards.Server.Data;
+using FortuneCards.Server.Middleware;
 using FortuneCards.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -13,10 +14,13 @@ builder.Services.AddDbContext<FortuneCardsDbContext>(options =>
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IDeckService, DeckService>();
 builder.Services.AddScoped<ICardService, CardService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddHttpClient("google");
 
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
-        policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod()));
+        policy.WithOrigins("http://localhost:5173", "https://127.0.0.1:51313")
+              .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase);
@@ -37,6 +41,7 @@ app.MapStaticAssets();     // serves compiled Angular assets with optimized head
 
 app.UseHttpsRedirection();
 app.UseCors();
+app.UseMiddleware<JwtMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 app.MapFallbackToFile("/index.html");
