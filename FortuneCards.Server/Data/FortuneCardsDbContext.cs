@@ -38,7 +38,7 @@ namespace FortuneCards.Server.Data
                 e.Property(d => d.Emoji).HasMaxLength(10).HasDefaultValue("🎴");
                 e.Property(d => d.ColorIndex).HasDefaultValue(0);
                 e.Property(d => d.CardBackImageUrl).HasMaxLength(500);
-                e.Property(d => d.IsPublic).HasDefaultValue(true);
+                e.Property(d => d.IsPublic).HasDefaultValue(false);
                 e.HasOne(d => d.User)
                  .WithMany(u => u.Decks)
                  .HasForeignKey(d => d.UserId)
