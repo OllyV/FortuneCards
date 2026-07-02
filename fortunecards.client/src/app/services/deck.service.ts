@@ -19,15 +19,11 @@ export class DeckService {
   }
 
   createDeck(payload: CreateDeckPayload): Observable<Deck> {
-    const form = new FormData();
-    form.append('name', payload.name);
-    if (payload.description) form.append('description', payload.description);
-    form.append('emoji', payload.emoji);
-    form.append('colorIndex', payload.colorIndex.toString());
-    if (payload.cardBackImage) {
-      form.append('cardBackImage', payload.cardBackImage, payload.cardBackImage.name);
-    }
-    return this.http.post<Deck>(this.base, form);
+    return this.http.post<Deck>(this.base, this.buildDeckForm(payload));
+  }
+
+  updateDeck(id: number, payload: CreateDeckPayload): Observable<Deck> {
+    return this.http.patch<Deck>(`${this.base}/${id}`, this.buildDeckForm(payload));
   }
 
   deleteDeck(id: number): Observable<void> {
@@ -42,7 +38,16 @@ export class DeckService {
     return this.http.post<Card>(`${this.base}/${deckId}/cards`, form);
   }
 
-  toggleVisibility(deckId: number, isPublic: boolean): Observable<void> {
-    return this.http.patch<void>(`${this.base}/${deckId}/visibility`, { isPublic });
+  private buildDeckForm(payload: CreateDeckPayload): FormData {
+    const form = new FormData();
+    form.append('name', payload.name);
+    form.append('description', payload.description ?? '');
+    form.append('emoji', payload.emoji);
+    form.append('colorIndex', payload.colorIndex.toString());
+    form.append('isPublic', payload.isPublic.toString());
+    if (payload.cardBackImage) {
+      form.append('cardBackImage', payload.cardBackImage, payload.cardBackImage.name);
+    }
+    return form;
   }
 }

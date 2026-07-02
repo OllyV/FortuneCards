@@ -19,5 +19,6 @@ export interface CreateDeckPayload {
   description: string | null;
   emoji: string;
   colorIndex: number;
+  isPublic: boolean;
   cardBackImage?: File;
 }
