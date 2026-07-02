@@ -76,7 +76,7 @@ namespace FortuneCards.Server.Services
             var deck = new Deck
             {
                 Name = name,
-                Description = description,
+                Description = string.IsNullOrWhiteSpace(description) ? null : description,
                 Emoji = emoji,
                 ColorIndex = colorIndex,
                 CardBackImageUrl = cardBackImageUrl,
