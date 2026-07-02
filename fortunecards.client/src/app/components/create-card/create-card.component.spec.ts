@@ -13,8 +13,7 @@ describe('CreateCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CreateCardComponent],
-      imports: [ReactiveFormsModule, RouterModule.forRoot([])],
+      imports: [CreateCardComponent, ReactiveFormsModule, RouterModule.forRoot([])],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),

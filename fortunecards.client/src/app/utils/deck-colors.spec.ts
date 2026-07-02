@@ -2,28 +2,32 @@ import { getDeckGradientStyle, getDeckShadowStyle, getDeckAccentColor, getCardAc
 
 describe('deck-colors', () => {
   describe('getDeckGradientStyle', () => {
-    it('returns coral-sunny gradient for index 0', () => {
-      expect(getDeckGradientStyle(0)).toBe('linear-gradient(135deg, #FF6B6B, #FECA57)');
+    it('returns the index-0 gradient', () => {
+      expect(getDeckGradientStyle(0)).toBe('linear-gradient(135deg, #B2FEFA, #A29BFE)');
     });
-    it('wraps around with modulo for index 5', () => {
-      expect(getDeckGradientStyle(5)).toBe(getDeckGradientStyle(0));
+    it('wraps around with modulo (16 gradients)', () => {
+      expect(getDeckGradientStyle(16)).toBe(getDeckGradientStyle(0));
+    });
+  });
+
+  describe('getDeckShadowStyle', () => {
+    it('returns the index-0 shadow', () => {
+      expect(getDeckShadowStyle(0)).toBe('0 6px 20px #B2FEFA33');
     });
   });
 
   describe('getDeckAccentColor', () => {
-    it('returns coral for index 0', () => {
-      expect(getDeckAccentColor(0)).toBe('#FF6B6B');
+    it('returns the index-0 accent', () => {
+      expect(getDeckAccentColor(0)).toBe('#B2FEFA');
     });
-    it('returns sunny for index 4', () => {
-      expect(getDeckAccentColor(4)).toBe('#FECA57');
+    it('returns the index-4 accent', () => {
+      expect(getDeckAccentColor(4)).toBe('#FF9FF3');
     });
   });
 
   describe('getCardAccentColor', () => {
-    it('cycles through 5 accent colors', () => {
-      const a = getCardAccentColor(0);
-      const b = getCardAccentColor(5);
-      expect(a).toBe(b);
+    it('cycles through the accent colors with modulo', () => {
+      expect(getCardAccentColor(0)).toBe(getCardAccentColor(16));
     });
   });
 });
