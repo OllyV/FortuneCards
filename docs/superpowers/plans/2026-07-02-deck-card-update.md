@@ -732,8 +732,7 @@ describe('DeckEditComponent', () => {
   beforeEach(async () => {
     const mockDeckService = { getDeck: () => of(ownerDeck) };
     await TestBed.configureTestingModule({
-      declarations: [DeckEditComponent],
-      imports: [ReactiveFormsModule, RouterModule.forRoot([])],
+      imports: [DeckEditComponent, ReactiveFormsModule, RouterModule.forRoot([])],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),
@@ -1210,8 +1209,7 @@ describe('CardDetailComponent', () => {
   beforeEach(async () => {
     const mockDeckService = { getDeck: () => of(deckWithCard) };
     await TestBed.configureTestingModule({
-      declarations: [CardDetailComponent],
-      imports: [RouterModule.forRoot([])],
+      imports: [CardDetailComponent, RouterModule.forRoot([])],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),
@@ -1450,8 +1448,7 @@ describe('CardEditComponent', () => {
   beforeEach(async () => {
     const mockDeckService = { getDeck: () => of(deckWithCard) };
     await TestBed.configureTestingModule({
-      declarations: [CardEditComponent],
-      imports: [ReactiveFormsModule, RouterModule.forRoot([])],
+      imports: [CardEditComponent, ReactiveFormsModule, RouterModule.forRoot([])],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),
