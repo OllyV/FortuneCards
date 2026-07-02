@@ -19,9 +19,13 @@ Let a deck's owner review and update their deck and its cards:
   - `Card`: `Title` (required), `Description` (required), `ImageUrl` (required), `DeckId`.
 - **The Card `title` field already exists** end-to-end (model, `CardDto`, `AddCardRequest`, the create form, the `Card` TS interface). No new field is added; we only ensure title is shown and editable on the new card pages.
 - Editable fields = all fields used at the create stage:
-  - Deck: `Name`, `Description`, `Emoji`, `ColorIndex`, `CardBackImage` (image replacement).
+  - Deck: `Name`, `Description`, `Emoji`, `ColorIndex`, `CardBackImage` (image replacement), **`IsPublic`**.
   - Card: `Title`, `Description`, `Image` (image replacement).
-- Visibility already has its own endpoint (`PATCH /api/decks/{id}/visibility`) and is out of scope here.
+- **Owner actions are consolidated onto the create/edit pages:**
+  - The **public/private choice** moves to the create page and the deck edit page. The deck tile keeps only the 🌐/🔒 **badge** (no toggle button).
+  - **Delete deck** moves from the deck tile to the deck edit page.
+  - **Delete card** moves from the deck-detail card grid to the card edit page.
+- **`IsPublic` is folded into the create request and the deck `PATCH`.** This makes the existing `PATCH /api/decks/{id}/visibility` endpoint, `DeckService.ToggleVisibilityAsync`, `ToggleVisibilityRequest`, and the frontend `DeckService.toggleVisibility` **dead code — they are removed.**
 
 ## Existing patterns this design follows
 
@@ -33,17 +37,25 @@ Let a deck's owner review and update their deck and its cards:
 
 ## Backend design
 
+### Create deck: add `IsPublic`
+
+- Add `bool? IsPublic` to `CreateDeckRequest` and thread it through `DeckService.CreateAsync(...)` (default `false` when omitted, preserving current behavior).
+
 ### `PATCH /api/decks/{id}` (DecksController)
 
 - Chosen approach: **multipart PATCH mirroring create** (consistent with existing `[FromForm]` endpoints; reuses the image-save helper; one endpoint per entity).
-- Request DTO `UpdateDeckRequest` (`[FromForm]`): `string? Name`, `string? Description`, `string? Emoji`, `int? ColorIndex`, `IFormFile? CardBackImage`.
+- Request DTO `UpdateDeckRequest` (`[FromForm]`): `string? Name`, `string? Description`, `string? Emoji`, `int? ColorIndex`, `IFormFile? CardBackImage`, `bool? IsPublic`.
 - Controller: `401` if unauthenticated; delegate to `DeckService.UpdateAsync(...)`; return updated `DeckDetail` on success, `404` if not found / not owner.
 - `DeckService.UpdateAsync(int deckId, UpdateDeckRequest req, int userId)`:
   - Load deck; if `null` or `deck.UserId != userId` → return `null`.
-  - Apply `Name` (if non-empty — `Name` is required so never cleared), `Emoji`, `ColorIndex` when provided.
+  - Apply `Name` (if non-empty — `Name` is required so never cleared), `Emoji`, `ColorIndex`, `IsPublic` when provided.
   - Set `Description` to the submitted value (empty string → stored as `null`), since the edit form always sends the full current state.
   - If `CardBackImage` is a non-empty file, save it via the existing image helper and set `CardBackImageUrl`.
   - `SaveChangesAsync`; invalidate `AllDecksKey` and `DeckKey(deckId)`; return the updated `DeckDetail`.
+
+### Removed: visibility-only endpoint
+
+- Delete `PATCH /api/decks/{id}/visibility`, `DeckService.ToggleVisibilityAsync`, and `ToggleVisibilityRequest` — superseded by `IsPublic` on create + update.
 
 ### `PATCH /api/cards/{id}` (CardsController)
 
@@ -71,10 +83,12 @@ No new migration. Update `proxy.conf.js` is **not** needed — `/api` and `/imag
 
 ### Pages
 
-- **Deck review** = existing `/decks/:id` detail page. Add an owner-only **Edit deck** button (visible when `deck.isOwner`) navigating to `/decks/:id/edit`. Make each card tile in the grid navigate to `/decks/:id/cards/:cardId`.
-- **`DeckEditComponent`** (owner-only): loads the deck via `DeckService.getDeck(id)`; if `!isOwner`, redirect to `/decks/:id`. Reactive form pre-filled with `emoji`, `colorIndex`, `name`, `description`; optional card-back image swap that shows the current back and previews a new one. Submit → `DeckService.updateDeck(id, payload)` → navigate back to `/decks/:id`.
+- **Deck list / tile** (`DeckListComponent`): **remove the owner controls** (visibility toggle + delete) from the tile, keeping only the 🌐/🔒 badge. Remove the now-unused `deleteDeck` and `toggleVisibility` methods from the component.
+- **Deck review** = existing `/decks/:id` detail page. Add an owner-only **Edit deck** button (visible when `deck.isOwner`) navigating to `/decks/:id/edit`. Make each card tile in the grid navigate to `/decks/:id/cards/:cardId`. **Remove the per-card delete button** from this grid (moves to the card edit page).
+- **Create deck** (`CreateDeckComponent`): add a **public/private choice** to the form (default private). Include `isPublic` in the submitted payload.
+- **`DeckEditComponent`** (owner-only): loads the deck via `DeckService.getDeck(id)`; if `!isOwner`, redirect to `/decks/:id`. Reactive form pre-filled with `emoji`, `colorIndex`, `name`, `description`, **and the public/private choice**; optional card-back image swap that shows the current back and previews a new one. Includes a **Delete deck** button (confirm → `DeckService.deleteDeck(id)` → navigate to `/decks`). Submit → `DeckService.updateDeck(id, payload)` → navigate back to `/decks/:id`.
 - **`CardDetailComponent`** (review): loads the deck via `DeckService.getDeck(deckId)`, finds the card by `cardId` (404-state if missing). Shows the card image, **title**, and description. If `deck.isOwner`, shows an **Edit card** button → `/decks/:id/cards/:cardId/edit`. Also a back link to the deck.
-- **`CardEditComponent`** (owner-only): loads deck + card the same way; if `!isOwner`, redirect to the card detail page. Reactive form pre-filled with `title`, `description`; optional image swap showing the current image. Submit → `CardService.updateCard(cardId, payload)` → navigate to `/decks/:id/cards/:cardId`.
+- **`CardEditComponent`** (owner-only): loads deck + card the same way; if `!isOwner`, redirect to the card detail page. Reactive form pre-filled with `title`, `description`; optional image swap showing the current image. Includes a **Delete card** button (confirm → `CardService.deleteCard(cardId)` → navigate to `/decks/:id`). Submit → `CardService.updateCard(cardId, payload)` → navigate to `/decks/:id/cards/:cardId`.
 
 ### Owner-only enforcement
 
@@ -82,7 +96,9 @@ Edit routes use the existing `authGuard` (must be logged in). Owner enforcement 
 
 ### Services & models
 
-- `DeckService.updateDeck(id: number, payload: CreateDeckPayload): Observable<Deck>` — `PATCH /api/decks/:id` as `FormData` (mirrors `createDeck`). Reuse the existing `CreateDeckPayload` shape (`cardBackImage?` optional).
+- Add `isPublic: boolean` to `CreateDeckPayload`; include it in `DeckService.createDeck`'s `FormData`.
+- `DeckService.updateDeck(id: number, payload: CreateDeckPayload): Observable<Deck>` — `PATCH /api/decks/:id` as `FormData` (mirrors `createDeck`, including `isPublic`).
+- **Remove `DeckService.toggleVisibility`** (backend endpoint is gone).
 - `CardService.updateCard(id: number, payload: { title: string; description: string; image?: File }): Observable<Card>` — `PATCH /api/cards/:id` as `FormData`.
 - No new GET endpoint: card pages reuse `DeckService.getDeck(deckId)` and pick the card by id, which also yields `isOwner`.
 
@@ -98,13 +114,12 @@ Edit routes use the existing `authGuard` (must be logged in). Owner enforcement 
 
 ## Testing
 
-- Frontend (Jasmine + Karma, existing convention): add creation/smoke specs for `DeckEditComponent`, `CardDetailComponent`, `CardEditComponent`, and spec coverage for the new `DeckService.updateDeck` / `CardService.updateCard` methods (HttpTestingController verifying `PATCH` URL + `FormData`). Keep the existing suite green.
+- Frontend (Jasmine + Karma, existing convention): add creation/smoke specs for `DeckEditComponent`, `CardDetailComponent`, `CardEditComponent`, and spec coverage for the new `DeckService.updateDeck` / `CardService.updateCard` methods (HttpTestingController verifying `PATCH` URL + `FormData`). Update existing `DeckListComponent` / `DeckService` specs that reference the removed `toggleVisibility`/tile-delete behavior. Keep the existing suite green.
 - Backend has no test project; none added (consistent with current repo).
 - Manual verification: as owner, edit a deck and a card (including image swap) and confirm changes persist and appear; as a non-owner viewing a public deck, confirm no edit buttons and that navigating directly to an edit URL redirects to the detail page.
 
 ## Out of scope
 
-- Deck visibility toggle (already implemented).
-- Adding/removing cards (create and delete already exist).
+- Adding cards (create already exists; unchanged).
 - Any new database fields or migration.
-- Refactoring the create components.
+- Refactoring the create components into a dual-mode form (create page is only extended with the public/private choice).
