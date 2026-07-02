@@ -32,21 +32,6 @@
 .deck-name   { font-size: 13px; font-weight: 800; color: white; text-align: center; padding: 0 8px; }
 .deck-count  { font-size: 11px; color: rgba(255,255,255,0.75); font-weight: 600; }
 
-.deck-delete {
-  background: rgba(0,0,0,0.2);
-  border: none;
-  border-radius: 100px;
-  width: 22px;
-  height: 22px;
-  font-size: 10px;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
-
 .deck-tile--add {
   background: var(--color-cream) !important;
   border: 2px dashed var(--color-border-light);
@@ -76,23 +61,3 @@
   border: 1px solid #5a3d1a;
 }
 
-.deck-owner-controls {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.deck-toggle-btn {
-  background: none;
-  border: none;
-  font-size: 11px;
-  color: #888;
-  cursor: pointer;
-  padding: 0;
-}
-
-.deck-toggle-btn:hover {
-  color: #ccc;
-}

@@ -41,16 +41,6 @@
               }
             }
 
-            @if (deck.isOwner) {
-              <div class="deck-owner-controls">
-                @if (deck.isPublic) {
-                  <button class="deck-toggle-btn" (click)="toggleVisibility(deck, false, $event)" title="Make private">🔒 Make private</button>
-                } @else {
-                  <button class="deck-toggle-btn" (click)="toggleVisibility(deck, true, $event)" title="Make public">🌐 Make public</button>
-                }
-                <button class="deck-delete" (click)="deleteDeck(deck.id, $event)" title="Delete deck">✕</button>
-              </div>
-            }
           </div>
         }
 
