@@ -36,6 +36,7 @@ export class CreateDeckComponent {
       colorIndex:  [0, Validators.required],
       name:        ['', [Validators.required, Validators.maxLength(200)]],
       description: ['', Validators.maxLength(1000)],
+      isPublic:    [false],
     });
   }
 
@@ -76,6 +77,7 @@ export class CreateDeckComponent {
       description: v.description ?? null,
       emoji: v.emoji ?? '🎴',
       colorIndex: v.colorIndex ?? 0,
+      isPublic: v.isPublic ?? false,
       cardBackImage: this.cardBackFile() ?? undefined,
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

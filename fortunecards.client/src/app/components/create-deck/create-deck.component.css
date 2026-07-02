@@ -101,3 +101,23 @@
 .btn-ghost--action:disabled { opacity: 0.4; }
 
 .btn-full { width: 100%; }
+
+.visibility-row { display: flex; gap: 10px; margin-top: 6px; }
+
+.visibility-btn {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-muted);
+  background: white;
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.visibility-btn--active {
+  color: var(--color-coral);
+  border-color: var(--color-coral);
+}

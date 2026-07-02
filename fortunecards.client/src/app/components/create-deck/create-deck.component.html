@@ -56,6 +56,19 @@
         </div>
       </div>
 
+      <!-- Visibility -->
+      <div class="form-field">
+        <label class="form-label">Visibility</label>
+        <div class="visibility-row">
+          <button type="button" class="visibility-btn"
+                  [class.visibility-btn--active]="!form.get('isPublic')!.value"
+                  (click)="form.get('isPublic')!.setValue(false)">🔒 Private</button>
+          <button type="button" class="visibility-btn"
+                  [class.visibility-btn--active]="form.get('isPublic')!.value"
+                  (click)="form.get('isPublic')!.setValue(true)">🌐 Public</button>
+        </div>
+      </div>
+
       <!-- Name -->
       <div class="form-field">
         <label class="form-label" for="deckName">Deck Name</label>
