@@ -15,6 +15,11 @@ const routes: Routes = [
     loadComponent: () => import('./components/create-card/create-card.component').then((c) => c.CreateCardComponent)
   },
   {
+    path: 'decks/:id/cards/:cardId/edit',
+    loadComponent: () => import('./components/card-edit/card-edit.component').then((c) => c.CardEditComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'decks/:id/cards/:cardId',
     loadComponent: () => import('./components/card-detail/card-detail.component').then((c) => c.CardDetailComponent)
   },
