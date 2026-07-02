@@ -19,6 +19,7 @@
       </div>
     </div>
     <div class="hero-actions">
+      <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="editDeck()">✏️ Edit deck</button>
       <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="addCard()">+ Add Card</button>
       <button class="hero-btn" [style.background]="getDeckGradient()" (click)="drawCard()">🎴 Draw a Card</button>
     </div>
@@ -30,14 +31,14 @@
     <div class="card-grid">
       <div class="card-tile"
            *ngFor="let card of (d.cards ?? []); let i = index"
-           [style.border-top-color]="getCardAccent(i)">
+           [style.border-top-color]="getCardAccent(i)"
+           (click)="openCard(card.id)">
         <div class="card-image" [style.background]="getCardAccent(i) + '18'">
           <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.title" />
           <span *ngIf="!card.imageUrl" class="card-placeholder">🃏</span>
         </div>
         <div class="card-body">
           <p class="card-title">{{ card.title }}</p>
-          <button *ngIf="d.isOwner" class="card-delete" (click)="deleteCard(card.id)" title="Remove card">✕</button>
         </div>
       </div>
 

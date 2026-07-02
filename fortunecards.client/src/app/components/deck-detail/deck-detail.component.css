@@ -91,19 +91,5 @@
   flex: 1;
 }
 
-.card-delete {
-  background: none;
-  border: none;
-  font-size: 10px;
-  color: var(--color-muted);
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-  flex-shrink: 0;
-  display: none;
-}
-
-.card-tile:hover .card-delete { display: block; }
-
 .card-tile--add { border-top-color: var(--color-border-light) !important; border-top-style: dashed; box-shadow: none; }
 .card-image--add { background: var(--color-cream); font-size: 24px; color: var(--color-border-light); font-weight: 400; }

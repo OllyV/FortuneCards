@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Deck } from '../../models/deck';
 import { DeckService } from '../../services/deck.service';
-import { CardService } from '../../services/card.service';
 import { getDeckGradientStyle, getDeckShadowStyle, getCardAccentColor } from '../../utils/deck-colors';
 
 @Component({
@@ -22,8 +21,7 @@ export class DeckDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private deckService: DeckService,
-    private cardService: CardService
+    private deckService: DeckService
   ) {}
 
   ngOnInit(): void {
@@ -63,18 +61,13 @@ export class DeckDetailComponent implements OnInit {
     this.router.navigate(['/decks']);
   }
 
-  deleteCard(cardId: number): void {
-    if (!confirm('Remove this card from the deck?')) return;
-    this.cardService.deleteCard(cardId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.deck.update(d => d ? {
-            ...d,
-            cards: (d.cards ?? []).filter(c => c.id !== cardId)
-          } : null);
-        },
-        error: () => this.error.set('Failed to delete card.')
-      });
+  editDeck(): void {
+    const d = this.deck();
+    if (d) this.router.navigate(['/decks', d.id, 'edit']);
+  }
+
+  openCard(cardId: number): void {
+    const d = this.deck();
+    if (d) this.router.navigate(['/decks', d.id, 'cards', cardId]);
   }
 }
