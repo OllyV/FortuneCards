@@ -3,8 +3,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { vi } from 'vitest';
 import { DeckEditComponent } from './deck-edit.component';
 import { DeckService } from '../../services/deck.service';
 import { Deck } from '../../models/deck';
@@ -14,6 +15,8 @@ const ownerDeck: Deck = {
   createdAt: '2026-01-01', emoji: '🌈', colorIndex: 3,
   cardBackImageUrl: null, isPublic: true, isOwner: true,
 };
+
+const nonOwnerDeck: Deck = { ...ownerDeck, isOwner: false };
 
 describe('DeckEditComponent', () => {
   let component: DeckEditComponent;
@@ -45,5 +48,32 @@ describe('DeckEditComponent', () => {
   it('should be invalid when name is cleared', () => {
     component.form.get('name')!.setValue('');
     expect(component.form.invalid).toBe(true);
+  });
+});
+
+describe('DeckEditComponent (non-owner)', () => {
+  let fixture: ComponentFixture<DeckEditComponent>;
+  let router: Router;
+
+  beforeEach(async () => {
+    const mockDeckService = { getDeck: () => of(nonOwnerDeck) };
+    await TestBed.configureTestingModule({
+      imports: [DeckEditComponent, ReactiveFormsModule, RouterModule.forRoot([])],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: ActivatedRoute, useValue: { params: of({ id: '1' }) } },
+        { provide: DeckService, useValue: mockDeckService },
+      ],
+    }).compileComponents();
+    fixture = TestBed.createComponent(DeckEditComponent);
+    router = TestBed.inject(Router);
+  });
+
+  it('should redirect a non-owner to the deck detail page', () => {
+    const navigateSpy = vi.spyOn(router, 'navigate');
+    fixture.detectChanges();
+    expect(navigateSpy).toHaveBeenCalledWith(['/decks', 1]);
   });
 });
