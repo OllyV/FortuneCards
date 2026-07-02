@@ -42,5 +42,29 @@ namespace FortuneCards.Server.Services
 
             return true;
         }
+
+        public async Task<CardDto?> UpdateAsync(int cardId, string? title, string? description, IFormFile? image, int userId)
+        {
+            var card = await _db.Cards
+                .Include(c => c.Deck)
+                .FirstOrDefaultAsync(c => c.Id == cardId);
+
+            if (card is null || card.Deck?.UserId != userId) return null;
+
+            if (!string.IsNullOrWhiteSpace(title)) card.Title = title;
+            if (!string.IsNullOrWhiteSpace(description)) card.Description = description;
+
+            if (image is { Length: > 0 })
+            {
+                ImageStorage.Delete(_env, card.ImageUrl);
+                card.ImageUrl = await ImageStorage.SaveAsync(_env, image);
+            }
+
+            await _db.SaveChangesAsync();
+            _cache.Remove(AllDecksKey);
+            _cache.Remove(DeckKey(card.DeckId));
+
+            return new CardDto(card.Id, card.Title, card.Description, card.ImageUrl, card.CreatedAt);
+        }
     }
 }
