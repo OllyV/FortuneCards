@@ -1,7 +1,7 @@
 # Deck & Card Update — Design
 
 **Date:** 2026-07-02
-**Branch:** `6_AddUsersAndAuth`
+**Branch:** `7_DeckCardUpdate`
 **Status:** Approved for planning
 
 ## Goal
