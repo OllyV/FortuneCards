@@ -1,0 +1,26 @@
+<div class="page">
+  <navigation-bar>
+    <div class="nav-actions">
+      <button class="nav-back" (click)="goBack()">← Back to deck</button>
+    </div>
+  </navigation-bar>
+
+  <main class="page-content">
+    <div *ngIf="card() as c; else notFoundOrLoading" class="card-detail">
+      <div class="card-figure">
+        <img *ngIf="c.imageUrl" [src]="c.imageUrl" [alt]="c.title" />
+        <span *ngIf="!c.imageUrl" class="card-figure-placeholder">🃏</span>
+      </div>
+      <h1 class="card-detail-title">{{ c.title }}</h1>
+      <p class="card-detail-desc">{{ c.description }}</p>
+
+      <button *ngIf="isOwner()" class="btn-primary btn-full" (click)="editCard()">✏️ Edit Card</button>
+    </div>
+
+    <ng-template #notFoundOrLoading>
+      <div *ngIf="loading()" class="state-loading">Loading card…</div>
+      <div *ngIf="!loading() && error()" class="state-error">{{ error() }}</div>
+      <div *ngIf="!loading() && !error()" class="state-error">Card not found.</div>
+    </ng-template>
+  </main>
+</div>
