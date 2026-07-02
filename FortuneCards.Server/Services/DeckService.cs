@@ -67,19 +67,11 @@ namespace FortuneCards.Server.Services
             return deck;
         }
 
-        public async Task<DeckSummary> CreateAsync(string name, string? description, string emoji, int colorIndex, IFormFile? cardBackImage, int userId)
+        public async Task<DeckSummary> CreateAsync(string name, string? description, string emoji, int colorIndex, bool isPublic, IFormFile? cardBackImage, int userId)
         {
             string? cardBackImageUrl = null;
             if (cardBackImage is { Length: > 0 })
-            {
-                var imagesDir = Path.Combine(_env.WebRootPath, "images");
-                Directory.CreateDirectory(imagesDir);
-                var ext = Path.GetExtension(cardBackImage.FileName);
-                var fileName = $"{Guid.NewGuid()}{ext}";
-                using var stream = File.Create(Path.Combine(imagesDir, fileName));
-                await cardBackImage.CopyToAsync(stream);
-                cardBackImageUrl = $"/images/{fileName}";
-            }
+                cardBackImageUrl = await ImageStorage.SaveAsync(_env, cardBackImage);
 
             var deck = new Deck
             {
@@ -89,14 +81,14 @@ namespace FortuneCards.Server.Services
                 ColorIndex = colorIndex,
                 CardBackImageUrl = cardBackImageUrl,
                 UserId = userId,
-                IsPublic = false
+                IsPublic = isPublic
             };
             _db.Decks.Add(deck);
             await _db.SaveChangesAsync();
             _cache.Remove(AllDecksKey);
 
             return new DeckSummary(deck.Id, deck.Name, deck.Description, deck.CreatedAt, 0,
-                deck.Emoji, deck.ColorIndex, deck.CardBackImageUrl, false, true);
+                deck.Emoji, deck.ColorIndex, deck.CardBackImageUrl, deck.IsPublic, true);
         }
 
         public async Task<bool> DeleteAsync(int id, int userId)
@@ -141,15 +133,29 @@ namespace FortuneCards.Server.Services
             return new CardDto(card.Id, card.Title, card.Description, card.ImageUrl, card.CreatedAt);
         }
 
-        public async Task<bool> ToggleVisibilityAsync(int deckId, bool isPublic, int userId)
+        public async Task<DeckDetail?> UpdateAsync(int deckId, string? name, string? description, string? emoji, int? colorIndex, bool? isPublic, IFormFile? cardBackImage, int userId)
         {
             var deck = await _db.Decks.FindAsync(deckId);
-            if (deck is null || deck.UserId != userId) return false;
-            deck.IsPublic = isPublic;
+            if (deck is null || deck.UserId != userId) return null;
+
+            if (!string.IsNullOrWhiteSpace(name)) deck.Name = name;
+            if (!string.IsNullOrWhiteSpace(emoji)) deck.Emoji = emoji;
+            if (colorIndex.HasValue) deck.ColorIndex = colorIndex.Value;
+            if (isPublic.HasValue) deck.IsPublic = isPublic.Value;
+            // Edit form always submits the full description; empty clears it.
+            deck.Description = string.IsNullOrWhiteSpace(description) ? null : description;
+
+            if (cardBackImage is { Length: > 0 })
+            {
+                if (deck.CardBackImageUrl is not null) ImageStorage.Delete(_env, deck.CardBackImageUrl);
+                deck.CardBackImageUrl = await ImageStorage.SaveAsync(_env, cardBackImage);
+            }
+
             await _db.SaveChangesAsync();
             _cache.Remove(AllDecksKey);
             _cache.Remove(DeckKey(deckId));
-            return true;
+
+            return await GetByIdAsync(deckId, userId);
         }
 
         private void DeleteImage(string imageUrl)

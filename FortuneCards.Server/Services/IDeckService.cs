@@ -17,9 +17,9 @@ namespace FortuneCards.Server.Services
     {
         Task<IEnumerable<DeckSummary>> GetAllAsync(int? userId = null);
         Task<DeckDetail?> GetByIdAsync(int id, int? userId = null);
-        Task<DeckSummary> CreateAsync(string name, string? description, string emoji, int colorIndex, IFormFile? cardBackImage, int userId);
+        Task<DeckSummary> CreateAsync(string name, string? description, string emoji, int colorIndex, bool isPublic, IFormFile? cardBackImage, int userId);
         Task<bool> DeleteAsync(int id, int userId);
         Task<CardDto?> AddCardAsync(int deckId, string title, string description, IFormFile image, int userId);
-        Task<bool> ToggleVisibilityAsync(int deckId, bool isPublic, int userId);
+        Task<DeckDetail?> UpdateAsync(int deckId, string? name, string? description, string? emoji, int? colorIndex, bool? isPublic, IFormFile? cardBackImage, int userId);
     }
 }
