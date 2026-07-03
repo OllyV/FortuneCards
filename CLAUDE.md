@@ -39,35 +39,43 @@ ng build
 ### Tests
 
 ```powershell
-# Frontend (Jasmine + Karma, runs in Chrome)
 cd fortunecards.client
-ng test
-
-# Single test file
-ng test --include="**/app.spec.ts"
+ng test                 # watch mode
+ng test --watch=false   # single run (use for CI / verification)
 ```
 
-No backend test project exists yet.
+The frontend test runner is **Vitest** (via the `@angular/build` builder — not Karma/Jasmine). Specs use `describe`/`it`/`expect` plus `vitest` utilities (e.g. `vi.spyOn`), and all spec files compile as one bundle, so a type error in any spec fails the whole run. **Standalone** components must be registered in `TestBed` via `imports:` (not `declarations:`); **non-standalone** components (declared in `app-module.ts`, e.g. `DeckListComponent`, `DeckDetailComponent`) use `declarations:` and must `imports:` any standalone components their templates render (e.g. `NavigationBar`) and `CommonModule` if they use `*ngIf`/`*ngFor`.
+
+No backend test project exists; verify the backend with `dotnet build`.
 
 ## Architecture
 
 ### Backend (`FortuneCards.Server/`)
 
 - **ASP.NET Core 10** minimal API style: no `Startup.cs`, all configuration in `Program.cs`
-- Controllers live in `Controllers/`; add new ones following `WeatherForecastController.cs` as a pattern
+- Controllers live in `Controllers/`; follow `DecksController.cs` / `CardsController.cs` as patterns. Business logic lives in `Services/` (`IDeckService`, `ICardService`, `IAuthService`)
+- Domain: a `Deck` (owned by a `User`) has many `Card`s, persisted with EF Core (`FortuneCardsDbContext`, SQL Server). Runtime-uploaded images are saved to `wwwroot/images/` via `Services/ImageStorage.cs`
+- Auth: Google OAuth → JWT in an HttpOnly cookie; `JwtMiddleware` populates `HttpContext.Items["UserId"]`. Ownership is enforced by comparing `deck.UserId` to the current user, and both not-found and not-owner return `404` (no existence leak)
 - In production, `app.UseDefaultFiles()` + `MapStaticAssets()` + `MapFallbackToFile("/index.html")` serve the compiled Angular app from the same origin
 
 ### Frontend (`fortunecards.client/`)
 
 - **Angular 21** using NgModules (non-standalone components); root module is `app-module.ts`
 - TypeScript strict mode is enabled across all compiler configs
-- HTTP calls use `HttpClient` from `HttpClientModule` (imported in `app-module.ts`); use typed generics (`HttpClient.get<T>()`)
+- HTTP calls use `HttpClient` (provided via `provideHttpClient()` in `app-module.ts`); use typed generics (`HttpClient.get<T>()`)
 - Component state uses Angular signals (`signal()` API)
 - Routes defined in `app-routing-module.ts`
 
 ### Dev Proxy
 
-`fortunecards.client/src/proxy.conf.js` routes API paths (currently `/weatherforecast`) to the ASP.NET backend. Update this file when adding new API endpoints so the Angular dev server forwards them correctly.
+`fortunecards.client/src/proxy.conf.js` routes `/api` and `/images` to the ASP.NET backend. New endpoints under those prefixes are forwarded automatically; update this file only if you add a path outside them.
+
+### Monitoring (Application Insights)
+
+- Server telemetry: `Microsoft.ApplicationInsights.AspNetCore` via `builder.Services.AddApplicationInsightsTelemetry()` in `Program.cs`.
+- Browser telemetry: `@microsoft/applicationinsights-web`, wrapped by `services/monitoring.service.ts` (`enableAutoRouteTracking`), initialized on startup by an `APP_INITIALIZER` in `app-module.ts`; `monitoring-error-handler.ts` forwards uncaught errors.
+- The browser fetches its connection string at runtime from the anonymous `GET /api/config` endpoint (`ConfigController`) — nothing is baked into the build.
+- Connection string config: **dev** via `dotnet user-secrets set "ApplicationInsights:ConnectionString" "<value>"`; **prod** via the Azure App Service application setting `APPLICATIONINSIGHTS_CONNECTION_STRING`. With no connection string set, telemetry silently no-ops and the app runs normally.
 
 ### HTTPS in Development
 

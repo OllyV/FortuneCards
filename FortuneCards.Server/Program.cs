@@ -12,6 +12,7 @@ builder.Services.AddDbContext<FortuneCardsDbContext>(options =>
         sql => sql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: null)));
 
 builder.Services.AddMemoryCache();
+builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddScoped<IDeckService, DeckService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IAuthService, AuthService>();

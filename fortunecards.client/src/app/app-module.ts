@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, NgModule, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -9,9 +9,15 @@ import { DeckListComponent } from './components/deck-list/deck-list.component';
 import { DeckDetailComponent } from './components/deck-detail/deck-detail.component';
 import { NavigationBar } from './components/navigation-bar/navigation-bar';
 import { AuthService } from './services/auth.service';
+import { MonitoringService } from './services/monitoring.service';
+import { MonitoringErrorHandler } from './monitoring-error-handler';
 
 function initAuth(auth: AuthService): () => Promise<void> {
   return () => auth.loadCurrentUser();
+}
+
+function initMonitoring(monitoring: MonitoringService): () => Promise<void> {
+  return () => monitoring.initFromConfig();
 }
 
 @NgModule({
@@ -22,6 +28,8 @@ function initAuth(auth: AuthService): () => Promise<void> {
     provideZonelessChangeDetection(),
     provideHttpClient(),
     { provide: APP_INITIALIZER, useFactory: initAuth, deps: [AuthService], multi: true },
+    { provide: APP_INITIALIZER, useFactory: initMonitoring, deps: [MonitoringService], multi: true },
+    { provide: ErrorHandler, useClass: MonitoringErrorHandler },
   ],
   bootstrap: [App],
 })
