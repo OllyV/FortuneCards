@@ -44,9 +44,9 @@
       </div>
     </div>
 
-    <div class="card-detail">
-      <h1 [class.hint-hidden]="!flipped()" class="card-detail-title">{{ card.title }}</h1>
-      <p [class.hint-hidden]="!flipped()" class="card-detail-desc">{{ card.description }}</p>
+    <div class="card-detail" *ngIf="flipped()">
+      <h1 class="card-detail-title">{{ card.title }}</h1>
+      <p class="card-detail-desc">{{ card.description }}</p>
     </div>
 
     <div class="draw-actions" [class.actions-visible]="flipped()">
