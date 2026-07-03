@@ -144,6 +144,7 @@
   line-height: 1.6;
   text-align: center;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .card-detail {
@@ -151,6 +152,9 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* Action buttons */
