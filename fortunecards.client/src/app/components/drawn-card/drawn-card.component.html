@@ -5,29 +5,22 @@
     <span></span>
   </navigation-bar>
 
-  <main class="draw-scene">
+  <main class="draw-scene" *ngIf="drawnCard() as card">
     <p class="draw-hint" [class.hint-hidden]="flipped()">✨ Tap the card to reveal your fortune</p>
 
-    <div
-      class="card-scene"
-      [class.flipped]="flipped()"
-      (click)="flipCard()"
-    >
+    <div class="card-scene"
+         [class.flipped]="flipped()"
+         (click)="flipCard()">
       <div class="card-flipper">
-
         <!-- Back (face-down) -->
         <div class="card-back">
-          <img
-            *ngIf="hasCustomBack()"
-            [src]="getCardBackImageUrl()"
-            class="card-back-img"
-            alt="Card back"
-          />
-          <div
-            *ngIf="!hasCustomBack()"
-            class="card-back-gradient"
-            [style.background]="getCardBackGradient()"
-          >
+          <img *ngIf="hasCustomBack()"
+               [src]="getCardBackImageUrl()"
+               class="card-back-img"
+               alt="Card back" />
+          <div *ngIf="!hasCustomBack()"
+               class="card-back-gradient"
+               [style.background]="getCardBackGradient()">
             <div class="card-back-inner">
               <span class="card-back-emoji">🎴</span>
             </div>
@@ -36,18 +29,24 @@
         </div>
 
         <!-- Face (revealed) -->
-        <div class="card-face" *ngIf="drawnCard() as card">
+
+        <div class="card-face">
           <div class="card-face-image">
             <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.title" />
             <span *ngIf="!card.imageUrl" class="card-face-placeholder">🃏</span>
           </div>
-          <div class="card-face-body">
+
+          <!--<div class="card-face-body">
             <h2 class="card-face-title">{{ card.title }}</h2>
             <p class="card-face-desc">{{ card.description }}</p>
-          </div>
+          </div>-->
         </div>
-
       </div>
+    </div>
+
+    <div class="card-detail">
+      <h1 [class.hint-hidden]="!flipped()" class="card-detail-title">{{ card.title }}</h1>
+      <p [class.hint-hidden]="!flipped()" class="card-detail-desc">{{ card.description }}</p>
     </div>
 
     <div class="draw-actions" [class.actions-visible]="flipped()">

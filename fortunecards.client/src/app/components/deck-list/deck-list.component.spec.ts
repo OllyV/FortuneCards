@@ -44,8 +44,8 @@ describe('DeckListComponent', () => {
     component.decks.set([mockDeck]);
     component.loading.set(false);
     fixture.detectChanges();
-    const tiles = fixture.nativeElement.querySelectorAll('.deck-tile');
-    expect(tiles.length).toBe(2); // 1 deck + 1 "add" tile
+    const tiles = fixture.nativeElement.querySelectorAll('.deck-tile:not(.deck-tile--add)');
+    expect(tiles.length).toBe(1); // one tile per deck (the "add" tile is auth-gated)
   });
 
   it('should apply gradient style to deck tile', () => {
