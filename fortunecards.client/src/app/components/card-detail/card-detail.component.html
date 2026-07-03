@@ -14,7 +14,15 @@
       <h1 class="card-detail-title">{{ c.title }}</h1>
       <p class="card-detail-desc">{{ c.description }}</p>
 
-      <button *ngIf="isOwner()" class="btn-primary btn-full" (click)="editCard()">✏️ Edit Card</button>
+      <div *ngIf="isOwner()" class="card-actions">
+        <button type="button" class="btn-primary" (click)="editCard()">✏️ Edit Card</button>
+        <button type="button" class="btn-danger" [disabled]="deleting()" (click)="deleteCard()">
+          {{ deleting() ? 'Deleting…' : '🗑 Delete Card' }}
+        </button>
+      </div>
+
+      <div *ngIf="error()" class="state-error">{{ error() }}</div>
+
     </div>
 
     <ng-template #notFoundOrLoading>

@@ -30,4 +30,26 @@
 .card-detail-title { font-size: 22px; font-weight: 800; text-align: center; }
 .card-detail-desc { font-size: 14px; color: var(--color-charcoal); line-height: 1.6; text-align: center; white-space: pre-wrap; }
 
-.btn-full { width: 100%; margin-top: 8px; }
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 260px;
+  margin-top: 8px;
+}
+
+.card-actions .btn-primary,
+.card-actions .btn-danger { width: 100%; text-align: center; }
+
+.btn-danger {
+  background: none;
+  border: 2px solid #e0b4b4;
+  color: #c0392b;
+  border-radius: var(--radius-pill);
+  padding: 12px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+}
+.btn-danger:disabled { opacity: 0.4; }

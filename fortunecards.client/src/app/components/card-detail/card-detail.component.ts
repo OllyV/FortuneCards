@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Deck } from '../../models/deck';
 import { Card } from '../../models/card';
 import { DeckService } from '../../services/deck.service';
+import { CardService } from '../../services/card.service';
 import { NavigationBar } from '../navigation-bar/navigation-bar';
 
 @Component({
@@ -20,6 +21,7 @@ export class CardDetailComponent implements OnInit {
   deck = signal<Deck | null>(null);
   card = signal<Card | null>(null);
   loading = signal(true);
+  deleting = signal(false);
   error = signal<string | null>(null);
 
   private readonly destroyRef = inject(DestroyRef);
@@ -27,7 +29,8 @@ export class CardDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private deckService: DeckService
+    private deckService: DeckService,
+    private cardService: CardService
   ) {}
 
   ngOnInit(): void {
@@ -55,6 +58,18 @@ export class CardDetailComponent implements OnInit {
 
   editCard(): void {
     this.router.navigate(['/decks', this.deckId(), 'cards', this.cardId(), 'edit']);
+  }
+
+  deleteCard(): void {
+    if (!confirm('Remove this card from the deck?')) return;
+    this.deleting.set(true);
+    this.error.set(null);
+    this.cardService.deleteCard(this.cardId())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.router.navigate(['/decks', this.deckId()]),
+        error: () => { this.error.set('Failed to delete card.'); this.deleting.set(false); }
+      });
   }
 
   goBack(): void {
