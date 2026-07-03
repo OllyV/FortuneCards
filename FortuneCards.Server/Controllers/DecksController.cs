@@ -32,6 +32,7 @@ namespace FortuneCards.Server.Controllers
             var deck = await _decks.CreateAsync(
                 request.Name, request.Description,
                 request.Emoji ?? "🎴", request.ColorIndex ?? 0,
+                request.IsPublic ?? false,
                 request.CardBackImage, userId);
             return CreatedAtAction(nameof(GetDeck), new { id = deck.Id }, deck);
         }
@@ -55,12 +56,14 @@ namespace FortuneCards.Server.Controllers
             return CreatedAtAction(nameof(GetDeck), new { id }, card);
         }
 
-        [HttpPatch("{id}/visibility")]
-        public async Task<IActionResult> ToggleVisibility(int id, [FromBody] ToggleVisibilityRequest request)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateDeck(int id, [FromForm] UpdateDeckRequest request)
         {
             if (CurrentUserId is not int userId) return Unauthorized();
-            var result = await _decks.ToggleVisibilityAsync(id, request.IsPublic, userId);
-            return result ? NoContent() : NotFound();
+            var deck = await _decks.UpdateAsync(
+                id, request.Name, request.Description, request.Emoji,
+                request.ColorIndex, request.IsPublic, request.CardBackImage, userId);
+            return deck is null ? NotFound() : Ok(deck);
         }
     }
 
@@ -70,6 +73,7 @@ namespace FortuneCards.Server.Controllers
         public string? Description { get; set; }
         public string? Emoji { get; set; }
         public int? ColorIndex { get; set; }
+        public bool? IsPublic { get; set; }
         public IFormFile? CardBackImage { get; set; }
     }
 
@@ -80,8 +84,13 @@ namespace FortuneCards.Server.Controllers
         public IFormFile? Image { get; set; }
     }
 
-    public class ToggleVisibilityRequest
+    public class UpdateDeckRequest
     {
-        public bool IsPublic { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public string? Emoji { get; set; }
+        public int? ColorIndex { get; set; }
+        public bool? IsPublic { get; set; }
+        public IFormFile? CardBackImage { get; set; }
     }
 }

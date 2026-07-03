@@ -9,7 +9,6 @@
 
 .form-content form { display: flex; flex-direction: column; gap: 20px; }
 
-/* Emoji */
 .emoji-section { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 
 .emoji-preview {
@@ -34,7 +33,6 @@
 
 .emoji-hint { font-size: 11px; color: var(--color-muted); font-weight: 600; }
 
-/* Color swatches */
 .form-field { display: flex; flex-direction: column; }
 
 .swatch-row { display: flex; gap: 10px; margin-top: 6px; }
@@ -53,7 +51,6 @@
   transform: scale(1.1);
 }
 
-/* Card back */
 .card-back-row {
   display: flex;
   align-items: center;
@@ -84,22 +81,10 @@
 .card-back-actions { display: flex; flex-direction: column; gap: 6px; }
 
 .card-back-status { font-size: 12px; font-weight: 700; color: var(--color-charcoal); }
-.card-back-status.muted { color: var(--color-muted); font-weight: 600; }
 
-.btn-file {
-  display: inline-block;
-  cursor: pointer;
-  padding: 8px 16px;
-  font-size: 13px;
-}
-
-.btn-ghost--action {
-  color: var(--color-coral);
-  font-weight: 800;
-}
-
+.btn-file { display: inline-block; cursor: pointer; padding: 8px 16px; font-size: 13px; }
+.btn-ghost--action { color: var(--color-coral); font-weight: 800; }
 .btn-ghost--action:disabled { opacity: 0.4; }
-
 .btn-full { width: 100%; }
 
 .visibility-row { display: flex; gap: 10px; margin-top: 6px; }
@@ -117,7 +102,16 @@
   transition: border-color 0.15s, color 0.15s;
 }
 
-.visibility-btn--active {
-  color: var(--color-coral);
-  border-color: var(--color-coral);
+.visibility-btn--active { color: var(--color-coral); border-color: var(--color-coral); }
+
+.btn-danger {
+  background: none;
+  border: 2px solid #e0b4b4;
+  color: #c0392b;
+  border-radius: var(--radius-pill);
+  padding: 12px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
 }
+.btn-danger:disabled { opacity: 0.4; }

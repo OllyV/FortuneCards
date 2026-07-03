@@ -4,13 +4,15 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { CommonModule } from '@angular/common';
 import { DeckDetailComponent } from './deck-detail.component';
+import { NavigationBar } from '../navigation-bar/navigation-bar';
 import { Deck } from '../../models/deck';
 
 const mockDeck: Deck = {
   id: 1, name: 'Adventure', description: 'Bold quests',
   createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0,
-  cardBackImageUrl: null, cards: []
+  cardBackImageUrl: null, cards: [], isPublic: false, isOwner: false
 };
 
 describe('DeckDetailComponent', () => {
@@ -20,7 +22,7 @@ describe('DeckDetailComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DeckDetailComponent],
-      imports: [RouterModule.forRoot([])],
+      imports: [CommonModule, RouterModule.forRoot([]), NavigationBar],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),
@@ -48,8 +50,9 @@ describe('DeckDetailComponent', () => {
     const hero = fixture.nativeElement.querySelector('.deck-hero');
     // Browsers normalize hex colors to rgb() in style attributes
     const style = hero.getAttribute('style') ?? '';
-    const hasHex = style.includes('#FF6B6B');
-    const hasRgb = style.includes('rgb(255, 107, 107)');
+    // colorIndex 0 → gradient from #B2FEFA; browsers normalize hex to rgb() in style attributes
+    const hasHex = style.includes('#B2FEFA');
+    const hasRgb = style.includes('rgb(178, 254, 250)');
     expect(hasHex || hasRgb).toBe(true);
   });
 });

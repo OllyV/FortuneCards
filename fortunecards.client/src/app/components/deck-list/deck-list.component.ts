@@ -45,27 +45,6 @@ export class DeckListComponent {
     return getDeckShadowStyle(colorIndex);
   }
 
-  deleteDeck(id: number, event: Event): void {
-    event.stopPropagation();
-    if (!confirm('Delete this deck and all its cards?')) return;
-    this.deckService.deleteDeck(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => this.decks.update(decks => decks.filter(d => d.id !== id)),
-        error: () => this.error.set('Failed to delete deck.')
-      });
-  }
-
-  toggleVisibility(deck: Deck, isPublic: boolean, event: Event): void {
-    event.stopPropagation();
-    this.deckService.toggleVisibility(deck.id, isPublic)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => this.decks.update(decks => decks.map(d => d.id === deck.id ? { ...d, isPublic } : d)),
-        error: () => this.error.set('Failed to update visibility.')
-      });
-  }
-
   goToNew(): void {
     this.router.navigate(['/decks', 'new']);
   }

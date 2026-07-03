@@ -5,5 +5,6 @@ namespace FortuneCards.Server.Services
     public interface ICardService
     {
         Task<bool> DeleteAsync(int id, int userId);
+        Task<CardDto?> UpdateAsync(int cardId, string? title, string? description, IFormFile? image, int userId);
     }
 }

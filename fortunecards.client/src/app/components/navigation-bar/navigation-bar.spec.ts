@@ -1,4 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { RouterModule } from '@angular/router';
 
 import { NavigationBar } from './navigation-bar';
 
@@ -8,7 +12,12 @@ describe('NavigationBar', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [NavigationBar],
+      imports: [NavigationBar, RouterModule.forRoot([])],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NavigationBar);

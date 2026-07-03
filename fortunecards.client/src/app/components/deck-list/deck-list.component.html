@@ -23,41 +23,32 @@
     @if (!loading() && !error()) {
       <div class="deck-grid">
         @for (deck of decks(); track deck.id) {
-          <div
-            class="deck-tile"
-            [style.background]="getDeckGradient(deck.colorIndex)"
-            [style.box-shadow]="getDeckShadow(deck.colorIndex)"
-            [routerLink]="['/decks', deck.id]"
-          >
-            <span class="deck-emoji">{{ deck.emoji }}</span>
-            <span class="deck-name">{{ deck.name }}</span>
-            <span class="deck-count">{{ deck.cardCount }} card{{ deck.cardCount === 1 ? '' : 's' }}</span>
+        <div class="deck-tile"
+             [style.background]="getDeckGradient(deck.colorIndex)"
+             [style.box-shadow]="getDeckShadow(deck.colorIndex)"
+             [routerLink]="['/decks', deck.id]">
+          <span class="deck-emoji">{{ deck.emoji }}</span>
+          <span class="deck-name">{{ deck.name }}</span>
+          <span class="deck-count">{{ deck.cardCount }} card{{ deck.cardCount === 1 ? '' : 's' }}</span>
 
-            @if (deck.isOwner) {
-              @if (deck.isPublic) {
-                <span class="deck-badge public">🌐 Public</span>
-              } @else {
-                <span class="deck-badge private">🔒 Private</span>
-              }
-            }
+          @if (deck.isOwner) {
+          @if (deck.isPublic) {
+          <span class="deck-badge public">🌐 Public</span>
+          } @else {
+          <span class="deck-badge private">🔒 Private</span>
+          }
+          }
 
-            @if (deck.isOwner) {
-              <div class="deck-owner-controls">
-                @if (deck.isPublic) {
-                  <button class="deck-toggle-btn" (click)="toggleVisibility(deck, false, $event)" title="Make private">🔒 Make private</button>
-                } @else {
-                  <button class="deck-toggle-btn" (click)="toggleVisibility(deck, true, $event)" title="Make public">🌐 Make public</button>
-                }
-                <button class="deck-delete" (click)="deleteDeck(deck.id, $event)" title="Delete deck">✕</button>
-              </div>
-            }
-          </div>
+        </div>
         }
 
+        @if (auth.isLoggedIn()) {
         <div class="deck-tile deck-tile--add" (click)="goToNew()">
           <span class="deck-add-icon">+</span>
           <span class="deck-add-label">New Deck</span>
         </div>
+        }
+
       </div>
     }
   </main>

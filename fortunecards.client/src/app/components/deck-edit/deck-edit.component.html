@@ -1,7 +1,12 @@
 <div class="form-page">
   <navigation-bar>
     <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
-    <span class="nav-title-centered">New Deck</span>
+    <span class="nav-title-centered">Edit Deck</span>
+    <button class="btn-ghost btn-ghost--action"
+            [disabled]="form.invalid || submitting()"
+            (click)="submit()">
+      Save
+    </button>
   </navigation-bar>
 
   <main class="form-content">
@@ -38,34 +43,21 @@
         <div class="card-back-row">
           <div class="card-back-preview">
             <img *ngIf="cardBackPreview()" [src]="cardBackPreview()!" alt="Card back preview" />
-            <div *ngIf="!cardBackPreview()"
+            <img *ngIf="!cardBackPreview() && currentBackUrl()" [src]="currentBackUrl()!" alt="Current card back" />
+            <div *ngIf="!cardBackPreview() && !currentBackUrl()"
                  class="card-back-gradient"
                  [style.background]="getSelectedGradient()">
               <span>🎴</span>
             </div>
           </div>
           <div class="card-back-actions">
-            <p class="card-back-status" *ngIf="cardBackPreview()">✓ Custom back set</p>
-            <p class="card-back-status muted" *ngIf="!cardBackPreview()">Using color gradient as default</p>
-            <label class="btn-secondary btn-file" *ngIf="!cardBackPreview()">
-              📷 Upload Image
+            <p class="card-back-status" *ngIf="cardBackPreview()">✓ New back selected</p>
+            <label class="btn-secondary btn-file">
+              📷 {{ (cardBackPreview() || currentBackUrl()) ? 'Replace Image' : 'Upload Image' }}
               <input type="file" accept="image/*" (change)="onCardBackSelected($event)" hidden />
             </label>
-            <button type="button" class="btn-ghost" *ngIf="cardBackPreview()" (click)="removeCardBack()">✕ Remove</button>
+            <button type="button" class="btn-ghost" *ngIf="cardBackPreview()" (click)="removeCardBack()">✕ Undo</button>
           </div>
-        </div>
-      </div>
-
-      <!-- Visibility -->
-      <div class="form-field">
-        <label class="form-label">Visibility</label>
-        <div class="visibility-row">
-          <button type="button" class="visibility-btn"
-                  [class.visibility-btn--active]="!form.get('isPublic')!.value"
-                  (click)="form.get('isPublic')!.setValue(false)">🔒 Private</button>
-          <button type="button" class="visibility-btn"
-                  [class.visibility-btn--active]="form.get('isPublic')!.value"
-                  (click)="form.get('isPublic')!.setValue(true)">🌐 Public</button>
         </div>
       </div>
 
@@ -90,12 +82,32 @@
                   rows="3"></textarea>
       </div>
 
+      <!-- Visibility -->
+      <div class="form-field">
+        <label class="form-label">Visibility</label>
+        <div class="visibility-row">
+          <button type="button" class="visibility-btn"
+                  [class.visibility-btn--active]="!form.get('isPublic')!.value"
+                  (click)="form.get('isPublic')!.setValue(false)">🔒 Private</button>
+          <button type="button" class="visibility-btn"
+                  [class.visibility-btn--active]="form.get('isPublic')!.value"
+                  (click)="form.get('isPublic')!.setValue(true)">🌐 Public</button>
+        </div>
+      </div>
+
       <div *ngIf="error()" class="state-error">{{ error() }}</div>
 
       <button type="submit"
               class="btn-primary btn-full"
               [disabled]="form.invalid || submitting()">
-        {{ submitting() ? 'Creating…' : '✨ Create Deck' }}
+        {{ submitting() ? 'Saving…' : '💾 Save Changes' }}
+      </button>
+
+      <button type="button"
+              class="btn-danger btn-full"
+              [disabled]="deleting()"
+              (click)="deleteDeck()">
+        {{ deleting() ? 'Deleting…' : '🗑 Delete Deck' }}
       </button>
     </form>
   </main>

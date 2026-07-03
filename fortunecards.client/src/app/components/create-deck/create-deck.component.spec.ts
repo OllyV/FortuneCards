@@ -12,8 +12,7 @@ describe('CreateDeckComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CreateDeckComponent],
-      imports: [ReactiveFormsModule, RouterModule.forRoot([])],
+      imports: [CreateDeckComponent, ReactiveFormsModule, RouterModule.forRoot([])],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),
@@ -37,9 +36,9 @@ describe('CreateDeckComponent', () => {
     expect(component.form.valid).toBe(true);
   });
 
-  it('should render 5 color swatches', () => {
+  it('should render 16 color swatches', () => {
     const swatches = fixture.nativeElement.querySelectorAll('.color-swatch');
-    expect(swatches.length).toBe(5);
+    expect(swatches.length).toBe(16);
   });
 
   it('should update selectedColor when a swatch is clicked', () => {
