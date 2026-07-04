@@ -3,13 +3,16 @@ import { RouterModule, Routes } from '@angular/router';
 import { DeckListComponent } from './components/deck-list/deck-list.component';
 import { DeckDetailComponent } from './components/deck-detail/deck-detail.component';
 import { authGuard } from './guards/auth.guard';
+import { landingRedirectGuard } from './guards/landing-redirect.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/decks', pathMatch: 'full' },
+  { path: '', pathMatch: 'full', canActivate: [landingRedirectGuard], children: [] },
   {
     path: 'decks/new',
     loadComponent: () => import('./components/create-deck/create-deck.component').then((c) => c.CreateDeckComponent)
   },
+  { path: 'decks/mine', component: DeckListComponent, data: { mode: 'mine' }, canActivate: [authGuard] },
+  { path: 'decks/search', component: DeckListComponent, data: { mode: 'search' } },
   {
     path: 'decks/:id/cards/new',
     loadComponent: () => import('./components/create-card/create-card.component').then((c) => c.CreateCardComponent)
@@ -33,7 +36,7 @@ const routes: Routes = [
     loadComponent: () => import('./components/drawn-card/drawn-card.component').then((c) => c.DrawnCardComponent)
   },
   { path: 'decks/:id', component: DeckDetailComponent },
-  { path: 'decks', component: DeckListComponent },
+  { path: 'decks', pathMatch: 'full', canActivate: [landingRedirectGuard], children: [] },
   {
     path: 'profile/settings',
     loadComponent: () => import('./pages/account-settings/account-settings.component').then((c) => c.AccountSettingsComponent),
