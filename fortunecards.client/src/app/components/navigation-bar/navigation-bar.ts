@@ -2,13 +2,14 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { MainMenuComponent } from '../main-menu/main-menu';
 
 @Component({
   selector: 'navigation-bar',
   standalone: true,
   templateUrl: './navigation-bar.html',
   styleUrl: './navigation-bar.css',
-  imports: [CommonModule],
+  imports: [CommonModule, MainMenuComponent],
 })
 export class NavigationBar {
   protected readonly auth = inject(AuthService);
