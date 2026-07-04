@@ -60,7 +60,15 @@ export class DeckDetailComponent implements OnInit {
   }
 
   goBack(): void {
-    this.location.back();
+    // navigationId > 1 means the user reached this page via in-app navigation,
+    // so there is history to pop. On a direct/refreshed/shared load it is 1
+    // (or absent) — fall back to the public Search list.
+    const state = this.location.getState() as { navigationId?: number } | null;
+    if (state?.navigationId && state.navigationId > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/decks/search']);
+    }
   }
 
   editDeck(): void {

@@ -56,10 +56,23 @@ describe('DeckDetailComponent', () => {
     expect(hasHex || hasRgb).toBe(true);
   });
 
-  it('goBack() returns to the previous page via Location.back()', () => {
+  it('goBack() returns to the previous page via Location.back() when there is in-app history', () => {
     const location = TestBed.inject(Location);
+    vi.spyOn(location, 'getState').mockReturnValue({ navigationId: 3 });
     const backSpy = vi.spyOn(location, 'back').mockImplementation(() => {});
+    const navSpy = vi.spyOn(component['router'], 'navigate').mockResolvedValue(true);
     component.goBack();
     expect(backSpy).toHaveBeenCalledTimes(1);
+    expect(navSpy).not.toHaveBeenCalled();
+  });
+
+  it('goBack() falls back to /decks/search on a direct load (no in-app history)', () => {
+    const location = TestBed.inject(Location);
+    vi.spyOn(location, 'getState').mockReturnValue({ navigationId: 1 });
+    const backSpy = vi.spyOn(location, 'back').mockImplementation(() => {});
+    const navSpy = vi.spyOn(component['router'], 'navigate').mockResolvedValue(true);
+    component.goBack();
+    expect(navSpy).toHaveBeenCalledWith(['/decks/search']);
+    expect(backSpy).not.toHaveBeenCalled();
   });
 });
