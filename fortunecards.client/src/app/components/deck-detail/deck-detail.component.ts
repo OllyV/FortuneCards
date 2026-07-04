@@ -1,5 +1,6 @@
 import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Deck } from '../../models/deck';
 import { DeckService } from '../../services/deck.service';
@@ -21,7 +22,8 @@ export class DeckDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private deckService: DeckService
+    private deckService: DeckService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +60,15 @@ export class DeckDetailComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/decks']);
+    // navigationId > 1 means the user reached this page via in-app navigation,
+    // so there is history to pop. On a direct/refreshed/shared load it is 1
+    // (or absent) — fall back to the public Search list.
+    const state = this.location.getState() as { navigationId?: number } | null;
+    if (state?.navigationId && state.navigationId > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/decks/search']);
+    }
   }
 
   editDeck(): void {

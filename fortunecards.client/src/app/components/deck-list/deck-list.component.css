@@ -61,3 +61,27 @@
   border: 1px solid #5a3d1a;
 }
 
+.deck-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.deck-search:focus {
+  outline: none;
+  border-color: var(--color-border-light);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.state-empty {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+

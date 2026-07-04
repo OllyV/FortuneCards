@@ -1,5 +1,8 @@
 <nav class="nav-bar">
-  <ng-content />
+  <div class="nav-left">
+    <main-menu />
+    <ng-content />
+  </div>
   <!-- auth section -->
   @if (!auth.isLoggedIn()) {
     <button class="nav-login-btn" (click)="login()">Sign in with Google</button>

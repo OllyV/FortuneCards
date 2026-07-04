@@ -68,3 +68,9 @@
   color: #ccc;
 }
 
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+

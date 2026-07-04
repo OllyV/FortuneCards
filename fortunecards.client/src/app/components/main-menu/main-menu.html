@@ -1,0 +1,24 @@
+<div class="menu">
+  <button class="menu-btn" type="button" aria-label="Menu" aria-haspopup="menu" [attr.aria-expanded]="open()" (click)="toggle()" (keydown.escape)="close()">☰</button>
+
+  @if (open()) {
+    <div class="menu-backdrop" (click)="close()"></div>
+    <div class="menu-panel" (keydown.escape)="close()">
+      @if (auth.isLoggedIn()) {
+        <button class="menu-item" type="button" (click)="go('/decks/mine')">My decks</button>
+      }
+      <button class="menu-item" type="button" (click)="go('/decks/search')">Search decks</button>
+      @if (auth.isLoggedIn()) {
+        <button class="menu-item" type="button" (click)="go('/profile')">My profile</button>
+      }
+
+      <div class="menu-divider"></div>
+
+      @if (auth.isLoggedIn()) {
+        <button class="menu-item" type="button" (click)="logout()">Logout</button>
+      } @else {
+        <button class="menu-item" type="button" (click)="login()">Sign in with Google</button>
+      }
+    </div>
+  }
+</div>
