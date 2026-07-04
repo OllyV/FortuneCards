@@ -4,7 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { DeckDetailComponent } from './deck-detail.component';
 import { NavigationBar } from '../navigation-bar/navigation-bar';
 import { Deck } from '../../models/deck';
@@ -54,5 +54,12 @@ describe('DeckDetailComponent', () => {
     const hasHex = style.includes('#B2FEFA');
     const hasRgb = style.includes('rgb(178, 254, 250)');
     expect(hasHex || hasRgb).toBe(true);
+  });
+
+  it('goBack() returns to the previous page via Location.back()', () => {
+    const location = TestBed.inject(Location);
+    const backSpy = vi.spyOn(location, 'back').mockImplementation(() => {});
+    component.goBack();
+    expect(backSpy).toHaveBeenCalledTimes(1);
   });
 });

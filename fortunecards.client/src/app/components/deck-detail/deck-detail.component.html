@@ -1,7 +1,7 @@
 <div class="page" *ngIf="deck() as d; else loadingOrError">
   <navigation-bar>
     <div class="nav-actions">
-      <button class="nav-back" (click)="goBack()">← My Decks</button>
+      <button class="nav-back" (click)="goBack()">← Back</button>
       <span class="nav-sep">/</span>
       <span class="nav-crumb">{{ d.name }}</span>
     </div>
