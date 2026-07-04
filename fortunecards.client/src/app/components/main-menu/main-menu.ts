@@ -1,5 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
@@ -8,7 +7,7 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   templateUrl: './main-menu.html',
   styleUrl: './main-menu.css',
-  imports: [CommonModule],
+  imports: [],
 })
 export class MainMenuComponent {
   protected readonly auth = inject(AuthService);

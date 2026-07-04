@@ -1,13 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { DeckListComponent } from './deck-list.component';
 import { NavigationBar } from '../navigation-bar/navigation-bar';
 import { DeckService } from '../../services/deck.service';
+import { AuthService } from '../../services/auth.service';
 import { Deck } from '../../models/deck';
 
 const ownedDeck: Deck = {
@@ -35,6 +36,7 @@ function configure(mode: 'mine' | 'search') {
       provideHttpClientTesting(),
       { provide: DeckService, useValue: mockDeckService },
       { provide: ActivatedRoute, useValue: { data: of({ mode }) } },
+      { provide: AuthService, useValue: { isLoggedIn: signal(true), currentUser: signal({ displayName: 'Test User', email: 'test@example.com' }) } },
     ],
   }).compileComponents();
 }
@@ -62,6 +64,12 @@ describe('DeckListComponent', () => {
       component.loading.set(false);
       fixture.detectChanges();
       expect(fixture.nativeElement.querySelector('.deck-search')).toBeNull();
+    });
+
+    it('renders the add tile when user is logged in', () => {
+      component.loading.set(false);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.deck-tile--add')).not.toBeNull();
     });
   });
 

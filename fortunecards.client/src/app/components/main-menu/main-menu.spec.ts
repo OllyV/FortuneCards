@@ -59,4 +59,24 @@ describe('MainMenuComponent', () => {
     expect(navSpy).toHaveBeenCalledWith(['/decks/search']);
     expect(component.open()).toBe(false);
   });
+
+  it('close() hides the panel', () => {
+    component.open.set(true);
+    fixture.detectChanges();
+    component.close();
+    fixture.detectChanges();
+    expect(component.open()).toBe(false);
+    expect(fixture.nativeElement.querySelector('.menu-panel')).toBeNull();
+  });
+
+  it('clicking .menu-backdrop closes the panel without navigating', () => {
+    const router = TestBed.inject(Router);
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    component.open.set(true);
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('.menu-backdrop').click();
+    fixture.detectChanges();
+    expect(component.open()).toBe(false);
+    expect(navSpy).not.toHaveBeenCalled();
+  });
 });

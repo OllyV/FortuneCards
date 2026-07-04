@@ -75,6 +75,7 @@
 .deck-search:focus {
   outline: none;
   border-color: var(--color-border-light);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
 .state-empty {
