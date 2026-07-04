@@ -55,3 +55,9 @@
 .menu-item:hover {
   background: var(--color-cream, #f3f3f3);
 }
+
+.menu-divider {
+  height: 1px;
+  background: var(--color-border, #e0e0e0);
+  margin: 6px 8px;
+}

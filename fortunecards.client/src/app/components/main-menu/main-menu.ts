@@ -27,4 +27,16 @@ export class MainMenuComponent {
     this.close();
     this.router.navigate([path]);
   }
+
+  login(): void {
+    this.close();
+    this.auth.login();
+  }
+
+  logout(): Promise<void> {
+    this.close();
+    return this.auth.logout().then(() => {
+      this.router.navigate(['/decks/search']);
+    });
+  }
 }

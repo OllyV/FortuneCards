@@ -7,10 +7,18 @@ import { AuthService } from '../../services/auth.service';
 describe('MainMenuComponent', () => {
   let component: MainMenuComponent;
   let fixture: ComponentFixture<MainMenuComponent>;
-  let auth: { isLoggedIn: ReturnType<typeof signal<boolean>> };
+  let auth: {
+    isLoggedIn: ReturnType<typeof signal<boolean>>;
+    login: ReturnType<typeof vi.fn>;
+    logout: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
-    auth = { isLoggedIn: signal(false) };
+    auth = {
+      isLoggedIn: signal(false),
+      login: vi.fn(),
+      logout: vi.fn().mockResolvedValue(undefined),
+    };
     await TestBed.configureTestingModule({
       imports: [MainMenuComponent, RouterModule.forRoot([])],
       providers: [
@@ -38,17 +46,17 @@ describe('MainMenuComponent', () => {
     expect(fixture.nativeElement.querySelector('.menu-panel')).not.toBeNull();
   });
 
-  it('shows only Search decks when logged out', () => {
+  it('shows Search decks and Sign in when logged out', () => {
     component.open.set(true);
     fixture.detectChanges();
-    expect(itemLabels()).toEqual(['Search decks']);
+    expect(itemLabels()).toEqual(['Search decks', 'Sign in with Google']);
   });
 
-  it('shows all items when logged in', () => {
+  it('shows all nav items and Logout when logged in', () => {
     auth.isLoggedIn.set(true);
     component.open.set(true);
     fixture.detectChanges();
-    expect(itemLabels()).toEqual(['My decks', 'Search decks', 'My profile']);
+    expect(itemLabels()).toEqual(['My decks', 'Search decks', 'My profile', 'Logout']);
   });
 
   it('go() navigates and closes the panel', () => {
@@ -78,5 +86,22 @@ describe('MainMenuComponent', () => {
     fixture.detectChanges();
     expect(component.open()).toBe(false);
     expect(navSpy).not.toHaveBeenCalled();
+  });
+
+  it('login() triggers auth.login and closes the panel', () => {
+    component.open.set(true);
+    component.login();
+    expect(auth.login).toHaveBeenCalledTimes(1);
+    expect(component.open()).toBe(false);
+  });
+
+  it('logout() logs out, navigates to /decks/search, and closes the panel', async () => {
+    const router = TestBed.inject(Router);
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    component.open.set(true);
+    await component.logout();
+    expect(auth.logout).toHaveBeenCalledTimes(1);
+    expect(navSpy).toHaveBeenCalledWith(['/decks/search']);
+    expect(component.open()).toBe(false);
   });
 });
