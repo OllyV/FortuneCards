@@ -149,4 +149,30 @@ describe('TableComponent', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('table-settings-dialog')).toBeNull();
   });
+
+  it('the + and − buttons change table height by the current card size', () => {
+    component.tableWidthPx.set(1000);
+    component.tableHeightPercent.set(100);
+    fixture.detectChanges();
+    (fixture.nativeElement.querySelector('.height-btn--plus') as HTMLElement).click();
+    expect(component.tableHeightPercent()).toBe(120);
+    (fixture.nativeElement.querySelector('.height-btn--minus') as HTMLElement).click();
+    expect(component.tableHeightPercent()).toBe(100);
+  });
+
+  it('minHeightPercent is the lowest card bottom edge + 5% of table width', () => {
+    // test card at y=0, card height = 20 * 1.5 = 30 → min = 35
+    expect(component.minHeightPercent()).toBe(35);
+    component.moveCard('test-card', { x: 0, y: 50 });
+    component.tableHeightPercent.set(100); // allow the move first
+    component.moveCard('test-card', { x: 0, y: 50 });
+    expect(component.minHeightPercent()).toBe(85);
+  });
+
+  it('decreaseHeight clamps to the minimum height', () => {
+    component.tableWidthPx.set(1000);
+    component.tableHeightPercent.set(40); // min is 35 (card at y=0)
+    component.decreaseHeight(); // 40 - 20 = 20 → clamped to 35
+    expect(component.tableHeightPercent()).toBe(35);
+  });
 });

@@ -37,6 +37,13 @@ export class TableComponent implements AfterViewInit {
       : '100vh'
   );
 
+  /** Minimum table height: bottom edge of the lowest card + 5% of table width. */
+  readonly minHeightPercent = computed(() => {
+    const cardHeight = this.cardSizePercent() * 1.5;
+    const lowestBottom = this.cards().reduce((max, c) => Math.max(max, c.y + cardHeight), 0);
+    return lowestBottom + 5;
+  });
+
   ngAfterViewInit(): void {
     const el = this.tableRef().nativeElement;
     const width = el.getBoundingClientRect().width;
@@ -81,6 +88,14 @@ export class TableComponent implements AfterViewInit {
   rotateCard(id: string, rotation: number): void {
     const normalized = ((rotation % 360) + 360) % 360;
     this.cards.update((cards) => cards.map((c) => (c.id === id ? { ...c, rotation: normalized } : c)));
+  }
+
+  increaseHeight(): void {
+    this.tableHeightPercent.update((h) => h + this.cardSizePercent());
+  }
+
+  decreaseHeight(): void {
+    this.tableHeightPercent.update((h) => Math.max(this.minHeightPercent(), h - this.cardSizePercent()));
   }
 
   onKeyDown(event: KeyboardEvent): void {

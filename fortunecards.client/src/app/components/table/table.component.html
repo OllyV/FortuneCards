@@ -20,6 +20,10 @@
     />
   }
   <button class="settings-btn" type="button" aria-label="Table settings" (click)="settingsOpen.set(true)">⚙</button>
+  <div class="height-controls">
+    <button class="height-btn height-btn--plus" type="button" aria-label="Increase table height" (click)="increaseHeight()">+</button>
+    <button class="height-btn height-btn--minus" type="button" aria-label="Decrease table height" (click)="decreaseHeight()">−</button>
+  </div>
 </div>
 
 @if (settingsOpen()) {
