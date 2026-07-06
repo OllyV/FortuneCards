@@ -9,10 +9,15 @@ import { TableCardState, TableColor } from '../../models/table';
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   imports: [NavigationBar, TableCardComponent],
+  host: {
+    '(document:keydown)': 'onKeyDown($event)',
+    '(document:keyup)': 'onKeyUp($event)',
+  },
 })
 export class TableComponent implements AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly tableRef = viewChild.required<ElementRef<HTMLDivElement>>('table');
+  private rotateKeyHeld = false;
 
   readonly tableColor = signal<TableColor>('beige');
   /** Card width, in % of table width (5–80). */
@@ -73,5 +78,27 @@ export class TableComponent implements AfterViewInit {
   rotateCard(id: string, rotation: number): void {
     const normalized = ((rotation % 360) + 360) % 360;
     this.cards.update((cards) => cards.map((c) => (c.id === id ? { ...c, rotation: normalized } : c)));
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'r' || event.key === 'R') {
+      this.rotateKeyHeld = true;
+      return;
+    }
+    if (!this.rotateKeyHeld) return;
+    const id = this.selectedCardId();
+    if (!id) return;
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      const delta = event.key === 'ArrowLeft' ? -1 : 1;
+      const card = this.cards().find((c) => c.id === id);
+      if (card) this.rotateCard(id, card.rotation + delta);
+    }
+  }
+
+  onKeyUp(event: KeyboardEvent): void {
+    if (event.key === 'r' || event.key === 'R') {
+      this.rotateKeyHeld = false;
+    }
   }
 }

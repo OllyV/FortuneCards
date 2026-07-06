@@ -86,4 +86,38 @@ describe('TableComponent', () => {
     component.rotateCard('test-card', -10);
     expect(component.cards()[0].rotation).toBe(350);
   });
+
+  function key(type: 'keydown' | 'keyup', key: string): void {
+    document.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true }));
+  }
+
+  it('rotates the selected card 1° per arrow keydown while R is held', () => {
+    component.selectCard('test-card');
+    key('keydown', 'r');
+    key('keydown', 'ArrowRight');
+    key('keydown', 'ArrowRight');
+    expect(component.cards()[0].rotation).toBe(2);
+    key('keydown', 'ArrowLeft');
+    expect(component.cards()[0].rotation).toBe(1);
+  });
+
+  it('ignores arrows when R is not held', () => {
+    component.selectCard('test-card');
+    key('keydown', 'ArrowRight');
+    expect(component.cards()[0].rotation).toBe(0);
+  });
+
+  it('stops rotating after R is released', () => {
+    component.selectCard('test-card');
+    key('keydown', 'r');
+    key('keyup', 'r');
+    key('keydown', 'ArrowRight');
+    expect(component.cards()[0].rotation).toBe(0);
+  });
+
+  it('ignores R+arrows when no card is selected', () => {
+    key('keydown', 'r');
+    key('keydown', 'ArrowRight');
+    expect(component.cards()[0].rotation).toBe(0);
+  });
 });
