@@ -20,6 +20,6 @@ export class TableSettingsDialogComponent {
   onSizeInput(event: Event): void {
     const value = Number((event.target as HTMLInputElement).value);
     if (Number.isNaN(value)) return;
-    this.cardSizeChange.emit(Math.min(80, Math.max(5, value)));
+    this.cardSizeChange.emit(Math.min(50, Math.max(5, value)));
   }
 }

@@ -22,7 +22,7 @@ export class TableComponent implements AfterViewInit {
   private rotateKeyHeld = false;
 
   readonly tableColor = signal<TableColor>('beige');
-  /** Card width, in % of table width (5–80). */
+  /** Card width, in % of table width (5–50). */
   readonly cardSizePercent = signal(20);
   readonly settingsOpen = signal(false);
   /** Table height, in % of table width; 0 = not yet measured. */

@@ -32,23 +32,23 @@ describe('TableSettingsDialogComponent', () => {
     expect(changed).toHaveBeenCalledWith('dark-red');
   });
 
-  it('shows the card size as % of table width with 5–80 slider bounds', () => {
+  it('shows the card size as % of table width with 5–50 slider bounds', () => {
     const slider: HTMLInputElement = fixture.nativeElement.querySelector('input[type="range"]');
     expect(slider.min).toBe('5');
-    expect(slider.max).toBe('80');
+    expect(slider.max).toBe('50');
     expect(slider.value).toBe('20');
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('20% of table width');
   });
 
-  it('emits cardSizeChange on slider input, clamped to 5–80', () => {
+  it('emits cardSizeChange on slider input, clamped to 5–50', () => {
     const changed = vi.fn();
     fixture.componentInstance.cardSizeChange.subscribe(changed);
     const slider: HTMLInputElement = fixture.nativeElement.querySelector('input[type="range"]');
-    slider.value = '55';
+    slider.value = '45';
     slider.dispatchEvent(new Event('input', { bubbles: true }));
-    expect(changed).toHaveBeenCalledWith(55);
+    expect(changed).toHaveBeenCalledWith(45);
     fixture.componentInstance.onSizeInput({ target: { value: '999' } } as unknown as Event);
-    expect(changed).toHaveBeenCalledWith(80);
+    expect(changed).toHaveBeenCalledWith(50);
     fixture.componentInstance.onSizeInput({ target: { value: '1' } } as unknown as Event);
     expect(changed).toHaveBeenCalledWith(5);
   });

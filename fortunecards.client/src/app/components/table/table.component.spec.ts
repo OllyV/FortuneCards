@@ -187,8 +187,8 @@ describe('TableComponent', () => {
   it('re-clamps table height when the card size grows past the minimum', () => {
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(40);
-    component.onCardSizeChange(80); // min becomes 80 * 1.5 + 5 = 125
-    expect(component.cardSizePercent()).toBe(80);
-    expect(component.tableHeightPercent()).toBe(125);
+    component.onCardSizeChange(50); // min becomes 50 * 1.5 + 5 = 80
+    expect(component.cardSizePercent()).toBe(50);
+    expect(component.tableHeightPercent()).toBe(80);
   });
 });

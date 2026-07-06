@@ -24,7 +24,7 @@ The page component. Owns all state as signals:
 | Signal | Type | Default |
 |---|---|---|
 | `tableColor` | `'beige' \| 'pink' \| 'yellow' \| 'dark-red'` | `'beige'` |
-| `cardSizePercent` | `number` (5–80) | `20` |
+| `cardSizePercent` | `number` (5–50) | `20` |
 | `tableHeightPercent` | `number` — table height in % of table width | derived from viewport height on first measure |
 | `cards` | `TableCardState[]` | one test card at (0, 0) |
 | `selectedCardId` | `string \| null` | `null` |
@@ -49,7 +49,7 @@ Renders a single card. Two faces: front face shows the text "front", back face s
 Overlay dialog opened from the ⚙ button:
 
 1. **Color of table** — four swatches: beige (default), pink, yellow, dark-red.
-2. **Size of cards** — range slider, min 5, max 80, value displayed as "% of table width".
+2. **Size of cards** — range slider, min 5, max 50, value displayed as "% of table width".
 
 Changes apply live to the table's signals. Closed via close button or backdrop click. No persistence — values live in `TableComponent` state only and reset on navigation.
 
@@ -99,7 +99,7 @@ Vitest specs (standalone components registered via `imports:` in TestBed):
 - Table defaults: beige color, 20% card size, exactly one card at (0, 0), nothing selected.
 - Click selects a card; clicking the table background deselects.
 - Double-click toggles `flipped`.
-- Settings dialog: color choice and size slider update the table's signals; slider respects 5–80 bounds.
+- Settings dialog: color choice and size slider update the table's signals; slider respects 5–50 bounds.
 - Height "+" / "−" change `tableHeightPercent` by `cardSizePercent`; "−" clamps to the minimum (lowest card bottom + 5).
 
 Backend: no changes (`dotnet build` untouched).

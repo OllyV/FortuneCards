@@ -20,7 +20,7 @@
 
   <div class="setting">
     <label class="setting-label" for="card-size">Size of cards: {{ cardSize() }}% of table width</label>
-    <input id="card-size" type="range" min="5" max="80" [value]="cardSize()" (input)="onSizeInput($event)" />
+    <input id="card-size" type="range" min="5" max="50" [value]="cardSize()" (input)="onSizeInput($event)" />
   </div>
 
   <button class="dialog-close" type="button" (click)="closed.emit()">Close</button>
