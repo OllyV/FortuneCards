@@ -1,0 +1,22 @@
+<navigation-bar></navigation-bar>
+
+<div
+  #table
+  class="table"
+  [attr.data-color]="tableColor()"
+  [style.height]="heightStyle()"
+  (pointerdown)="onTablePointerDown($event)"
+>
+  @for (card of cards(); track card.id) {
+    <table-card
+      [card]="card"
+      [widthPercent]="cardSizePercent()"
+      [tableWidthPx]="tableWidthPx()"
+      [selected]="selectedCardId() === card.id"
+      (cardSelect)="selectCard(card.id)"
+      (cardFlip)="flipCard(card.id)"
+      (cardMove)="moveCard(card.id, $event)"
+      (cardRotate)="rotateCard(card.id, $event)"
+    />
+  }
+</div>

@@ -1,0 +1,23 @@
+.table {
+  position: relative;
+  width: 90%;
+  margin: 16px auto;
+  border-radius: 12px;
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.table[data-color='beige'] {
+  background: #f0e6d2;
+}
+
+.table[data-color='pink'] {
+  background: #f6d5e0;
+}
+
+.table[data-color='yellow'] {
+  background: #f6e7a9;
+}
+
+.table[data-color='dark-red'] {
+  background: #7a2e2e;
+}
