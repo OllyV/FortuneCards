@@ -12,6 +12,7 @@ import { TableCardState, TableColor } from '../../models/table';
   host: {
     '(document:keydown)': 'onKeyDown($event)',
     '(document:keyup)': 'onKeyUp($event)',
+    '(window:blur)': 'onWindowBlur()',
   },
 })
 export class TableComponent implements AfterViewInit {
@@ -100,5 +101,9 @@ export class TableComponent implements AfterViewInit {
     if (event.key === 'r' || event.key === 'R') {
       this.rotateKeyHeld = false;
     }
+  }
+
+  onWindowBlur(): void {
+    this.rotateKeyHeld = false;
   }
 }

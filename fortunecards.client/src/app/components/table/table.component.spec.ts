@@ -120,4 +120,12 @@ describe('TableComponent', () => {
     key('keydown', 'ArrowRight');
     expect(component.cards()[0].rotation).toBe(0);
   });
+
+  it('resets the held R flag when the window loses focus', () => {
+    component.selectCard('test-card');
+    key('keydown', 'r');
+    window.dispatchEvent(new Event('blur'));
+    key('keydown', 'ArrowRight');
+    expect(component.cards()[0].rotation).toBe(0);
+  });
 });
