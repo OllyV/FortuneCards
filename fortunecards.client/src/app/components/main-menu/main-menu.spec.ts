@@ -49,14 +49,14 @@ describe('MainMenuComponent', () => {
   it('shows Search decks and Sign in when logged out', () => {
     component.open.set(true);
     fixture.detectChanges();
-    expect(itemLabels()).toEqual(['Search decks', 'Sign in with Google']);
+    expect(itemLabels()).toEqual(['Search decks', 'Table', 'Sign in with Google']);
   });
 
   it('shows all nav items and Logout when logged in', () => {
     auth.isLoggedIn.set(true);
     component.open.set(true);
     fixture.detectChanges();
-    expect(itemLabels()).toEqual(['My decks', 'Search decks', 'My profile', 'Logout']);
+    expect(itemLabels()).toEqual(['My decks', 'Search decks', 'Table', 'My profile', 'Logout']);
   });
 
   it('go() navigates and closes the panel', () => {
