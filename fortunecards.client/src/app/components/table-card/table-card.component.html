@@ -1,0 +1,21 @@
+<div
+  class="table-card"
+  [class.selected]="selected()"
+  [style.left.px]="leftPx()"
+  [style.top.px]="topPx()"
+  [style.width.px]="widthPx()"
+  [style.transform]="'rotate(' + card().rotation + 'deg)'"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerUp()"
+  (pointercancel)="onPointerUp()"
+  (dblclick)="cardFlip.emit()"
+>
+  <div class="flip-inner" [class.flipped]="card().flipped">
+    <div class="face back">back</div>
+    <div class="face front">front</div>
+  </div>
+  @if (selected()) {
+    <div class="rotate-handle" title="Drag to rotate" (pointerdown)="onRotateStart($event)">⤾</div>
+  }
+</div>

@@ -1,0 +1,72 @@
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 100;
+}
+
+.dialog-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 101;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  min-width: 280px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.dialog-panel h2 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+}
+
+.setting {
+  margin-bottom: 16px;
+}
+
+.setting-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.swatches {
+  display: flex;
+  gap: 10px;
+}
+
+.swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.swatch.active {
+  border-color: #333;
+  box-shadow: 0 0 0 2px #fff inset;
+}
+
+.swatch[data-color='beige'] { background: #f0e6d2; }
+.swatch[data-color='pink'] { background: #f6d5e0; }
+.swatch[data-color='yellow'] { background: #f6e7a9; }
+.swatch[data-color='dark-red'] { background: #7a2e2e; }
+
+.setting input[type='range'] {
+  width: 100%;
+}
+
+.dialog-close {
+  display: block;
+  margin-left: auto;
+  padding: 6px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #6b4f9e;
+  color: #fff;
+  cursor: pointer;
+}

@@ -38,6 +38,10 @@ const routes: Routes = [
   { path: 'decks/:id', component: DeckDetailComponent },
   { path: 'decks', pathMatch: 'full', canActivate: [landingRedirectGuard], children: [] },
   {
+    path: 'table',
+    loadComponent: () => import('./components/table/table.component').then((c) => c.TableComponent)
+  },
+  {
     path: 'profile/settings',
     loadComponent: () => import('./pages/account-settings/account-settings.component').then((c) => c.AccountSettingsComponent),
     canActivate: [authGuard]
