@@ -128,4 +128,25 @@ describe('TableComponent', () => {
     key('keydown', 'ArrowRight');
     expect(component.cards()[0].rotation).toBe(0);
   });
+
+  it('opens the settings dialog from the gear button and applies changes', () => {
+    expect(fixture.nativeElement.querySelector('table-settings-dialog')).toBeNull();
+    (fixture.nativeElement.querySelector('.settings-btn') as HTMLElement).click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('table-settings-dialog')).not.toBeNull();
+
+    (fixture.nativeElement.querySelector('.swatch[data-color="pink"]') as HTMLElement).click();
+    fixture.detectChanges();
+    expect(component.tableColor()).toBe('pink');
+    expect(tableEl().getAttribute('data-color')).toBe('pink');
+
+    const slider: HTMLInputElement = fixture.nativeElement.querySelector('input[type="range"]');
+    slider.value = '40';
+    slider.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(component.cardSizePercent()).toBe(40);
+
+    (fixture.nativeElement.querySelector('.dialog-close') as HTMLElement).click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('table-settings-dialog')).toBeNull();
+  });
 });

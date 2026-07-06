@@ -1,0 +1,27 @@
+<div class="dialog-backdrop" (click)="closed.emit()"></div>
+<div class="dialog-panel" role="dialog" aria-label="Table settings">
+  <h2>Table settings</h2>
+
+  <div class="setting">
+    <span class="setting-label">Color of table</span>
+    <div class="swatches">
+      @for (c of colors; track c) {
+        <button
+          type="button"
+          class="swatch"
+          [attr.data-color]="c"
+          [class.active]="color() === c"
+          [attr.aria-label]="c"
+          (click)="colorChange.emit(c)"
+        ></button>
+      }
+    </div>
+  </div>
+
+  <div class="setting">
+    <label class="setting-label" for="card-size">Size of cards: {{ cardSize() }}% of table width</label>
+    <input id="card-size" type="range" min="5" max="80" [value]="cardSize()" (input)="onSizeInput($event)" />
+  </div>
+
+  <button class="dialog-close" type="button" (click)="closed.emit()">Close</button>
+</div>

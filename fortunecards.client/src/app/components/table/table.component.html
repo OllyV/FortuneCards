@@ -19,4 +19,15 @@
       (cardRotate)="rotateCard(card.id, $event)"
     />
   }
+  <button class="settings-btn" type="button" aria-label="Table settings" (click)="settingsOpen.set(true)">⚙</button>
 </div>
+
+@if (settingsOpen()) {
+  <table-settings-dialog
+    [color]="tableColor()"
+    [cardSize]="cardSizePercent()"
+    (colorChange)="tableColor.set($event)"
+    (cardSizeChange)="cardSizePercent.set($event)"
+    (closed)="settingsOpen.set(false)"
+  />
+}

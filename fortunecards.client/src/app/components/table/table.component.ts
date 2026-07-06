@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 import { NavigationBar } from '../navigation-bar/navigation-bar';
 import { TableCardComponent } from '../table-card/table-card.component';
+import { TableSettingsDialogComponent } from '../table-settings-dialog/table-settings-dialog.component';
 import { TableCardState, TableColor } from '../../models/table';
 
 @Component({
@@ -8,7 +9,7 @@ import { TableCardState, TableColor } from '../../models/table';
   standalone: true,
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
-  imports: [NavigationBar, TableCardComponent],
+  imports: [NavigationBar, TableCardComponent, TableSettingsDialogComponent],
   host: {
     '(document:keydown)': 'onKeyDown($event)',
     '(document:keyup)': 'onKeyUp($event)',
@@ -23,6 +24,7 @@ export class TableComponent implements AfterViewInit {
   readonly tableColor = signal<TableColor>('beige');
   /** Card width, in % of table width (5–80). */
   readonly cardSizePercent = signal(20);
+  readonly settingsOpen = signal(false);
   /** Table height, in % of table width; 0 = not yet measured. */
   readonly tableHeightPercent = signal(0);
   readonly tableWidthPx = signal(0);
