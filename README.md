@@ -18,5 +18,6 @@ The development to working solution took 3 days:
 - Day 6: Decks and cards edit pages added and patch controllers added.
 - Day 7: Azure App Insights set.
 - Day 8: Main menu created.
+- Day 9: Table prototype created.
 
 It can: create decks of cards with image and description. Randomly pull out one card.
