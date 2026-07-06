@@ -50,7 +50,7 @@ export class TableComponent implements AfterViewInit {
     if (width > 0) {
       this.tableWidthPx.set(width);
       // Initial table height = viewport height, stored in table-width % so it rescales.
-      this.tableHeightPercent.set((window.innerHeight / width) * 100);
+      this.tableHeightPercent.set(Math.max((window.innerHeight / width) * 100, this.minHeightPercent()));
     }
     if (typeof ResizeObserver !== 'undefined') {
       const observer = new ResizeObserver((entries) => {
@@ -98,7 +98,13 @@ export class TableComponent implements AfterViewInit {
     this.tableHeightPercent.update((h) => Math.max(this.minHeightPercent(), h - this.cardSizePercent()));
   }
 
+  onCardSizeChange(size: number): void {
+    this.cardSizePercent.set(size);
+    this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
+  }
+
   onKeyDown(event: KeyboardEvent): void {
+    if (this.settingsOpen()) return;
     if (event.key === 'r' || event.key === 'R') {
       this.rotateKeyHeld = true;
       return;

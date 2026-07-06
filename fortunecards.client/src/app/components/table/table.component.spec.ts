@@ -129,6 +129,14 @@ describe('TableComponent', () => {
     expect(component.cards()[0].rotation).toBe(0);
   });
 
+  it('ignores R+arrows while the settings dialog is open', () => {
+    component.selectCard('test-card');
+    component.settingsOpen.set(true);
+    key('keydown', 'r');
+    key('keydown', 'ArrowRight');
+    expect(component.cards()[0].rotation).toBe(0);
+  });
+
   it('opens the settings dialog from the gear button and applies changes', () => {
     expect(fixture.nativeElement.querySelector('table-settings-dialog')).toBeNull();
     (fixture.nativeElement.querySelector('.settings-btn') as HTMLElement).click();
@@ -174,5 +182,13 @@ describe('TableComponent', () => {
     component.tableHeightPercent.set(40); // min is 35 (card at y=0)
     component.decreaseHeight(); // 40 - 20 = 20 → clamped to 35
     expect(component.tableHeightPercent()).toBe(35);
+  });
+
+  it('re-clamps table height when the card size grows past the minimum', () => {
+    component.tableWidthPx.set(1000);
+    component.tableHeightPercent.set(40);
+    component.onCardSizeChange(80); // min becomes 80 * 1.5 + 5 = 125
+    expect(component.cardSizePercent()).toBe(80);
+    expect(component.tableHeightPercent()).toBe(125);
   });
 });

@@ -31,7 +31,7 @@
     [color]="tableColor()"
     [cardSize]="cardSizePercent()"
     (colorChange)="tableColor.set($event)"
-    (cardSizeChange)="cardSizePercent.set($event)"
+    (cardSizeChange)="onCardSizeChange($event)"
     (closed)="settingsOpen.set(false)"
   />
 }
