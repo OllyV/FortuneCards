@@ -4,7 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { DeckDetailComponent } from './deck-detail.component';
 import { NavigationBar } from '../navigation-bar/navigation-bar';
 import { Deck } from '../../models/deck';
@@ -56,23 +56,24 @@ describe('DeckDetailComponent', () => {
     expect(hasHex || hasRgb).toBe(true);
   });
 
-  it('goBack() returns to the previous page via Location.back() when there is in-app history', () => {
-    const location = TestBed.inject(Location);
-    vi.spyOn(location, 'getState').mockReturnValue({ navigationId: 3 });
-    const backSpy = vi.spyOn(location, 'back').mockImplementation(() => {});
+  it('goBack() returns to /decks/mine when the current user owns the deck', () => {
+    component.deck.set({ ...mockDeck, isOwner: true });
     const navSpy = vi.spyOn(component['router'], 'navigate').mockResolvedValue(true);
     component.goBack();
-    expect(backSpy).toHaveBeenCalledTimes(1);
-    expect(navSpy).not.toHaveBeenCalled();
+    expect(navSpy).toHaveBeenCalledWith(['/decks/mine']);
   });
 
-  it('goBack() falls back to /decks/search on a direct load (no in-app history)', () => {
-    const location = TestBed.inject(Location);
-    vi.spyOn(location, 'getState').mockReturnValue({ navigationId: 1 });
-    const backSpy = vi.spyOn(location, 'back').mockImplementation(() => {});
+  it('goBack() returns to /decks/search when the user does not own the deck', () => {
+    component.deck.set({ ...mockDeck, isOwner: false });
     const navSpy = vi.spyOn(component['router'], 'navigate').mockResolvedValue(true);
     component.goBack();
     expect(navSpy).toHaveBeenCalledWith(['/decks/search']);
-    expect(backSpy).not.toHaveBeenCalled();
+  });
+
+  it('goBack() falls back to /decks/search when the deck has not loaded', () => {
+    component.deck.set(null);
+    const navSpy = vi.spyOn(component['router'], 'navigate').mockResolvedValue(true);
+    component.goBack();
+    expect(navSpy).toHaveBeenCalledWith(['/decks/search']);
   });
 });
