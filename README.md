@@ -19,5 +19,6 @@ The development to working solution took 3 days:
 - Day 7: Azure App Insights set.
 - Day 8: Main menu created.
 - Day 9: Table prototype created.
+- Day 10: Split table-cards for deck cards and pattern. Move from NgModules to standalone components.
 
 It can: create decks of cards with image and description. Randomly pull out one card.
