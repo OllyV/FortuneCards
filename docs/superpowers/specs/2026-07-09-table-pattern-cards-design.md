@@ -104,7 +104,8 @@ card aspect ratio for both kinds.
 - **Inputs:** `card: TablePatternCard`, `widthPercent: number`, `tableWidthPx: number`,
   `selected = false`.
 - **Outputs:** `cardSelect`, `cardMove` (`{ x, y }` in % of table width),
-  `cardRotate` (absolute degrees). **No `cardFlip`.**
+  `cardRotate` (absolute degrees), `textChange` (new text, for inline editing).
+  **No `cardFlip`.**
 - **Rendering:** shows the pattern `text` and `order` number; same card dimensions
   (`leftPx`/`topPx`/`widthPx` computed exactly as in `table-card`).
 - **Behavior:** owns its own pointer handlers for drag + rotate (copied from `table-card`,
