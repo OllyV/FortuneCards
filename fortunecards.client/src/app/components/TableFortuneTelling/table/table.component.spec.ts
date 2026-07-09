@@ -191,4 +191,88 @@ describe('TableComponent', () => {
     expect(component.cardSizePercent()).toBe(50);
     expect(component.tableHeightPercent()).toBe(80);
   });
+
+  it('starts with no pattern cards and unlocked', () => {
+    expect(component.patternCards()).toEqual([]);
+    expect(component.patternsLocked()).toBe(false);
+  });
+
+  it('addPatternCard appends cards with incrementing order', () => {
+    component.addPatternCard();
+    component.addPatternCard();
+    const patterns = component.patternCards();
+    expect(patterns.length).toBe(2);
+    expect(patterns.map((p) => p.order)).toEqual([1, 2]);
+    expect(patterns.every((p) => p.kind === 'pattern' && !p.locked)).toBe(true);
+  });
+
+  it('toggleLockPattern locks then unlocks all pattern cards', () => {
+    component.addPatternCard();
+    component.addPatternCard();
+    component.toggleLockPattern();
+    expect(component.patternsLocked()).toBe(true);
+    expect(component.patternCards().every((p) => p.locked)).toBe(true);
+    component.toggleLockPattern();
+    expect(component.patternsLocked()).toBe(false);
+    expect(component.patternCards().every((p) => !p.locked)).toBe(true);
+  });
+
+  it('movePatternCard clamps inside the table and is a no-op when locked', () => {
+    component.tableWidthPx.set(1000);
+    component.tableHeightPercent.set(60);
+    component.addPatternCard();
+    const id = component.patternCards()[0].id;
+    component.movePatternCard(id, { x: 95, y: 95 }); // clamp to maxX=80, maxY=30
+    expect(component.patternCards()[0]).toMatchObject({ x: 80, y: 30 });
+    component.toggleLockPattern();
+    component.movePatternCard(id, { x: 0, y: 0 });
+    expect(component.patternCards()[0]).toMatchObject({ x: 80, y: 30 }); // unchanged
+  });
+
+  it('rotatePatternCard normalizes and is a no-op when locked', () => {
+    component.addPatternCard();
+    const id = component.patternCards()[0].id;
+    component.rotatePatternCard(id, 370);
+    expect(component.patternCards()[0].rotation).toBe(10);
+    component.toggleLockPattern();
+    component.rotatePatternCard(id, 90);
+    expect(component.patternCards()[0].rotation).toBe(10); // unchanged
+  });
+
+  it('setPatternText updates the pattern text', () => {
+    component.addPatternCard();
+    const id = component.patternCards()[0].id;
+    component.setPatternText(id, 'Present');
+    expect(component.patternCards()[0].text).toBe('Present');
+  });
+
+  it('minHeightPercent accounts for pattern cards too', () => {
+    component.tableWidthPx.set(1000);
+    component.tableHeightPercent.set(100);
+    component.addPatternCard();
+    const id = component.patternCards()[0].id;
+    component.movePatternCard(id, { x: 0, y: 50 }); // pattern bottom = 50 + 30 = 80 → min 85
+    expect(component.minHeightPercent()).toBe(85);
+  });
+
+  it('R+arrows rotate a selected pattern card, but not when locked', () => {
+    component.addPatternCard();
+    const id = component.patternCards()[0].id;
+    component.selectCard(id);
+    key('keydown', 'r');
+    key('keydown', 'ArrowRight');
+    expect(component.patternCards()[0].rotation).toBe(1);
+    component.toggleLockPattern();
+    key('keydown', 'ArrowRight');
+    expect(component.patternCards()[0].rotation).toBe(1); // unchanged while locked
+  });
+
+  it('the Add pattern card and Lock pattern buttons drive the signals', () => {
+    (fixture.nativeElement.querySelector('.add-pattern-btn') as HTMLElement).click();
+    fixture.detectChanges();
+    expect(component.patternCards().length).toBe(1);
+    expect(fixture.nativeElement.querySelectorAll('table-pattern-card').length).toBe(1);
+    (fixture.nativeElement.querySelector('.lock-pattern-btn') as HTMLElement).click();
+    expect(component.patternsLocked()).toBe(true);
+  });
 });

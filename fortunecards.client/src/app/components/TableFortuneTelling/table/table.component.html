@@ -7,6 +7,18 @@
   [style.height]="heightStyle()"
   (pointerdown)="onTablePointerDown($event)"
 >
+  @for (pattern of patternCards(); track pattern.id) {
+    <table-pattern-card
+      [card]="pattern"
+      [widthPercent]="cardSizePercent()"
+      [tableWidthPx]="tableWidthPx()"
+      [selected]="selectedCardId() === pattern.id"
+      (cardSelect)="selectCard(pattern.id)"
+      (cardMove)="movePatternCard(pattern.id, $event)"
+      (cardRotate)="rotatePatternCard(pattern.id, $event)"
+      (textChange)="setPatternText(pattern.id, $event)"
+    />
+  }
   @for (card of cards(); track card.id) {
     <table-card
       [card]="card"
@@ -23,6 +35,12 @@
   <div class="height-controls">
     <button class="height-btn height-btn--plus" type="button" aria-label="Increase table height" (click)="increaseHeight()">+</button>
     <button class="height-btn height-btn--minus" type="button" aria-label="Decrease table height" (click)="decreaseHeight()">−</button>
+  </div>
+  <div class="pattern-controls">
+    <button class="add-pattern-btn" type="button" (click)="addPatternCard()">Add pattern card</button>
+    <button class="lock-pattern-btn" type="button" (click)="toggleLockPattern()">
+      {{ patternsLocked() ? 'Unlock pattern' : 'Lock pattern' }}
+    </button>
   </div>
 </div>
 
