@@ -6,8 +6,8 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { DeckDetailComponent } from './deck-detail.component';
-import { NavigationBar } from '../navigation-bar/navigation-bar';
-import { Deck } from '../../models/deck';
+import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
+import { Deck } from '../../../models/deck';
 
 const mockDeck: Deck = {
   id: 1, name: 'Adventure', description: 'Bold quests',

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TableCardComponent } from './table-card.component';
-import { TableCardState } from '../../models/table';
+import { TableCardState } from '../../../models/table';
 
 describe('TableCardComponent', () => {
   let fixture: ComponentFixture<TableCardComponent>;
