@@ -1,6 +1,8 @@
 import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { Deck } from '../../../models/deck';
 import { DeckService } from '../../../services/deck.service';
 import { getDeckGradientStyle, getDeckShadowStyle, getCardAccentColor } from '../../../utils/deck-colors';
@@ -9,7 +11,8 @@ import { getDeckGradientStyle, getDeckShadowStyle, getCardAccentColor } from '..
   selector: 'app-deck-detail',
   templateUrl: './deck-detail.component.html',
   styleUrls: ['./deck-detail.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [CommonModule, NavigationBar]
 })
 export class DeckDetailComponent implements OnInit {
   deck = signal<Deck | null>(null);

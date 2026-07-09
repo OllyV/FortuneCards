@@ -1,6 +1,7 @@
 import { Component, signal, computed, inject, DestroyRef, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { Deck } from '../../../models/deck';
 import { DeckService } from '../../../services/deck.service';
 import { AuthService } from '../../../services/auth.service';
@@ -12,7 +13,8 @@ export type DeckListMode = 'mine' | 'search';
   selector: 'app-deck-list',
   templateUrl: './deck-list.component.html',
   styleUrls: ['./deck-list.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [RouterLink, NavigationBar]
 })
 export class DeckListComponent {
   decks = signal<Deck[]>([]);

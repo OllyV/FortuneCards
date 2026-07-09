@@ -28,8 +28,7 @@ function configure(mode: 'mine' | 'search') {
     deleteDeck: () => of(void 0),
   };
   return TestBed.configureTestingModule({
-    declarations: [DeckListComponent],
-    imports: [CommonModule, RouterModule.forRoot([]), NavigationBar],
+    imports: [DeckListComponent, CommonModule, RouterModule.forRoot([]), NavigationBar],
     providers: [
       provideZonelessChangeDetection(),
       provideHttpClient(),

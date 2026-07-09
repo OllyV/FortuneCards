@@ -21,8 +21,7 @@ describe('DeckDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DeckDetailComponent],
-      imports: [CommonModule, RouterModule.forRoot([]), NavigationBar],
+      imports: [DeckDetailComponent, CommonModule, RouterModule.forRoot([]), NavigationBar],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),

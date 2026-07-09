@@ -1,11 +1,10 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { DeckListComponent } from './components/Deck/deck-list/deck-list.component';
 import { DeckDetailComponent } from './components/Deck/deck-detail/deck-detail.component';
 import { authGuard } from './guards/auth.guard';
 import { landingRedirectGuard } from './guards/landing-redirect.guard';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', pathMatch: 'full', canActivate: [landingRedirectGuard], children: [] },
   {
     path: 'decks/new',
@@ -52,9 +51,3 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule {}
