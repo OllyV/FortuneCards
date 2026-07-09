@@ -21,6 +21,7 @@ export class TableComponent implements AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly tableRef = viewChild.required<ElementRef<HTMLDivElement>>('table');
   private rotateKeyHeld = false;
+  private nextPatternId = 1;
 
   readonly tableColor = signal<TableColor>('beige');
   /** Card width, in % of table width (5–50). */
@@ -103,7 +104,7 @@ export class TableComponent implements AfterViewInit {
         ...cards,
         {
           kind: 'pattern' as const,
-          id: `pattern-${order}`,
+          id: `pattern-${this.nextPatternId++}`,
           x: 0,
           y: 0,
           rotation: 0,
