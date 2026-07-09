@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TableCardComponent } from './table-card.component';
-import { TableCardState } from '../../../models/table';
+import { TableDeckCard } from '../../../models/table';
 
 describe('TableCardComponent', () => {
   let fixture: ComponentFixture<TableCardComponent>;
 
-  const baseCard: TableCardState = { id: 'c1', x: 10, y: 20, rotation: 0, flipped: false };
+  const baseCard: TableDeckCard = { kind: 'deck', id: 'c1', x: 10, y: 20, rotation: 0, flipped: false };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

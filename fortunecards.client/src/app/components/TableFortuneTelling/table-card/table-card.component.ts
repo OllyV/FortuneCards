@@ -1,5 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
-import { TableCardState } from '../../../models/table';
+import { TableDeckCard } from '../../../models/table';
 
 @Component({
   selector: 'table-card',
@@ -8,7 +8,7 @@ import { TableCardState } from '../../../models/table';
   styleUrl: './table-card.component.css',
 })
 export class TableCardComponent {
-  readonly card = input.required<TableCardState>();
+  readonly card = input.required<TableDeckCard>();
   /** Card width as % of table width. */
   readonly widthPercent = input.required<number>();
   readonly tableWidthPx = input.required<number>();

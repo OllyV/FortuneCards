@@ -28,7 +28,7 @@ describe('TableComponent', () => {
   it('has spec defaults: beige, 20% cards, one test card, nothing selected', () => {
     expect(component.tableColor()).toBe('beige');
     expect(component.cardSizePercent()).toBe(20);
-    expect(component.cards()).toEqual([{ id: 'test-card', x: 0, y: 0, rotation: 0, flipped: false }]);
+    expect(component.cards()).toEqual([{ kind: 'deck', id: 'test-card', x: 0, y: 0, rotation: 0, flipped: false }]);
     expect(component.selectedCardId()).toBeNull();
   });
 

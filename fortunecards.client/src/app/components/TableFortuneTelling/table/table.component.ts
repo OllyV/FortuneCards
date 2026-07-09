@@ -2,7 +2,7 @@ import { AfterViewInit, Component, DestroyRef, ElementRef, computed, inject, sig
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { TableCardComponent } from '../table-card/table-card.component';
 import { TableSettingsDialogComponent } from '../table-settings-dialog/table-settings-dialog.component';
-import { TableCardState, TableColor } from '../../../models/table';
+import { TableDeckCard, TableColor } from '../../../models/table';
 
 @Component({
   selector: 'app-table',
@@ -28,7 +28,7 @@ export class TableComponent implements AfterViewInit {
   /** Table height, in % of table width; 0 = not yet measured. */
   readonly tableHeightPercent = signal(0);
   readonly tableWidthPx = signal(0);
-  readonly cards = signal<TableCardState[]>([{ id: 'test-card', x: 0, y: 0, rotation: 0, flipped: false }]);
+  readonly cards = signal<TableDeckCard[]>([{ kind: 'deck', id: 'test-card', x: 0, y: 0, rotation: 0, flipped: false }]);
   readonly selectedCardId = signal<string | null>(null);
 
   readonly heightStyle = computed(() =>
