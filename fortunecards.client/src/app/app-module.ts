@@ -5,9 +5,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
-import { DeckListComponent } from './components/deck-list/deck-list.component';
-import { DeckDetailComponent } from './components/deck-detail/deck-detail.component';
-import { NavigationBar } from './components/navigation-bar/navigation-bar';
+import { DeckListComponent } from './components/Deck/deck-list/deck-list.component';
+import { DeckDetailComponent } from './components/Deck/deck-detail/deck-detail.component';
+import { NavigationBar } from './components/Navigation/navigation-bar/navigation-bar';
 import { AuthService } from './services/auth.service';
 import { MonitoringService } from './services/monitoring.service';
 import { MonitoringErrorHandler } from './monitoring-error-handler';

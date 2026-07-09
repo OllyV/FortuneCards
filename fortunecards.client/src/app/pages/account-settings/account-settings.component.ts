@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../services/auth.service';
-import { NavigationBar } from '../../components/navigation-bar/navigation-bar';
+import { NavigationBar } from '../../components/Navigation/navigation-bar/navigation-bar';
 
 @Component({
   selector: 'app-account-settings',
