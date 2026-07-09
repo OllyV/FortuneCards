@@ -25,12 +25,12 @@ export class TableComponent implements AfterViewInit {
 
   readonly tableColor = signal<TableColor>('beige');
   /** Card width, in % of table width (5–50). */
-  readonly cardSizePercent = signal(20);
+  readonly cardSizePercent = signal(15);
   readonly settingsOpen = signal(false);
   /** Table height, in % of table width; 0 = not yet measured. */
   readonly tableHeightPercent = signal(0);
   readonly tableWidthPx = signal(0);
-  readonly cards = signal<TableDeckCard[]>([{ kind: 'deck', id: 'test-card', x: 0, y: 0, rotation: 0, flipped: false }]);
+  readonly cards = signal<TableDeckCard[]>([{ kind: 'deck', id: 'test-card', x: 5, y: 5, rotation: 0, flipped: false }]);
   readonly patternCards = signal<TablePatternCard[]>([]);
   readonly patternsLocked = signal(false);
   readonly selectedCardId = signal<string | null>(null);
@@ -56,8 +56,9 @@ export class TableComponent implements AfterViewInit {
     const width = el.getBoundingClientRect().width;
     if (width > 0) {
       this.tableWidthPx.set(width);
-      // Initial table height = table-width, stored in table-width % so it rescales.
-      this.tableHeightPercent.set(100);
+      // Initial table height ≈ viewport height (as a % of table width), floored at the
+      // minimum needed to fit the cards, so it rescales with the table width.
+      this.tableHeightPercent.set(Math.max((window.innerHeight / width) * 80, this.minHeightPercent()));
     }
     if (typeof ResizeObserver !== 'undefined') {
       const observer = new ResizeObserver((entries) => {
@@ -105,8 +106,8 @@ export class TableComponent implements AfterViewInit {
         {
           kind: 'pattern' as const,
           id: `pattern-${this.nextPatternId++}`,
-          x: 0,
-          y: 0,
+          x: 5,
+          y: 5,
           rotation: 0,
           text: `Position ${order}`,
           order,

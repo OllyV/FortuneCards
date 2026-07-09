@@ -59,7 +59,7 @@
 .pattern-controls {
   position: absolute;
   left: 12px;
-  bottom: 12px;
+  top: 12px;
   display: flex;
   gap: 8px;
 }

@@ -25,10 +25,10 @@ describe('TableComponent', () => {
     return fixture.nativeElement.querySelector('.table');
   }
 
-  it('has spec defaults: beige, 20% cards, one test card, nothing selected', () => {
+  it('has spec defaults: beige, 15% cards, one test card, nothing selected', () => {
     expect(component.tableColor()).toBe('beige');
-    expect(component.cardSizePercent()).toBe(20);
-    expect(component.cards()).toEqual([{ kind: 'deck', id: 'test-card', x: 0, y: 0, rotation: 0, flipped: false }]);
+    expect(component.cardSizePercent()).toBe(15);
+    expect(component.cards()).toEqual([{ kind: 'deck', id: 'test-card', x: 5, y: 5, rotation: 0, flipped: false }]);
     expect(component.selectedCardId()).toBeNull();
   });
 
@@ -73,9 +73,9 @@ describe('TableComponent', () => {
   it('moveCard clamps the card inside the table', () => {
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(60);
-    // card is 20% wide, 30% tall (aspect 2/3) → max x = 80, max y = 30
+    // card is 15% wide, 22.5% tall (aspect 2/3) → max x = 85, max y = 37.5
     component.moveCard('test-card', { x: 95, y: 95 });
-    expect(component.cards()[0]).toMatchObject({ x: 80, y: 30 });
+    expect(component.cards()[0]).toMatchObject({ x: 85, y: 37.5 });
     component.moveCard('test-card', { x: -10, y: -10 });
     expect(component.cards()[0]).toMatchObject({ x: 0, y: 0 });
   });
@@ -163,33 +163,33 @@ describe('TableComponent', () => {
     component.tableHeightPercent.set(100);
     fixture.detectChanges();
     (fixture.nativeElement.querySelector('.height-btn--plus') as HTMLElement).click();
-    expect(component.tableHeightPercent()).toBe(120);
+    expect(component.tableHeightPercent()).toBe(115);
     (fixture.nativeElement.querySelector('.height-btn--minus') as HTMLElement).click();
     expect(component.tableHeightPercent()).toBe(100);
   });
 
   it('minHeightPercent is the lowest card bottom edge + 5% of table width', () => {
-    // test card at y=0, card height = 20 * 1.5 = 30 → min = 35
-    expect(component.minHeightPercent()).toBe(35);
+    // test card at y=5, card height = 15 * 1.5 = 22.5 → min = 5 + 22.5 + 5 = 32.5
+    expect(component.minHeightPercent()).toBe(32.5);
     component.moveCard('test-card', { x: 0, y: 50 });
     component.tableHeightPercent.set(100); // allow the move first
     component.moveCard('test-card', { x: 0, y: 50 });
-    expect(component.minHeightPercent()).toBe(85);
+    expect(component.minHeightPercent()).toBe(77.5);
   });
 
   it('decreaseHeight clamps to the minimum height', () => {
     component.tableWidthPx.set(1000);
-    component.tableHeightPercent.set(40); // min is 35 (card at y=0)
-    component.decreaseHeight(); // 40 - 20 = 20 → clamped to 35
-    expect(component.tableHeightPercent()).toBe(35);
+    component.tableHeightPercent.set(40); // min is 32.5 (card at y=5)
+    component.decreaseHeight(); // 40 - 15 = 25 → clamped to 32.5
+    expect(component.tableHeightPercent()).toBe(32.5);
   });
 
   it('re-clamps table height when the card size grows past the minimum', () => {
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(40);
-    component.onCardSizeChange(50); // min becomes 50 * 1.5 + 5 = 80
+    component.onCardSizeChange(50); // card at y=5 → min becomes 5 + 50 * 1.5 + 5 = 85
     expect(component.cardSizePercent()).toBe(50);
-    expect(component.tableHeightPercent()).toBe(80);
+    expect(component.tableHeightPercent()).toBe(85);
   });
 
   it('starts with no pattern cards and unlocked', () => {
@@ -222,11 +222,11 @@ describe('TableComponent', () => {
     component.tableHeightPercent.set(60);
     component.addPatternCard();
     const id = component.patternCards()[0].id;
-    component.movePatternCard(id, { x: 95, y: 95 }); // clamp to maxX=80, maxY=30
-    expect(component.patternCards()[0]).toMatchObject({ x: 80, y: 30 });
+    component.movePatternCard(id, { x: 95, y: 95 }); // clamp to maxX=85, maxY=37.5
+    expect(component.patternCards()[0]).toMatchObject({ x: 85, y: 37.5 });
     component.toggleLockPattern();
     component.movePatternCard(id, { x: 0, y: 0 });
-    expect(component.patternCards()[0]).toMatchObject({ x: 80, y: 30 }); // unchanged
+    expect(component.patternCards()[0]).toMatchObject({ x: 85, y: 37.5 }); // unchanged
   });
 
   it('rotatePatternCard normalizes and is a no-op when locked', () => {
@@ -251,8 +251,8 @@ describe('TableComponent', () => {
     component.tableHeightPercent.set(100);
     component.addPatternCard();
     const id = component.patternCards()[0].id;
-    component.movePatternCard(id, { x: 0, y: 50 }); // pattern bottom = 50 + 30 = 80 → min 85
-    expect(component.minHeightPercent()).toBe(85);
+    component.movePatternCard(id, { x: 0, y: 50 }); // pattern bottom = 50 + 22.5 = 72.5 → min 77.5
+    expect(component.minHeightPercent()).toBe(77.5);
   });
 
   it('R+arrows rotate a selected pattern card, but not when locked', () => {
