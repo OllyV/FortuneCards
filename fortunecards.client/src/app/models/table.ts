@@ -1,6 +1,6 @@
 export type TableColor = 'beige' | 'pink' | 'yellow' | 'dark-red';
 
-export interface TableCardState {
+interface TableItemBase {
   id: string;
   /** Card top-left X, in % of table width. */
   x: number;
@@ -8,6 +8,21 @@ export interface TableCardState {
   y: number;
   /** Rotation in degrees, clockwise. */
   rotation: number;
+}
+
+export interface TableDeckCard extends TableItemBase {
+  kind: 'deck';
   /** false = back face up (default), true = front face up. */
   flipped: boolean;
+  /** Reserved for the deferred manual-pick link to a pattern slot; unused for now. */
+  patternId?: string;
 }
+
+export interface TablePatternCard extends TableItemBase {
+  kind: 'pattern';
+  text: string;
+  order: number;
+  locked: boolean;
+}
+
+export type TableItem = TableDeckCard | TablePatternCard;

@@ -44,7 +44,7 @@ ng test                 # watch mode
 ng test --watch=false   # single run (use for CI / verification)
 ```
 
-The frontend test runner is **Vitest** (via the `@angular/build` builder — not Karma/Jasmine). Specs use `describe`/`it`/`expect` plus `vitest` utilities (e.g. `vi.spyOn`), and all spec files compile as one bundle, so a type error in any spec fails the whole run. **Standalone** components must be registered in `TestBed` via `imports:` (not `declarations:`); **non-standalone** components (declared in `app-module.ts`, e.g. `DeckListComponent`, `DeckDetailComponent`) use `declarations:` and must `imports:` any standalone components their templates render (e.g. `NavigationBar`) and `CommonModule` if they use `*ngIf`/`*ngFor`.
+The frontend test runner is **Vitest** (via the `@angular/build` builder — not Karma/Jasmine). Specs use `describe`/`it`/`expect` plus `vitest` utilities (e.g. `vi.spyOn`), and all spec files compile as one bundle, so a type error in any spec fails the whole run. All components are **standalone** — register them (and any standalone components their templates render, e.g. `NavigationBar`) in `TestBed` via `imports:`, never `declarations:`. Import `CommonModule` only where a component uses `*ngIf`/`*ngFor` (newer components use the `@if`/`@for` control-flow syntax and don't need it).
 
 No backend test project exists; verify the backend with `dotnet build`.
 
@@ -60,11 +60,11 @@ No backend test project exists; verify the backend with `dotnet build`.
 
 ### Frontend (`fortunecards.client/`)
 
-- **Angular 21** using NgModules (non-standalone components); root module is `app-module.ts`
+- **Angular 21**, fully **standalone components** (no NgModules); the app is bootstrapped in `main.ts` via `bootstrapApplication(App, { providers: [...] })`, and the root component is `app.ts`
 - TypeScript strict mode is enabled across all compiler configs
-- HTTP calls use `HttpClient` (provided via `provideHttpClient()` in `app-module.ts`); use typed generics (`HttpClient.get<T>()`)
+- HTTP calls use `HttpClient` (provided via `provideHttpClient()` in `main.ts`); use typed generics (`HttpClient.get<T>()`)
 - Component state uses Angular signals (`signal()` API)
-- Routes defined in `app-routing-module.ts`
+- Routes defined in `app.routes.ts` (the `routes` array), wired via `provideRouter(routes)` in `main.ts`
 
 ### Dev Proxy
 
@@ -73,7 +73,7 @@ No backend test project exists; verify the backend with `dotnet build`.
 ### Monitoring (Application Insights)
 
 - Server telemetry: `Microsoft.ApplicationInsights.AspNetCore` via `builder.Services.AddApplicationInsightsTelemetry()` in `Program.cs`.
-- Browser telemetry: `@microsoft/applicationinsights-web`, wrapped by `services/monitoring.service.ts` (`enableAutoRouteTracking`), initialized on startup by an `APP_INITIALIZER` in `app-module.ts`; `monitoring-error-handler.ts` forwards uncaught errors.
+- Browser telemetry: `@microsoft/applicationinsights-web`, wrapped by `services/monitoring.service.ts` (`enableAutoRouteTracking`), initialized on startup by an `APP_INITIALIZER` provider in `main.ts`; `monitoring-error-handler.ts` forwards uncaught errors.
 - The browser fetches its connection string at runtime from the anonymous `GET /api/config` endpoint (`ConfigController`) — nothing is baked into the build.
 - Connection string config: **dev** via `dotnet user-secrets set "ApplicationInsights:ConnectionString" "<value>"`; **prod** via the Azure App Service application setting `APPLICATIONINSIGHTS_CONNECTION_STRING`. With no connection string set, telemetry silently no-ops and the app runs normally.
 

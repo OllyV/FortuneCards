@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../services/auth.service';
 import { DeckService } from '../../services/deck.service';
 import { Deck } from '../../models/deck';
-import { NavigationBar } from '../../components/navigation-bar/navigation-bar';
+import { NavigationBar } from '../../components/Navigation/navigation-bar/navigation-bar';
 import { getDeckGradientStyle } from '../../utils/deck-colors';
 
 @Component({

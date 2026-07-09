@@ -1,0 +1,75 @@
+.table {
+  position: relative;
+  width: 90%;
+  margin: 16px auto;
+  border-radius: 12px;
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.table[data-color='beige'] {
+  background: #f0e6d2;
+}
+
+.table[data-color='pink'] {
+  background: #f6d5e0;
+}
+
+.table[data-color='yellow'] {
+  background: #f6e7a9;
+}
+
+.table[data-color='dark-red'] {
+  background: #7a2e2e;
+}
+
+.settings-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.height-controls {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.height-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.pattern-controls {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.pattern-controls button {
+  border: none;
+  border-radius: 18px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}

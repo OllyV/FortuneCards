@@ -12,8 +12,7 @@ describe('App', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [App],
-      imports: [RouterModule.forRoot([])],
+      imports: [App, RouterModule.forRoot([])],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),
