@@ -1,0 +1,27 @@
+<div
+  class="table-pattern-card"
+  [class.selected]="selected()"
+  [class.locked]="card().locked"
+  [style.left.px]="leftPx()"
+  [style.top.px]="topPx()"
+  [style.width.px]="widthPx()"
+  [style.transform]="'rotate(' + card().rotation + 'deg)'"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerUp()"
+  (pointercancel)="onPointerUp()"
+>
+  <div class="pattern-face">
+    <span class="pattern-order">{{ card().order }}</span>
+    <input
+      class="pattern-text"
+      [value]="card().text"
+      [disabled]="card().locked"
+      (pointerdown)="$event.stopPropagation()"
+      (input)="textChange.emit($any($event.target).value)"
+    />
+  </div>
+  @if (selected() && !card().locked) {
+    <div class="rotate-handle" title="Drag to rotate" (pointerdown)="onRotateStart($event)">⤾</div>
+  }
+</div>
