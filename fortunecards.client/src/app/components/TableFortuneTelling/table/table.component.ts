@@ -4,6 +4,7 @@ import { TableCardComponent } from '../table-card/table-card.component';
 import { TablePatternCardComponent } from '../table-pattern-card/table-pattern-card.component';
 import { TableSettingsDialogComponent } from '../table-settings-dialog/table-settings-dialog.component';
 import { TableDeckCard, TablePatternCard, TableColor } from '../../../models/table';
+import { Deck } from '../../../models/deck';
 
 @Component({
   selector: 'app-table',
@@ -116,6 +117,47 @@ export class TableComponent implements AfterViewInit {
         },
       ];
     });
+    this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
+  }
+
+  loadDeck(deck: Deck): void {
+    const cardWidth = this.cardSizePercent();
+    const cardHeight = cardWidth * 1.5;
+    const source = deck.cards ?? [];
+
+    // Row capacity: max cards whose gaps stay >= 20% of card width across x = 5..95.
+    const usable = 90;
+    const minGap = 0.2 * cardWidth;
+    const n = Math.max(1, Math.floor((usable + minGap) / (cardWidth + minGap)));
+    const gap = n > 1 ? (usable - n * cardWidth) / (n - 1) : 0;
+    const lines = source.length > 0 ? Math.ceil(source.length / n) : 0;
+
+    const placed: TableDeckCard[] = source.map((card, i) => ({
+      kind: 'deck' as const,
+      id: `card-${this.nextDeckCardId++}`,
+      x: 5 + (i % n) * (cardWidth + gap),
+      y: 5 + Math.floor(i / n) * (cardHeight + 5),
+      rotation: 0,
+      flipped: false,
+      deckId: deck.id,
+      cardId: card.id,
+      colorIndex: deck.colorIndex,
+      frontImageUrl: card.imageUrl,
+      backImageUrl: deck.cardBackImageUrl,
+    }));
+
+    // Push existing items (pattern cards) below the new block and grow the table.
+    const existing = this.patternCards();
+    if (placed.length > 0 && existing.length > 0) {
+      const topmost = existing.reduce((min, c) => Math.min(min, c.y), Infinity);
+      const distance = Math.max(0, lines * (cardHeight + 5) + 5 - topmost);
+      if (distance > 0) {
+        this.patternCards.update((items) => items.map((c) => ({ ...c, y: c.y + distance })));
+        this.tableHeightPercent.update((h) => h + distance);
+      }
+    }
+
+    this.cards.set(placed);
     this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
   }
 
