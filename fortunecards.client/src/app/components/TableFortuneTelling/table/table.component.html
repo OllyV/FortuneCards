@@ -42,6 +42,9 @@
       {{ patternsLocked() ? 'Unlock pattern' : 'Lock pattern' }}
     </button>
   </div>
+  <div class="deck-controls">
+    <button class="select-deck-btn" type="button" (click)="deckSelectorOpen.set(true)">Select deck</button>
+  </div>
 </div>
 
 @if (settingsOpen()) {
@@ -51,5 +54,12 @@
     (colorChange)="tableColor.set($event)"
     (cardSizeChange)="onCardSizeChange($event)"
     (closed)="settingsOpen.set(false)"
+  />
+}
+
+@if (deckSelectorOpen()) {
+  <deck-selector
+    (deckSelected)="onDeckSelected($event)"
+    (closed)="deckSelectorOpen.set(false)"
   />
 }

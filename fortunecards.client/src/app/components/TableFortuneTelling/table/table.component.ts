@@ -3,6 +3,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { TableCardComponent } from '../table-card/table-card.component';
 import { TablePatternCardComponent } from '../table-pattern-card/table-pattern-card.component';
 import { TableSettingsDialogComponent } from '../table-settings-dialog/table-settings-dialog.component';
+import { DeckSelectorComponent } from '../deck-selector/deck-selector.component';
 import { TableDeckCard, TablePatternCard, TableColor } from '../../../models/table';
 import { Deck } from '../../../models/deck';
 
@@ -11,7 +12,7 @@ import { Deck } from '../../../models/deck';
   standalone: true,
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
-  imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent],
+  imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent],
   host: {
     '(document:keydown)': 'onKeyDown($event)',
     '(document:keyup)': 'onKeyUp($event)',
@@ -29,6 +30,7 @@ export class TableComponent implements AfterViewInit {
   /** Card width, in % of table width (5–50). */
   readonly cardSizePercent = signal(15);
   readonly settingsOpen = signal(false);
+  readonly deckSelectorOpen = signal(false);
   /** Table height, in % of table width; 0 = not yet measured. */
   readonly tableHeightPercent = signal(0);
   readonly tableWidthPx = signal(0);
@@ -202,8 +204,13 @@ export class TableComponent implements AfterViewInit {
     this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
   }
 
+  onDeckSelected(deck: Deck): void {
+    this.loadDeck(deck);
+    this.deckSelectorOpen.set(false);
+  }
+
   onKeyDown(event: KeyboardEvent): void {
-    if (this.settingsOpen()) return;
+    if (this.settingsOpen() || this.deckSelectorOpen()) return;
     if (event.key === 'r' || event.key === 'R') {
       this.rotateKeyHeld = true;
       return;

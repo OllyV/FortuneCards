@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { of } from 'rxjs';
 import { TableComponent } from './table.component';
 import { AuthService } from '../../../services/auth.service';
+import { DeckService } from '../../../services/deck.service';
 import { TableDeckCard } from '../../../models/table';
 import { Deck } from '../../../models/deck';
 import { Card } from '../../../models/card';
@@ -17,6 +19,7 @@ describe('TableComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
+        { provide: DeckService, useValue: { getDecks: () => of([]), getDeck: () => of(null) } },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(TableComponent);
@@ -348,5 +351,28 @@ describe('TableComponent', () => {
     expect(component.cards()).toEqual([]);
     expect(component.patternCards().length).toBe(1);
     expect(component.patternCards()[0].y).toBe(5);
+  });
+
+  it('opens the deck-selector dialog from the Select deck button', () => {
+    expect(fixture.nativeElement.querySelector('deck-selector')).toBeNull();
+    (fixture.nativeElement.querySelector('.select-deck-btn') as HTMLElement).click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('deck-selector')).not.toBeNull();
+  });
+
+  it('onDeckSelected loads the deck and closes the dialog', () => {
+    const spy = vi.spyOn(component, 'loadDeck');
+    component.deckSelectorOpen.set(true);
+    component.onDeckSelected(deck([card(1)]));
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(component.deckSelectorOpen()).toBe(false);
+  });
+
+  it('ignores R+arrows while the deck-selector is open', () => {
+    component.selectCard('test-card');
+    component.deckSelectorOpen.set(true);
+    key('keydown', 'r');
+    key('keydown', 'ArrowRight');
+    expect(component.cards()[0].rotation).toBe(0);
   });
 });
