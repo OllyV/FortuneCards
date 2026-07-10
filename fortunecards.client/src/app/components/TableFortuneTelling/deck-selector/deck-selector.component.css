@@ -1,0 +1,83 @@
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 100;
+}
+
+.dialog-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 101;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  min-width: 320px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.dialog-panel h2 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+}
+
+.deck-search {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.deck-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 8px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #222;
+  font: inherit;
+}
+
+.deck-emoji {
+  font-size: 1.8rem;
+}
+
+.deck-name {
+  font-weight: 600;
+  text-align: center;
+}
+
+.state {
+  padding: 12px 0;
+  color: #555;
+}
+
+.state-error {
+  color: #b00020;
+}
+
+.dialog-close {
+  display: block;
+  margin: 16px 0 0 auto;
+  padding: 6px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #6b4f9e;
+  color: #fff;
+  cursor: pointer;
+}
