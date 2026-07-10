@@ -12,8 +12,14 @@
   (dblclick)="cardFlip.emit()"
 >
   <div class="flip-inner" [class.flipped]="card().flipped">
-    <div class="face back">back</div>
-    <div class="face front">front</div>
+    <div class="face back" [style.background]="backStyle()">
+      @if (card().backImageUrl) {
+        <img class="face-img" [src]="card().backImageUrl" alt="" draggable="false" />
+      }
+    </div>
+    <div class="face front">
+      <img class="face-img" [src]="card().frontImageUrl" alt="" draggable="false" />
+    </div>
   </div>
   @if (selected()) {
     <div class="rotate-handle" title="Drag to rotate" (pointerdown)="onRotateStart($event)">⤾</div>

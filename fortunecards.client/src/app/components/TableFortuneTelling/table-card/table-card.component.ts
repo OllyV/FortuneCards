@@ -1,5 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import { TableDeckCard } from '../../../models/table';
+import { getDeckGradientStyle } from '../../../utils/deck-colors';
 
 @Component({
   selector: 'table-card',
@@ -24,6 +25,9 @@ export class TableCardComponent {
   readonly leftPx = computed(() => (this.card().x / 100) * this.tableWidthPx());
   readonly topPx = computed(() => (this.card().y / 100) * this.tableWidthPx());
   readonly widthPx = computed(() => (this.widthPercent() / 100) * this.tableWidthPx());
+  readonly backStyle = computed(() =>
+    this.card().backImageUrl ? '' : getDeckGradientStyle(this.card().colorIndex)
+  );
 
   private dragging = false;
   private rotating = false;

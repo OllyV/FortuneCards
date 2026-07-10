@@ -29,9 +29,24 @@ describe('TableCardComponent', () => {
     return fixture.nativeElement.querySelector('.table-card');
   }
 
-  it('renders back and front faces with placeholder text', () => {
-    expect(root().querySelector('.face.back')!.textContent).toContain('back');
-    expect(root().querySelector('.face.front')!.textContent).toContain('front');
+  it('shows the card image on the front face', () => {
+    const img = root().querySelector('.face.front img') as HTMLImageElement;
+    expect(img).not.toBeNull();
+    expect(img.getAttribute('src')).toBe('/images/front.png');
+  });
+
+  it('shows the deck back image on the back face when present', () => {
+    const img = root().querySelector('.face.back img') as HTMLImageElement;
+    expect(img).not.toBeNull();
+    expect(img.getAttribute('src')).toBe('/images/back.png');
+  });
+
+  it('falls back to the deck gradient on the back face when there is no back image', () => {
+    fixture.componentRef.setInput('card', { ...baseCard, backImageUrl: null, colorIndex: 0 });
+    fixture.detectChanges();
+    const back = root().querySelector('.face.back') as HTMLElement;
+    expect(back.querySelector('img')).toBeNull();
+    expect(back.style.background).toContain('linear-gradient');
   });
 
   it('derives pixel position and size from % of table width', () => {
