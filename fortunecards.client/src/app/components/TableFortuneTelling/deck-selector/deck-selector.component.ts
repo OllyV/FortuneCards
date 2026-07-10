@@ -22,6 +22,7 @@ export class DeckSelectorComponent {
   readonly decks = signal<Deck[]>([]);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  readonly selectError = signal<string | null>(null);
   readonly searchTerm = signal('');
   readonly isAuthorized = computed(() => this.auth.currentUser() !== null);
 
@@ -61,6 +62,7 @@ export class DeckSelectorComponent {
   }
 
   selectDeck(deck: Deck): void {
+    this.selectError.set(null);
     this.deckService
       .getDeck(deck.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -69,7 +71,7 @@ export class DeckSelectorComponent {
           this.deckSelected.emit(full);
           this.closed.emit();
         },
-        error: () => this.error.set('Failed to load deck.'),
+        error: () => this.selectError.set('Failed to load deck.'),
       });
   }
 }

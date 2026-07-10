@@ -20,6 +20,9 @@
   }
 
   @if (!loading() && !error()) {
+    @if (selectError()) {
+      <div class="state state-error">{{ selectError() }}</div>
+    }
     <div class="deck-grid">
       @for (deck of visibleDecks(); track deck.id) {
         <button type="button" class="deck-tile" [style.background]="gradient(deck.colorIndex)" (click)="selectDeck(deck)">

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { DeckSelectorComponent } from './deck-selector.component';
 import { DeckService } from '../../../services/deck.service';
 import { AuthService } from '../../../services/auth.service';
@@ -59,5 +59,15 @@ describe('DeckSelectorComponent', () => {
     expect(getDeck).toHaveBeenCalledWith(1);
     expect(selected).toHaveBeenCalledWith(expect.objectContaining({ id: 1, name: 'Full' }));
     expect(closed).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the deck grid visible and sets selectError (not error) when getDeck fails', () => {
+    setup(true);
+    getDeck.mockReturnValueOnce(throwError(() => new Error('boom')));
+    fixture.componentInstance.selectDeck(decks[0]);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.deck-grid')).not.toBeNull();
+    expect(fixture.componentInstance.selectError()).toBeTruthy();
+    expect(fixture.componentInstance.error()).toBeNull();
   });
 });
