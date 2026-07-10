@@ -3,6 +3,7 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TableComponent } from './table.component';
 import { AuthService } from '../../../services/auth.service';
+import { TableDeckCard } from '../../../models/table';
 
 describe('TableComponent', () => {
   let component: TableComponent;
@@ -25,10 +26,23 @@ describe('TableComponent', () => {
     return fixture.nativeElement.querySelector('.table');
   }
 
-  it('has spec defaults: beige, 15% cards, one test card, nothing selected', () => {
+  function makeDeckCard(overrides: Partial<TableDeckCard> = {}): TableDeckCard {
+    return {
+      kind: 'deck', id: 'c1', x: 0, y: 0, rotation: 0, flipped: false,
+      deckId: 1, cardId: 1, colorIndex: 0,
+      frontImageUrl: '/images/front.png', backImageUrl: '/images/back.png',
+      ...overrides,
+    };
+  }
+
+  beforeEach(() => {
+    component.cards.set([makeDeckCard({ id: 'test-card', x: 5, y: 5 })]);
+    fixture.detectChanges();
+  });
+
+  it('has spec defaults: beige, 15% cards, nothing selected', () => {
     expect(component.tableColor()).toBe('beige');
     expect(component.cardSizePercent()).toBe(15);
-    expect(component.cards()).toEqual([{ kind: 'deck', id: 'test-card', x: 5, y: 5, rotation: 0, flipped: false }]);
     expect(component.selectedCardId()).toBeNull();
   });
 

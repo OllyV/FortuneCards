@@ -12,8 +12,16 @@ interface TableItemBase {
 
 export interface TableDeckCard extends TableItemBase {
   kind: 'deck';
-  /** false = back face up (default), true = front face up. */
+  /** false = back face up (default for freshly placed cards), true = front face up. */
   flipped: boolean;
+  deckId: number;
+  cardId: number;
+  /** Deck colour index — used for the gradient fallback back face. */
+  colorIndex: number;
+  /** Card image (front face). */
+  frontImageUrl: string;
+  /** Deck back image; null → render the deck gradient instead. */
+  backImageUrl: string | null;
   /** Reserved for the deferred manual-pick link to a pattern slot; unused for now. */
   patternId?: string;
 }

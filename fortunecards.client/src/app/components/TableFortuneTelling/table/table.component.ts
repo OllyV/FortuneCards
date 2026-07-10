@@ -22,6 +22,7 @@ export class TableComponent implements AfterViewInit {
   private readonly tableRef = viewChild.required<ElementRef<HTMLDivElement>>('table');
   private rotateKeyHeld = false;
   private nextPatternId = 1;
+  private nextDeckCardId = 1;
 
   readonly tableColor = signal<TableColor>('beige');
   /** Card width, in % of table width (5–50). */
@@ -30,7 +31,7 @@ export class TableComponent implements AfterViewInit {
   /** Table height, in % of table width; 0 = not yet measured. */
   readonly tableHeightPercent = signal(0);
   readonly tableWidthPx = signal(0);
-  readonly cards = signal<TableDeckCard[]>([{ kind: 'deck', id: 'test-card', x: 5, y: 5, rotation: 0, flipped: false }]);
+  readonly cards = signal<TableDeckCard[]>([]);
   readonly patternCards = signal<TablePatternCard[]>([]);
   readonly patternsLocked = signal(false);
   readonly selectedCardId = signal<string | null>(null);
