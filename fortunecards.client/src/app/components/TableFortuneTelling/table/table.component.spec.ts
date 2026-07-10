@@ -1,8 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { of } from 'rxjs';
 import { TableComponent } from './table.component';
 import { AuthService } from '../../../services/auth.service';
+import { DeckService } from '../../../services/deck.service';
+import { TableDeckCard } from '../../../models/table';
+import { Deck } from '../../../models/deck';
+import { Card } from '../../../models/card';
 
 describe('TableComponent', () => {
   let component: TableComponent;
@@ -14,6 +19,7 @@ describe('TableComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
+        { provide: DeckService, useValue: { getDecks: () => of([]), getDeck: () => of(null) } },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(TableComponent);
@@ -25,10 +31,23 @@ describe('TableComponent', () => {
     return fixture.nativeElement.querySelector('.table');
   }
 
-  it('has spec defaults: beige, 15% cards, one test card, nothing selected', () => {
+  function makeDeckCard(overrides: Partial<TableDeckCard> = {}): TableDeckCard {
+    return {
+      kind: 'deck', id: 'c1', x: 0, y: 0, rotation: 0, flipped: false,
+      deckId: 1, cardId: 1, colorIndex: 0,
+      frontImageUrl: '/images/front.png', backImageUrl: '/images/back.png',
+      ...overrides,
+    };
+  }
+
+  beforeEach(() => {
+    component.cards.set([makeDeckCard({ id: 'test-card', x: 5, y: 5 })]);
+    fixture.detectChanges();
+  });
+
+  it('has spec defaults: beige, 15% cards, nothing selected', () => {
     expect(component.tableColor()).toBe('beige');
     expect(component.cardSizePercent()).toBe(15);
-    expect(component.cards()).toEqual([{ kind: 'deck', id: 'test-card', x: 5, y: 5, rotation: 0, flipped: false }]);
     expect(component.selectedCardId()).toBeNull();
   });
 
@@ -274,5 +293,86 @@ describe('TableComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('table-pattern-card').length).toBe(1);
     (fixture.nativeElement.querySelector('.lock-pattern-btn') as HTMLElement).click();
     expect(component.patternsLocked()).toBe(true);
+  });
+
+  function card(id: number): Card {
+    return { id, title: `t${id}`, description: '', imageUrl: `/images/${id}.png`, createdAt: '', deckId: 7 };
+  }
+  function deck(cards: Card[]): Deck {
+    return {
+      id: 7, name: 'D', description: null, createdAt: '', emoji: '🔮',
+      colorIndex: 2, cardBackImageUrl: '/images/back.png', isPublic: false, isOwner: true, cards,
+    };
+  }
+
+  it('loadDeck replaces deck cards but keeps pattern cards', () => {
+    component.addPatternCard();
+    component.loadDeck(deck([card(1), card(2)]));
+    expect(component.cards().length).toBe(2);
+    expect(component.cards().every((c) => c.deckId === 7 && !c.flipped)).toBe(true);
+    expect(component.patternCards().length).toBe(1);
+  });
+
+  it('loadDeck justifies a single row (cardSize 15% → n=5, gap=3.75)', () => {
+    component.loadDeck(deck([card(1), card(2), card(3)]));
+    expect(component.cards().map((c) => c.x)).toEqual([5, 23.75, 42.5]);
+    expect(component.cards().every((c) => c.y === 5)).toBe(true);
+  });
+
+  it('loadDeck wraps overflow onto a second row 5% below', () => {
+    component.loadDeck(deck([1, 2, 3, 4, 5, 6, 7].map(card)));
+    // n=5: index 5 and 6 land on row 1 at y = 5 + (22.5 + 5) = 32.5
+    expect(component.cards()[5]).toMatchObject({ x: 5, y: 32.5 });
+    expect(component.cards()[6]).toMatchObject({ x: 23.75, y: 32.5 });
+  });
+
+  it('loadDeck pushes existing pattern cards down and extends the table', () => {
+    component.tableWidthPx.set(1000);
+    component.tableHeightPercent.set(100);
+    component.addPatternCard(); // pattern at y=5
+    component.loadDeck(deck([card(1), card(2), card(3)])); // 1 line
+    // distance = 1*(22.5 + 5) + 5 - 5 = 27.5
+    expect(component.patternCards()[0].y).toBe(32.5);
+    expect(component.tableHeightPercent()).toBe(127.5);
+  });
+
+  it('loadDeck floors the height to fit new cards when nothing else is on the table', () => {
+    component.tableWidthPx.set(1000);
+    component.tableHeightPercent.set(10);
+    component.loadDeck(deck([card(1), card(2), card(3)]));
+    // one line: lowest bottom = 5 + 22.5 = 27.5 → min height 32.5
+    expect(component.tableHeightPercent()).toBe(32.5);
+  });
+
+  it('loadDeck with an empty deck clears deck cards without pushing patterns', () => {
+    component.tableHeightPercent.set(100);
+    component.addPatternCard();
+    component.loadDeck(deck([]));
+    expect(component.cards()).toEqual([]);
+    expect(component.patternCards().length).toBe(1);
+    expect(component.patternCards()[0].y).toBe(5);
+  });
+
+  it('opens the deck-selector dialog from the Select deck button', () => {
+    expect(fixture.nativeElement.querySelector('deck-selector')).toBeNull();
+    (fixture.nativeElement.querySelector('.select-deck-btn') as HTMLElement).click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('deck-selector')).not.toBeNull();
+  });
+
+  it('onDeckSelected loads the deck and closes the dialog', () => {
+    const spy = vi.spyOn(component, 'loadDeck');
+    component.deckSelectorOpen.set(true);
+    component.onDeckSelected(deck([card(1)]));
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(component.deckSelectorOpen()).toBe(false);
+  });
+
+  it('ignores R+arrows while the deck-selector is open', () => {
+    component.selectCard('test-card');
+    component.deckSelectorOpen.set(true);
+    key('keydown', 'r');
+    key('keydown', 'ArrowRight');
+    expect(component.cards()[0].rotation).toBe(0);
   });
 });

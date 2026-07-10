@@ -3,14 +3,16 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { TableCardComponent } from '../table-card/table-card.component';
 import { TablePatternCardComponent } from '../table-pattern-card/table-pattern-card.component';
 import { TableSettingsDialogComponent } from '../table-settings-dialog/table-settings-dialog.component';
+import { DeckSelectorComponent } from '../deck-selector/deck-selector.component';
 import { TableDeckCard, TablePatternCard, TableColor } from '../../../models/table';
+import { Deck } from '../../../models/deck';
 
 @Component({
   selector: 'app-table',
   standalone: true,
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
-  imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent],
+  imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent],
   host: {
     '(document:keydown)': 'onKeyDown($event)',
     '(document:keyup)': 'onKeyUp($event)',
@@ -22,15 +24,17 @@ export class TableComponent implements AfterViewInit {
   private readonly tableRef = viewChild.required<ElementRef<HTMLDivElement>>('table');
   private rotateKeyHeld = false;
   private nextPatternId = 1;
+  private nextDeckCardId = 1;
 
   readonly tableColor = signal<TableColor>('beige');
   /** Card width, in % of table width (5–50). */
   readonly cardSizePercent = signal(15);
   readonly settingsOpen = signal(false);
+  readonly deckSelectorOpen = signal(false);
   /** Table height, in % of table width; 0 = not yet measured. */
   readonly tableHeightPercent = signal(0);
   readonly tableWidthPx = signal(0);
-  readonly cards = signal<TableDeckCard[]>([{ kind: 'deck', id: 'test-card', x: 5, y: 5, rotation: 0, flipped: false }]);
+  readonly cards = signal<TableDeckCard[]>([]);
   readonly patternCards = signal<TablePatternCard[]>([]);
   readonly patternsLocked = signal(false);
   readonly selectedCardId = signal<string | null>(null);
@@ -118,6 +122,47 @@ export class TableComponent implements AfterViewInit {
     this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
   }
 
+  loadDeck(deck: Deck): void {
+    const cardWidth = this.cardSizePercent();
+    const cardHeight = cardWidth * 1.5;
+    const source = deck.cards ?? [];
+
+    // Row capacity: max cards whose gaps stay >= 20% of card width across x = 5..95.
+    const usable = 90;
+    const minGap = 0.2 * cardWidth;
+    const n = Math.max(1, Math.floor((usable + minGap) / (cardWidth + minGap)));
+    const gap = n > 1 ? (usable - n * cardWidth) / (n - 1) : 0;
+    const lines = source.length > 0 ? Math.ceil(source.length / n) : 0;
+
+    const placed: TableDeckCard[] = source.map((card, i) => ({
+      kind: 'deck' as const,
+      id: `card-${this.nextDeckCardId++}`,
+      x: 5 + (i % n) * (cardWidth + gap),
+      y: 5 + Math.floor(i / n) * (cardHeight + 5),
+      rotation: 0,
+      flipped: false,
+      deckId: deck.id,
+      cardId: card.id,
+      colorIndex: deck.colorIndex,
+      frontImageUrl: card.imageUrl,
+      backImageUrl: deck.cardBackImageUrl,
+    }));
+
+    // Push existing items (pattern cards) below the new block and grow the table.
+    const existing = this.patternCards();
+    if (placed.length > 0 && existing.length > 0) {
+      const topmost = existing.reduce((min, c) => Math.min(min, c.y), Infinity);
+      const distance = Math.max(0, lines * (cardHeight + 5) + 5 - topmost);
+      if (distance > 0) {
+        this.patternCards.update((items) => items.map((c) => ({ ...c, y: c.y + distance })));
+        this.tableHeightPercent.update((h) => h + distance);
+      }
+    }
+
+    this.cards.set(placed);
+    this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
+  }
+
   toggleLockPattern(): void {
     const locked = !this.patternsLocked();
     this.patternsLocked.set(locked);
@@ -159,8 +204,13 @@ export class TableComponent implements AfterViewInit {
     this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
   }
 
+  onDeckSelected(deck: Deck): void {
+    this.loadDeck(deck);
+    this.deckSelectorOpen.set(false);
+  }
+
   onKeyDown(event: KeyboardEvent): void {
-    if (this.settingsOpen()) return;
+    if (this.settingsOpen() || this.deckSelectorOpen()) return;
     if (event.key === 'r' || event.key === 'R') {
       this.rotateKeyHeld = true;
       return;
