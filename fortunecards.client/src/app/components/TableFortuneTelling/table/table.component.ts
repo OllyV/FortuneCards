@@ -26,6 +26,8 @@ export class TableComponent implements AfterViewInit {
   readonly cardSizePercent = signal(15);
   readonly settingsOpen = signal(false);
   readonly deckSelectorOpen = signal(false);
+  readonly deckMenuOpen = signal(false);
+  readonly patternMenuOpen = signal(false);
   /** Table height, in % of table width; 0 = not yet measured. */
   readonly tableHeightPercent = signal(0);
   readonly tableWidthPx = signal(0);
@@ -124,22 +126,11 @@ export class TableComponent implements AfterViewInit {
   }
 
   loadDeck(deck: Deck): void {
-    const cardWidth = this.cardSizePercent();
-    const cardHeight = cardWidth * 1.5;
-    const source = deck.cards ?? [];
-
-    // Row capacity: max cards whose gaps stay >= 20% of card width across x = 5..95.
-    const usable = 90;
-    const minGap = 0.2 * cardWidth;
-    const n = Math.max(1, Math.floor((usable + minGap) / (cardWidth + minGap)));
-    const gap = n > 1 ? (usable - n * cardWidth) / (n - 1) : 0;
-    const lines = source.length > 0 ? Math.ceil(source.length / n) : 0;
-
-    const placed: TableDeckCard[] = source.map((card, i) => ({
+    const cards: TableDeckCard[] = (deck.cards ?? []).map((card) => ({
       kind: 'deck' as const,
       id: `card-${this.nextDeckCardId++}`,
-      x: 5 + (i % n) * (cardWidth + gap),
-      y: 5 + Math.floor(i / n) * (cardHeight + 5),
+      x: 0,
+      y: 0,
       rotation: 0,
       flipped: false,
       deckId: deck.id,
@@ -147,6 +138,33 @@ export class TableComponent implements AfterViewInit {
       colorIndex: deck.colorIndex,
       frontImageUrl: card.imageUrl,
       backImageUrl: deck.cardBackImageUrl,
+    }));
+    this.placeCards(cards);
+  }
+
+  /**
+   * Lay the given deck cards out in justified rows at their starting position — face down,
+   * unrotated — pushing pattern cards below the block and fitting the table. Used both when a
+   * deck is loaded and when it is re-loaded to reset the current cards.
+   */
+  private placeCards(cards: TableDeckCard[]): void {
+    const cardWidth = this.cardSizePercent();
+    const cardHeight = cardWidth * 1.5;
+
+    // Row capacity: max cards whose gaps stay >= 20% of card width across x = 5..95.
+    const usable = 90;
+    const minGap = 0.2 * cardWidth;
+    const n = Math.max(1, Math.floor((usable - cardWidth) / minGap ) + 1);
+    const gap = n > 1 ? (usable - cardWidth) / (n - 1) : 0;
+    const lines = cards.length > 0 ? Math.ceil(cards.length / n) : 0;
+
+    const placed: TableDeckCard[] = cards.map((card, i) => ({
+      ...card,
+      x: 5 + (i % n) * gap,
+      y: 7 + Math.floor(i / n) * (cardHeight + 5),
+      z: i,
+      rotation: 0,
+      flipped: false,
     }));
 
     // Push existing pattern cards below the new deck block so they don't overlap it.
@@ -208,5 +226,30 @@ export class TableComponent implements AfterViewInit {
   onDeckSelected(deck: Deck): void {
     this.loadDeck(deck);
     this.deckSelectorOpen.set(false);
+  }
+
+  toggleDeckMenu(): void {
+    this.patternMenuOpen.set(false);
+    this.deckMenuOpen.update((v) => !v);
+  }
+
+  togglePatternMenu(): void {
+    this.deckMenuOpen.set(false);
+    this.patternMenuOpen.update((v) => !v);
+  }
+
+  closeMenus(): void {
+    this.deckMenuOpen.set(false);
+    this.patternMenuOpen.set(false);
+  }
+
+  openDeckSelector(): void {
+    this.closeMenus();
+    this.deckSelectorOpen.set(true);
+  }
+
+  reloadDeck(): void {
+    this.closeMenus();
+    this.placeCards(this.cards());
   }
 }

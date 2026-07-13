@@ -68,16 +68,19 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
-.pattern-controls {
+.table-controls {
   position: absolute;
-  z-index: 2;
   left: 12px;
   top: 12px;
   display: flex;
   gap: 8px;
 }
 
-.pattern-controls button {
+.dropdown {
+  position: relative;
+}
+
+.dropdown-btn {
   border: none;
   border-radius: 18px;
   padding: 8px 14px;
@@ -87,21 +90,45 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
-.deck-controls {
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+}
+
+.dropdown-panel {
   position: absolute;
-  z-index: 2;
-  left: 12px;
-  top: 56px;
+  z-index: 21;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 160px;
+  background: white;
+  border: 2px solid var(--color-border, #e0e0e0);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 6px;
   display: flex;
-  gap: 8px;
+  flex-direction: column;
 }
 
-.select-deck-btn {
+.dropdown-item {
+  background: none;
   border: none;
-  border-radius: 18px;
-  padding: 8px 14px;
-  background: rgba(255, 255, 255, 0.85);
+  text-align: left;
+  padding: 10px 12px;
   font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--color-text, #333);
+  border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.dropdown-item:hover:not(:disabled) {
+  background: var(--color-cream, #f3f3f3);
+}
+
+.dropdown-item:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
