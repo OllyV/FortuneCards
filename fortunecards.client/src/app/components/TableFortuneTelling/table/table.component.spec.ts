@@ -106,56 +106,6 @@ describe('TableComponent', () => {
     expect(component.cards()[0].rotation).toBe(350);
   });
 
-  function key(type: 'keydown' | 'keyup', key: string): void {
-    document.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true }));
-  }
-
-  it('rotates the selected card 1° per arrow keydown while R is held', () => {
-    component.selectCard('test-card');
-    key('keydown', 'r');
-    key('keydown', 'ArrowRight');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(2);
-    key('keydown', 'ArrowLeft');
-    expect(component.cards()[0].rotation).toBe(1);
-  });
-
-  it('ignores arrows when R is not held', () => {
-    component.selectCard('test-card');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
-  });
-
-  it('stops rotating after R is released', () => {
-    component.selectCard('test-card');
-    key('keydown', 'r');
-    key('keyup', 'r');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
-  });
-
-  it('ignores R+arrows when no card is selected', () => {
-    key('keydown', 'r');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
-  });
-
-  it('resets the held R flag when the window loses focus', () => {
-    component.selectCard('test-card');
-    key('keydown', 'r');
-    window.dispatchEvent(new Event('blur'));
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
-  });
-
-  it('ignores R+arrows while the settings dialog is open', () => {
-    component.selectCard('test-card');
-    component.settingsOpen.set(true);
-    key('keydown', 'r');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
-  });
-
   it('opens the settings dialog from the gear button and applies changes', () => {
     expect(fixture.nativeElement.querySelector('table-settings-dialog')).toBeNull();
     (fixture.nativeElement.querySelector('.settings-btn') as HTMLElement).click();
@@ -274,18 +224,6 @@ describe('TableComponent', () => {
     expect(component.minHeightPercent()).toBe(77.5);
   });
 
-  it('R+arrows rotate a selected pattern card, but not when locked', () => {
-    component.addPatternCard();
-    const id = component.patternCards()[0].id;
-    component.selectCard(id);
-    key('keydown', 'r');
-    key('keydown', 'ArrowRight');
-    expect(component.patternCards()[0].rotation).toBe(1);
-    component.toggleLockPattern();
-    key('keydown', 'ArrowRight');
-    expect(component.patternCards()[0].rotation).toBe(1); // unchanged while locked
-  });
-
   it('the Add pattern card and Lock pattern buttons drive the signals', () => {
     (fixture.nativeElement.querySelector('.add-pattern-btn') as HTMLElement).click();
     fixture.detectChanges();
@@ -366,13 +304,5 @@ describe('TableComponent', () => {
     component.onDeckSelected(deck([card(1)]));
     expect(spy).toHaveBeenCalledTimes(1);
     expect(component.deckSelectorOpen()).toBe(false);
-  });
-
-  it('ignores R+arrows while the deck-selector is open', () => {
-    component.selectCard('test-card');
-    component.deckSelectorOpen.set(true);
-    key('keydown', 'r');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
   });
 });

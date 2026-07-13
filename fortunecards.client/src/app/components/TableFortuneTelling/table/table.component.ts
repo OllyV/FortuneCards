@@ -13,16 +13,10 @@ import { Deck } from '../../../models/deck';
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent],
-  host: {
-    '(document:keydown)': 'onKeyDown($event)',
-    '(document:keyup)': 'onKeyUp($event)',
-    '(window:blur)': 'onWindowBlur()',
-  },
 })
 export class TableComponent implements AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly tableRef = viewChild.required<ElementRef<HTMLDivElement>>('table');
-  private rotateKeyHeld = false;
   private nextPatternId = 1;
   private nextDeckCardId = 1;
 
@@ -207,37 +201,5 @@ export class TableComponent implements AfterViewInit {
   onDeckSelected(deck: Deck): void {
     this.loadDeck(deck);
     this.deckSelectorOpen.set(false);
-  }
-
-  onKeyDown(event: KeyboardEvent): void {
-    if (this.settingsOpen() || this.deckSelectorOpen()) return;
-    if (event.key === 'r' || event.key === 'R') {
-      this.rotateKeyHeld = true;
-      return;
-    }
-    if (!this.rotateKeyHeld) return;
-    const id = this.selectedCardId();
-    if (!id) return;
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-      event.preventDefault();
-      const delta = event.key === 'ArrowLeft' ? -1 : 1;
-      const deck = this.cards().find((c) => c.id === id);
-      if (deck) {
-        this.rotateCard(id, deck.rotation + delta);
-        return;
-      }
-      const pattern = this.patternCards().find((c) => c.id === id);
-      if (pattern) this.rotatePatternCard(id, pattern.rotation + delta);
-    }
-  }
-
-  onKeyUp(event: KeyboardEvent): void {
-    if (event.key === 'r' || event.key === 'R') {
-      this.rotateKeyHeld = false;
-    }
-  }
-
-  onWindowBlur(): void {
-    this.rotateKeyHeld = false;
   }
 }
