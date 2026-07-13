@@ -178,6 +178,9 @@ export class TableComponent implements AfterViewInit {
     }
 
     this.cards.set(placed);
+    // Keep the selection counter ahead of the cards' initial z (i) so the next selected
+    // card still comes to the front.
+    this.nextZ = Math.max(this.nextZ, placed.length);
     // Extend the table only if a card now sits below its bottom edge; fit the lowest card.
     this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
   }

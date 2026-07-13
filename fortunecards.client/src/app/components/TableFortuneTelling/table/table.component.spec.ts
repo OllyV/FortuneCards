@@ -293,6 +293,14 @@ describe('TableComponent', () => {
     expect(component.cards().map((c) => c.z)).toEqual([0, 1, 2]);
   });
 
+  it('selecting a freshly loaded card brings it above the deck cascade', () => {
+    component.loadDeck(deck([card(1), card(2), card(3)]));
+    const zOf = (i: number) => component.cards()[i].z!;
+    // the first card starts at the bottom of the cascade (z = 0)
+    component.selectCard(component.cards()[0].id);
+    expect(zOf(0)).toBeGreaterThan(Math.max(zOf(1), zOf(2)));
+  });
+
   it('loadDeck wraps overflow onto a second row below the first', () => {
     component.cardSizePercent.set(50); // n=5 per row, cardHeight 75
     component.loadDeck(deck([1, 2, 3, 4, 5, 6, 7].map(card)));
