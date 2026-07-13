@@ -7,30 +7,32 @@
   [style.height]="heightStyle()"
   (pointerdown)="onTablePointerDown($event)"
 >
-  @for (pattern of patternCards(); track pattern.id) {
-    <table-pattern-card
-      [card]="pattern"
-      [widthPercent]="cardSizePercent()"
-      [tableWidthPx]="tableWidthPx()"
-      [selected]="selectedCardId() === pattern.id"
-      (cardSelect)="selectCard(pattern.id)"
-      (cardMove)="movePatternCard(pattern.id, $event)"
-      (cardRotate)="rotatePatternCard(pattern.id, $event)"
-      (textChange)="setPatternText(pattern.id, $event)"
-    />
-  }
-  @for (card of cards(); track card.id) {
-    <table-card
-      [card]="card"
-      [widthPercent]="cardSizePercent()"
-      [tableWidthPx]="tableWidthPx()"
-      [selected]="selectedCardId() === card.id"
-      (cardSelect)="selectCard(card.id)"
-      (cardFlip)="flipCard(card.id)"
-      (cardMove)="moveCard(card.id, $event)"
-      (cardRotate)="rotateCard(card.id, $event)"
-    />
-  }
+  <div class="card-layer">
+    @for (pattern of patternCards(); track pattern.id) {
+      <table-pattern-card
+        [card]="pattern"
+        [widthPercent]="cardSizePercent()"
+        [tableWidthPx]="tableWidthPx()"
+        [selected]="selectedCardId() === pattern.id"
+        (cardSelect)="selectCard(pattern.id)"
+        (cardMove)="movePatternCard(pattern.id, $event)"
+        (cardRotate)="rotatePatternCard(pattern.id, $event)"
+        (textChange)="setPatternText(pattern.id, $event)"
+      />
+    }
+    @for (card of cards(); track card.id) {
+      <table-card
+        [card]="card"
+        [widthPercent]="cardSizePercent()"
+        [tableWidthPx]="tableWidthPx()"
+        [selected]="selectedCardId() === card.id"
+        (cardSelect)="selectCard(card.id)"
+        (cardFlip)="flipCard(card.id)"
+        (cardMove)="moveCard(card.id, $event)"
+        (cardRotate)="rotateCard(card.id, $event)"
+      />
+    }
+  </div>
   <button class="settings-btn" type="button" aria-label="Table settings" (click)="settingsOpen.set(true)">⚙</button>
   <div class="height-controls">
     <button class="height-btn height-btn--plus" type="button" aria-label="Increase table height" (click)="increaseHeight()">+</button>

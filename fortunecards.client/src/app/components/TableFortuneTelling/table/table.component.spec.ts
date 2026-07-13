@@ -82,6 +82,25 @@ describe('TableComponent', () => {
     expect(component.selectedCardId()).toBe('test-card');
   });
 
+  it('selecting a card brings it to the front and keeps prior selections beneath', () => {
+    component.cards.set([makeDeckCard({ id: 'a' }), makeDeckCard({ id: 'b' })]);
+    const z = (id: string) => component.cards().find((c) => c.id === id)!.z!;
+    component.selectCard('a');
+    component.selectCard('b');
+    expect(z('b')).toBeGreaterThan(z('a'));
+    // re-selecting the first card lifts it back above the second
+    component.selectCard('a');
+    expect(z('a')).toBeGreaterThan(z('b'));
+  });
+
+  it('front ordering is shared across deck and pattern cards', () => {
+    component.addPatternCard();
+    const patternId = component.patternCards()[0].id;
+    component.selectCard(patternId);
+    component.selectCard('test-card');
+    expect(component.cards()[0].z!).toBeGreaterThan(component.patternCards()[0].z!);
+  });
+
   it('flipCard toggles the flipped flag', () => {
     component.flipCard('test-card');
     expect(component.cards()[0].flipped).toBe(true);

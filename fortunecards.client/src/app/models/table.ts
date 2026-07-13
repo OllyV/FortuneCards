@@ -8,6 +8,8 @@ interface TableItemBase {
   y: number;
   /** Rotation in degrees, clockwise. */
   rotation: number;
+  /** Stacking order; higher sits in front. Unset until the card is first selected. */
+  z?: number;
 }
 
 export interface TableDeckCard extends TableItemBase {

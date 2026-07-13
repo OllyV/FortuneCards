@@ -19,6 +19,7 @@ export class TableComponent implements AfterViewInit {
   private readonly tableRef = viewChild.required<ElementRef<HTMLDivElement>>('table');
   private nextPatternId = 1;
   private nextDeckCardId = 1;
+  private nextZ = 1;
 
   readonly tableColor = signal<TableColor>('beige');
   /** Card width, in % of table width (5–50). */
@@ -70,6 +71,12 @@ export class TableComponent implements AfterViewInit {
 
   selectCard(id: string): void {
     this.selectedCardId.set(id);
+    const z = this.nextZ++;
+    if (this.cards().some((c) => c.id === id)) {
+      this.cards.update((cards) => cards.map((c) => (c.id === id ? { ...c, z } : c)));
+    } else {
+      this.patternCards.update((cards) => cards.map((c) => (c.id === id ? { ...c, z } : c)));
+    }
   }
 
   onTablePointerDown(event: Event): void {
