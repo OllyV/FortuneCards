@@ -9,7 +9,7 @@ Used claude plugins:
 - superpowers
 - frontend-design
   
-The development to working solution took 3 days:
+The development by days:
 - Day 1: Base protoype creation with Claude + Cursor. Azure Sql Server setup.
 - Day 2: UI redesign with Claude superpowers. ScreenShots before and after redesign can be found in UIScreenshots folder.
 - Day 3: Set up hosting on Azure App Services with GitHub actions, UI bugfix with Claude + Cursor.
@@ -20,5 +20,7 @@ The development to working solution took 3 days:
 - Day 8: Main menu created.
 - Day 9: Table prototype created.
 - Day 10: Split table-cards for deck cards and pattern. Move from NgModules to standalone components.
+- Day 11: Make deck loading on table.
+- Day 12: Work on table cards behaviour, add table dropdown menus.
 
 It can: create decks of cards with image and description. Randomly pull out one card.
