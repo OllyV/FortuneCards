@@ -283,14 +283,25 @@ describe('TableComponent', () => {
     expect(component.cards()[6]).toMatchObject({ x: 23.75, y: 32.5 });
   });
 
-  it('loadDeck pushes existing pattern cards down and extends the table', () => {
+  it('loadDeck pushes existing pattern cards below the deck block without extending a table that still fits', () => {
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(100);
     component.addPatternCard(); // pattern at y=5
     component.loadDeck(deck([card(1), card(2), card(3)])); // 1 line
-    // distance = 1*(22.5 + 5) + 5 - 5 = 27.5
+    // distance = 1*(22.5 + 5) + 5 - 5 = 27.5 → pattern moves to y=32.5
     expect(component.patternCards()[0].y).toBe(32.5);
-    expect(component.tableHeightPercent()).toBe(127.5);
+    // pushed pattern bottom = 32.5 + 22.5 = 55 → min 60, still inside the 100 table
+    expect(component.tableHeightPercent()).toBe(100);
+  });
+
+  it('loadDeck extends the table only enough to fit a pattern pushed past its bottom edge', () => {
+    component.tableWidthPx.set(1000);
+    component.tableHeightPercent.set(40);
+    component.addPatternCard(); // pattern at y=5
+    component.loadDeck(deck([card(1), card(2), card(3)])); // pattern pushed to y=32.5
+    expect(component.patternCards()[0].y).toBe(32.5);
+    // pattern bottom 55 now sits below the 40 table → extend to fit: 55 + 5 = 60
+    expect(component.tableHeightPercent()).toBe(60);
   });
 
   it('loadDeck floors the height to fit new cards when nothing else is on the table', () => {

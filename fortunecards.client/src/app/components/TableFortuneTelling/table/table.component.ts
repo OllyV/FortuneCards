@@ -149,18 +149,18 @@ export class TableComponent implements AfterViewInit {
       backImageUrl: deck.cardBackImageUrl,
     }));
 
-    // Push existing items (pattern cards) below the new block and grow the table.
+    // Push existing pattern cards below the new deck block so they don't overlap it.
     const existing = this.patternCards();
     if (placed.length > 0 && existing.length > 0) {
       const topmost = existing.reduce((min, c) => Math.min(min, c.y), Infinity);
       const distance = Math.max(0, lines * (cardHeight + 5) + 5 - topmost);
       if (distance > 0) {
         this.patternCards.update((items) => items.map((c) => ({ ...c, y: c.y + distance })));
-        this.tableHeightPercent.update((h) => h + distance);
       }
     }
 
     this.cards.set(placed);
+    // Extend the table only if a card now sits below its bottom edge; fit the lowest card.
     this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
   }
 
