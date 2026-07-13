@@ -13,24 +13,21 @@ import { Deck } from '../../../models/deck';
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent],
-  host: {
-    '(document:keydown)': 'onKeyDown($event)',
-    '(document:keyup)': 'onKeyUp($event)',
-    '(window:blur)': 'onWindowBlur()',
-  },
 })
 export class TableComponent implements AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly tableRef = viewChild.required<ElementRef<HTMLDivElement>>('table');
-  private rotateKeyHeld = false;
   private nextPatternId = 1;
   private nextDeckCardId = 1;
+  private nextZ = 1;
 
   readonly tableColor = signal<TableColor>('beige');
   /** Card width, in % of table width (5–50). */
   readonly cardSizePercent = signal(15);
   readonly settingsOpen = signal(false);
   readonly deckSelectorOpen = signal(false);
+  readonly deckMenuOpen = signal(false);
+  readonly patternMenuOpen = signal(false);
   /** Table height, in % of table width; 0 = not yet measured. */
   readonly tableHeightPercent = signal(0);
   readonly tableWidthPx = signal(0);
@@ -76,6 +73,12 @@ export class TableComponent implements AfterViewInit {
 
   selectCard(id: string): void {
     this.selectedCardId.set(id);
+    const z = this.nextZ++;
+    if (this.cards().some((c) => c.id === id)) {
+      this.cards.update((cards) => cards.map((c) => (c.id === id ? { ...c, z } : c)));
+    } else {
+      this.patternCards.update((cards) => cards.map((c) => (c.id === id ? { ...c, z } : c)));
+    }
   }
 
   onTablePointerDown(event: Event): void {
@@ -123,22 +126,11 @@ export class TableComponent implements AfterViewInit {
   }
 
   loadDeck(deck: Deck): void {
-    const cardWidth = this.cardSizePercent();
-    const cardHeight = cardWidth * 1.5;
-    const source = deck.cards ?? [];
-
-    // Row capacity: max cards whose gaps stay >= 20% of card width across x = 5..95.
-    const usable = 90;
-    const minGap = 0.2 * cardWidth;
-    const n = Math.max(1, Math.floor((usable + minGap) / (cardWidth + minGap)));
-    const gap = n > 1 ? (usable - n * cardWidth) / (n - 1) : 0;
-    const lines = source.length > 0 ? Math.ceil(source.length / n) : 0;
-
-    const placed: TableDeckCard[] = source.map((card, i) => ({
+    const cards: TableDeckCard[] = (deck.cards ?? []).map((card) => ({
       kind: 'deck' as const,
       id: `card-${this.nextDeckCardId++}`,
-      x: 5 + (i % n) * (cardWidth + gap),
-      y: 5 + Math.floor(i / n) * (cardHeight + 5),
+      x: 0,
+      y: 0,
       rotation: 0,
       flipped: false,
       deckId: deck.id,
@@ -147,19 +139,49 @@ export class TableComponent implements AfterViewInit {
       frontImageUrl: card.imageUrl,
       backImageUrl: deck.cardBackImageUrl,
     }));
+    this.placeCards(cards);
+  }
 
-    // Push existing items (pattern cards) below the new block and grow the table.
+  /**
+   * Lay the given deck cards out in justified rows at their starting position — face down,
+   * unrotated — pushing pattern cards below the block and fitting the table. Used both when a
+   * deck is loaded and when it is re-loaded to reset the current cards.
+   */
+  private placeCards(cards: TableDeckCard[]): void {
+    const cardWidth = this.cardSizePercent();
+    const cardHeight = cardWidth * 1.5;
+
+    // Row capacity: max cards whose gaps stay >= 20% of card width across x = 5..95.
+    const usable = 90;
+    const minGap = 0.2 * cardWidth;
+    const n = Math.max(1, Math.floor((usable - cardWidth) / minGap ) + 1);
+    const gap = n > 1 ? (usable - cardWidth) / (n - 1) : 0;
+    const lines = cards.length > 0 ? Math.ceil(cards.length / n) : 0;
+
+    const placed: TableDeckCard[] = cards.map((card, i) => ({
+      ...card,
+      x: 5 + (i % n) * gap,
+      y: 7 + Math.floor(i / n) * (cardHeight + 5),
+      z: i,
+      rotation: 0,
+      flipped: false,
+    }));
+
+    // Push existing pattern cards below the new deck block so they don't overlap it.
     const existing = this.patternCards();
     if (placed.length > 0 && existing.length > 0) {
       const topmost = existing.reduce((min, c) => Math.min(min, c.y), Infinity);
       const distance = Math.max(0, lines * (cardHeight + 5) + 5 - topmost);
       if (distance > 0) {
         this.patternCards.update((items) => items.map((c) => ({ ...c, y: c.y + distance })));
-        this.tableHeightPercent.update((h) => h + distance);
       }
     }
 
     this.cards.set(placed);
+    // Keep the selection counter ahead of the cards' initial z (i) so the next selected
+    // card still comes to the front.
+    this.nextZ = Math.max(this.nextZ, placed.length);
+    // Extend the table only if a card now sits below its bottom edge; fit the lowest card.
     this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
   }
 
@@ -209,35 +231,28 @@ export class TableComponent implements AfterViewInit {
     this.deckSelectorOpen.set(false);
   }
 
-  onKeyDown(event: KeyboardEvent): void {
-    if (this.settingsOpen() || this.deckSelectorOpen()) return;
-    if (event.key === 'r' || event.key === 'R') {
-      this.rotateKeyHeld = true;
-      return;
-    }
-    if (!this.rotateKeyHeld) return;
-    const id = this.selectedCardId();
-    if (!id) return;
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-      event.preventDefault();
-      const delta = event.key === 'ArrowLeft' ? -1 : 1;
-      const deck = this.cards().find((c) => c.id === id);
-      if (deck) {
-        this.rotateCard(id, deck.rotation + delta);
-        return;
-      }
-      const pattern = this.patternCards().find((c) => c.id === id);
-      if (pattern) this.rotatePatternCard(id, pattern.rotation + delta);
-    }
+  toggleDeckMenu(): void {
+    this.patternMenuOpen.set(false);
+    this.deckMenuOpen.update((v) => !v);
   }
 
-  onKeyUp(event: KeyboardEvent): void {
-    if (event.key === 'r' || event.key === 'R') {
-      this.rotateKeyHeld = false;
-    }
+  togglePatternMenu(): void {
+    this.deckMenuOpen.set(false);
+    this.patternMenuOpen.update((v) => !v);
   }
 
-  onWindowBlur(): void {
-    this.rotateKeyHeld = false;
+  closeMenus(): void {
+    this.deckMenuOpen.set(false);
+    this.patternMenuOpen.set(false);
+  }
+
+  openDeckSelector(): void {
+    this.closeMenus();
+    this.deckSelectorOpen.set(true);
+  }
+
+  reloadDeck(): void {
+    this.closeMenus();
+    this.placeCards(this.cards());
   }
 }

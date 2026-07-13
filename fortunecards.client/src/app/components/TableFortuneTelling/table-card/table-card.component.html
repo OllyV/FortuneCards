@@ -4,6 +4,7 @@
   [style.left.px]="leftPx()"
   [style.top.px]="topPx()"
   [style.width.px]="widthPx()"
+  [style.zIndex]="card().z"
   [style.transform]="'rotate(' + card().rotation + 'deg)'"
   (pointerdown)="onPointerDown($event)"
   (pointermove)="onPointerMove($event)"

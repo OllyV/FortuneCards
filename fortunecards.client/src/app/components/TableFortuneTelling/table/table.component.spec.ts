@@ -82,6 +82,25 @@ describe('TableComponent', () => {
     expect(component.selectedCardId()).toBe('test-card');
   });
 
+  it('selecting a card brings it to the front and keeps prior selections beneath', () => {
+    component.cards.set([makeDeckCard({ id: 'a' }), makeDeckCard({ id: 'b' })]);
+    const z = (id: string) => component.cards().find((c) => c.id === id)!.z!;
+    component.selectCard('a');
+    component.selectCard('b');
+    expect(z('b')).toBeGreaterThan(z('a'));
+    // re-selecting the first card lifts it back above the second
+    component.selectCard('a');
+    expect(z('a')).toBeGreaterThan(z('b'));
+  });
+
+  it('front ordering is shared across deck and pattern cards', () => {
+    component.addPatternCard();
+    const patternId = component.patternCards()[0].id;
+    component.selectCard(patternId);
+    component.selectCard('test-card');
+    expect(component.cards()[0].z!).toBeGreaterThan(component.patternCards()[0].z!);
+  });
+
   it('flipCard toggles the flipped flag', () => {
     component.flipCard('test-card');
     expect(component.cards()[0].flipped).toBe(true);
@@ -104,56 +123,6 @@ describe('TableComponent', () => {
     expect(component.cards()[0].rotation).toBe(10);
     component.rotateCard('test-card', -10);
     expect(component.cards()[0].rotation).toBe(350);
-  });
-
-  function key(type: 'keydown' | 'keyup', key: string): void {
-    document.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true }));
-  }
-
-  it('rotates the selected card 1° per arrow keydown while R is held', () => {
-    component.selectCard('test-card');
-    key('keydown', 'r');
-    key('keydown', 'ArrowRight');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(2);
-    key('keydown', 'ArrowLeft');
-    expect(component.cards()[0].rotation).toBe(1);
-  });
-
-  it('ignores arrows when R is not held', () => {
-    component.selectCard('test-card');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
-  });
-
-  it('stops rotating after R is released', () => {
-    component.selectCard('test-card');
-    key('keydown', 'r');
-    key('keyup', 'r');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
-  });
-
-  it('ignores R+arrows when no card is selected', () => {
-    key('keydown', 'r');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
-  });
-
-  it('resets the held R flag when the window loses focus', () => {
-    component.selectCard('test-card');
-    key('keydown', 'r');
-    window.dispatchEvent(new Event('blur'));
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
-  });
-
-  it('ignores R+arrows while the settings dialog is open', () => {
-    component.selectCard('test-card');
-    component.settingsOpen.set(true);
-    key('keydown', 'r');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
   });
 
   it('opens the settings dialog from the gear button and applies changes', () => {
@@ -274,25 +243,29 @@ describe('TableComponent', () => {
     expect(component.minHeightPercent()).toBe(77.5);
   });
 
-  it('R+arrows rotate a selected pattern card, but not when locked', () => {
-    component.addPatternCard();
-    const id = component.patternCards()[0].id;
-    component.selectCard(id);
-    key('keydown', 'r');
-    key('keydown', 'ArrowRight');
-    expect(component.patternCards()[0].rotation).toBe(1);
-    component.toggleLockPattern();
-    key('keydown', 'ArrowRight');
-    expect(component.patternCards()[0].rotation).toBe(1); // unchanged while locked
-  });
+  function openMenu(btn: string): void {
+    (fixture.nativeElement.querySelector(btn) as HTMLElement).click();
+    fixture.detectChanges();
+  }
 
-  it('the Add pattern card and Lock pattern buttons drive the signals', () => {
-    (fixture.nativeElement.querySelector('.add-pattern-btn') as HTMLElement).click();
+  it('the Pattern menu adds pattern cards and toggles the lock', () => {
+    openMenu('.pattern-menu-btn');
+    (fixture.nativeElement.querySelector('.add-pattern-item') as HTMLElement).click();
     fixture.detectChanges();
     expect(component.patternCards().length).toBe(1);
     expect(fixture.nativeElement.querySelectorAll('table-pattern-card').length).toBe(1);
-    (fixture.nativeElement.querySelector('.lock-pattern-btn') as HTMLElement).click();
+    // the menu closes on selection, so reopen it to toggle the lock
+    openMenu('.pattern-menu-btn');
+    (fixture.nativeElement.querySelector('.lock-pattern-item') as HTMLElement).click();
     expect(component.patternsLocked()).toBe(true);
+  });
+
+  it('opening one menu closes the other', () => {
+    openMenu('.deck-menu-btn');
+    expect(component.deckMenuOpen()).toBe(true);
+    openMenu('.pattern-menu-btn');
+    expect(component.patternMenuOpen()).toBe(true);
+    expect(component.deckMenuOpen()).toBe(false);
   });
 
   function card(id: number): Card {
@@ -313,35 +286,56 @@ describe('TableComponent', () => {
     expect(component.patternCards().length).toBe(1);
   });
 
-  it('loadDeck justifies a single row (cardSize 15% → n=5, gap=3.75)', () => {
+  it('loadDeck lays a single row as a justified cascade, stacked by index (cardSize 15% → stride 3)', () => {
     component.loadDeck(deck([card(1), card(2), card(3)]));
-    expect(component.cards().map((c) => c.x)).toEqual([5, 23.75, 42.5]);
-    expect(component.cards().every((c) => c.y === 5)).toBe(true);
+    expect(component.cards().map((c) => c.x)).toEqual([5, 8, 11]);
+    expect(component.cards().every((c) => c.y === 7)).toBe(true);
+    expect(component.cards().map((c) => c.z)).toEqual([0, 1, 2]);
   });
 
-  it('loadDeck wraps overflow onto a second row 5% below', () => {
+  it('selecting a freshly loaded card brings it above the deck cascade', () => {
+    component.loadDeck(deck([card(1), card(2), card(3)]));
+    const zOf = (i: number) => component.cards()[i].z!;
+    // the first card starts at the bottom of the cascade (z = 0)
+    component.selectCard(component.cards()[0].id);
+    expect(zOf(0)).toBeGreaterThan(Math.max(zOf(1), zOf(2)));
+  });
+
+  it('loadDeck wraps overflow onto a second row below the first', () => {
+    component.cardSizePercent.set(50); // n=5 per row, cardHeight 75
     component.loadDeck(deck([1, 2, 3, 4, 5, 6, 7].map(card)));
-    // n=5: index 5 and 6 land on row 1 at y = 5 + (22.5 + 5) = 32.5
-    expect(component.cards()[5]).toMatchObject({ x: 5, y: 32.5 });
-    expect(component.cards()[6]).toMatchObject({ x: 23.75, y: 32.5 });
+    // n=5: indices 5 and 6 land on row 1 at y = 7 + (75 + 5) = 87
+    expect(component.cards()[5]).toMatchObject({ x: 5, y: 87 });
+    expect(component.cards()[6]).toMatchObject({ x: 15, y: 87 });
   });
 
-  it('loadDeck pushes existing pattern cards down and extends the table', () => {
+  it('loadDeck pushes existing pattern cards below the deck block without extending a table that still fits', () => {
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(100);
     component.addPatternCard(); // pattern at y=5
     component.loadDeck(deck([card(1), card(2), card(3)])); // 1 line
-    // distance = 1*(22.5 + 5) + 5 - 5 = 27.5
+    // distance = 1*(22.5 + 5) + 5 - 5 = 27.5 → pattern moves to y=32.5
     expect(component.patternCards()[0].y).toBe(32.5);
-    expect(component.tableHeightPercent()).toBe(127.5);
+    // pushed pattern bottom = 32.5 + 22.5 = 55 → min 60, still inside the 100 table
+    expect(component.tableHeightPercent()).toBe(100);
+  });
+
+  it('loadDeck extends the table only enough to fit a pattern pushed past its bottom edge', () => {
+    component.tableWidthPx.set(1000);
+    component.tableHeightPercent.set(40);
+    component.addPatternCard(); // pattern at y=5
+    component.loadDeck(deck([card(1), card(2), card(3)])); // pattern pushed to y=32.5
+    expect(component.patternCards()[0].y).toBe(32.5);
+    // pattern bottom 55 now sits below the 40 table → extend to fit: 55 + 5 = 60
+    expect(component.tableHeightPercent()).toBe(60);
   });
 
   it('loadDeck floors the height to fit new cards when nothing else is on the table', () => {
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(10);
     component.loadDeck(deck([card(1), card(2), card(3)]));
-    // one line: lowest bottom = 5 + 22.5 = 27.5 → min height 32.5
-    expect(component.tableHeightPercent()).toBe(32.5);
+    // one line: lowest bottom = 7 + 22.5 = 29.5 → min height 34.5
+    expect(component.tableHeightPercent()).toBe(34.5);
   });
 
   it('loadDeck with an empty deck clears deck cards without pushing patterns', () => {
@@ -353,9 +347,10 @@ describe('TableComponent', () => {
     expect(component.patternCards()[0].y).toBe(5);
   });
 
-  it('opens the deck-selector dialog from the Select deck button', () => {
+  it('opens the deck-selector dialog from the Deck menu', () => {
     expect(fixture.nativeElement.querySelector('deck-selector')).toBeNull();
-    (fixture.nativeElement.querySelector('.select-deck-btn') as HTMLElement).click();
+    openMenu('.deck-menu-btn');
+    (fixture.nativeElement.querySelector('.select-deck-item') as HTMLElement).click();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('deck-selector')).not.toBeNull();
   });
@@ -368,11 +363,32 @@ describe('TableComponent', () => {
     expect(component.deckSelectorOpen()).toBe(false);
   });
 
-  it('ignores R+arrows while the deck-selector is open', () => {
-    component.selectCard('test-card');
-    component.deckSelectorOpen.set(true);
-    key('keydown', 'r');
-    key('keydown', 'ArrowRight');
-    expect(component.cards()[0].rotation).toBe(0);
+  it('Re-load deck is disabled until cards are on the table, then resets them to their initial layout', () => {
+    component.cards.set([]); // clear the seeded card: nothing loaded yet
+    fixture.detectChanges();
+    openMenu('.deck-menu-btn');
+    expect((fixture.nativeElement.querySelector('.reload-deck-item') as HTMLButtonElement).disabled).toBe(true);
+    component.closeMenus();
+    fixture.detectChanges();
+
+    component.tableWidthPx.set(1000);
+    component.tableHeightPercent.set(100);
+    component.onDeckSelected(deck([card(1), card(2), card(3)]));
+    const movedId = component.cards()[0].id;
+    // disturb the first card: move it, rotate it, flip it
+    component.moveCard(movedId, { x: 40, y: 40 });
+    component.rotateCard(movedId, 90);
+    component.flipCard(movedId);
+    fixture.detectChanges();
+
+    openMenu('.deck-menu-btn');
+    const reload = fixture.nativeElement.querySelector('.reload-deck-item') as HTMLButtonElement;
+    expect(reload.disabled).toBe(false);
+    reload.click();
+
+    // the same card object is reset to its clean starting position, not recreated
+    const c0 = component.cards()[0];
+    expect(c0.id).toBe(movedId);
+    expect(c0).toMatchObject({ x: 5, y: 7, rotation: 0, flipped: false });
   });
 });
