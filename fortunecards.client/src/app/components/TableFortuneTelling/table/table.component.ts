@@ -151,10 +151,20 @@ export class TableComponent implements AfterViewInit {
     this.placeCards(cards);
   }
 
+  /** Fisher–Yates shuffle; returns a new array. A seam so tests can pin the order. */
+  private shuffle<T>(items: T[]): T[] {
+    const result = [...items];
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
   /**
    * Lay the given deck cards out in justified rows at their starting position — face down,
-   * unrotated — pushing pattern cards below the block and fitting the table. Used both when a
-   * deck is loaded and when it is re-loaded to reset the current cards.
+   * unrotated — in a random order, pushing pattern cards below the block and fitting the table.
+   * Used both when a deck is loaded and when it is re-loaded to re-shuffle the current cards.
    */
   private placeCards(cards: TableDeckCard[]): void {
     const cardWidth = this.cardSizePercent();
@@ -167,7 +177,7 @@ export class TableComponent implements AfterViewInit {
     const gap = n > 1 ? (usable - cardWidth) / (n - 1) : 0;
     const lines = cards.length > 0 ? Math.ceil(cards.length / n) : 0;
 
-    const placed: TableDeckCard[] = cards.map((card, i) => ({
+    const placed: TableDeckCard[] = this.shuffle(cards).map((card, i) => ({
       ...card,
       x: 5 + (i % n) * gap,
       y: 7 + Math.floor(i / n) * (cardHeight + 5),

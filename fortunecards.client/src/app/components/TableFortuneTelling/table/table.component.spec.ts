@@ -294,6 +294,15 @@ describe('TableComponent', () => {
     expect(component.cards().map((c) => c.z)).toEqual([0, 1, 2]);
   });
 
+  it('placeCards deals cards into the slots in the order shuffle returns', () => {
+    // Pin the shuffle to a reversal so placement order is deterministic to assert.
+    vi.spyOn(component as unknown as { shuffle(items: TableDeckCard[]): TableDeckCard[] }, 'shuffle')
+      .mockImplementation((items) => [...items].reverse());
+    component.loadDeck(deck([card(1), card(2), card(3)]));
+    // Reversed deck → slots fill back-to-front by cardId.
+    expect(component.cards().map((c) => c.cardId)).toEqual([3, 2, 1]);
+  });
+
   it('selecting a freshly loaded card brings it above the deck cascade', () => {
     component.loadDeck(deck([card(1), card(2), card(3)]));
     const zOf = (i: number) => component.cards()[i].z!;
@@ -350,7 +359,8 @@ describe('TableComponent', () => {
 
   it('loadDeck carries the card title and description onto the table cards', () => {
     component.loadDeck(deck([card(1), card(2)]));
-    expect(component.cards().map((c) => c.title)).toEqual(['t1', 't2']);
+    // Order is randomized by placeCards, so compare as an unordered set.
+    expect(component.cards().map((c) => c.title).sort()).toEqual(['t1', 't2']);
     expect(component.cards().every((c) => c.description === '')).toBe(true);
   });
 
@@ -378,6 +388,9 @@ describe('TableComponent', () => {
     component.closeMenus();
     fixture.detectChanges();
 
+    // Pin the shuffle to identity so the disturbed card returns to the same slot on re-load.
+    vi.spyOn(component as unknown as { shuffle(items: TableDeckCard[]): TableDeckCard[] }, 'shuffle')
+      .mockImplementation((items) => items);
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(100);
     component.onDeckSelected(deck([card(1), card(2), card(3)]));
