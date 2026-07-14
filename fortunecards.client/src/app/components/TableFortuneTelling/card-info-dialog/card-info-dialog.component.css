@@ -14,33 +14,35 @@
   background: #fff;
   border-radius: 12px;
   padding: 20px 24px;
-  min-width: 320px;
+  /* Fixed width (not shrink-to-fit) so the description reliably wraps around
+     the floated picture instead of sitting entirely beside it. */
+  width: 440px;
   max-width: 90vw;
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
-.card-info-body {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 20px;
-  align-items: flex-start;
+/* Contain the floated picture so the Close button clears it. */
+.card-info-body::after {
+  content: "";
+  display: block;
+  clear: both;
 }
 
 .card-info-img {
-  flex: 0 0 auto;
-  width: 180px;
-  max-width: 100%;
+  float: left;
+  width: 160px;
+  max-width: 45%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #8a8a8a;
+  /* Text wraps to the right and below the picture. */
+  margin: 0 16px 8px 0;
 }
 
 .card-info-text {
-  flex: 1 1 240px;
-  min-width: 0;
   text-align: left;
 }
 
