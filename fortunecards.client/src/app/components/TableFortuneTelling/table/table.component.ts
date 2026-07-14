@@ -4,6 +4,7 @@ import { TableCardComponent } from '../table-card/table-card.component';
 import { TablePatternCardComponent } from '../table-pattern-card/table-pattern-card.component';
 import { TableSettingsDialogComponent } from '../table-settings-dialog/table-settings-dialog.component';
 import { DeckSelectorComponent } from '../deck-selector/deck-selector.component';
+import { CardInfoDialogComponent } from '../card-info-dialog/card-info-dialog.component';
 import { TableDeckCard, TablePatternCard, TableColor } from '../../../models/table';
 import { Deck } from '../../../models/deck';
 
@@ -12,7 +13,7 @@ import { Deck } from '../../../models/deck';
   standalone: true,
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
-  imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent],
+  imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent, CardInfoDialogComponent],
 })
 export class TableComponent implements AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
@@ -35,6 +36,8 @@ export class TableComponent implements AfterViewInit {
   readonly patternCards = signal<TablePatternCard[]>([]);
   readonly patternsLocked = signal(false);
   readonly selectedCardId = signal<string | null>(null);
+  readonly infoCardId = signal<string | null>(null);
+  readonly infoCard = computed(() => this.cards().find((c) => c.id === this.infoCardId()) ?? null);
 
   readonly heightStyle = computed(() =>
     this.tableWidthPx() > 0 && this.tableHeightPercent() > 0
@@ -91,6 +94,10 @@ export class TableComponent implements AfterViewInit {
     this.cards.update((cards) => cards.map((c) => (c.id === id ? { ...c, flipped: !c.flipped } : c)));
   }
 
+  openCardInfo(id: string): void {
+    this.infoCardId.set(id);
+  }
+
   moveCard(id: string, pos: { x: number; y: number }): void {
     const cardHeight = this.cardSizePercent() * 1.5; // aspect ratio 2/3
     const maxX = Math.max(0, 100 - this.cardSizePercent());
@@ -138,14 +145,26 @@ export class TableComponent implements AfterViewInit {
       colorIndex: deck.colorIndex,
       frontImageUrl: card.imageUrl,
       backImageUrl: deck.cardBackImageUrl,
+      title: card.title,
+      description: card.description,
     }));
     this.placeCards(cards);
   }
 
+  /** Fisher–Yates shuffle; returns a new array. A seam so tests can pin the order. */
+  private shuffle<T>(items: T[]): T[] {
+    const result = [...items];
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
   /**
    * Lay the given deck cards out in justified rows at their starting position — face down,
-   * unrotated — pushing pattern cards below the block and fitting the table. Used both when a
-   * deck is loaded and when it is re-loaded to reset the current cards.
+   * unrotated — in a random order, pushing pattern cards below the block and fitting the table.
+   * Used both when a deck is loaded and when it is re-loaded to re-shuffle the current cards.
    */
   private placeCards(cards: TableDeckCard[]): void {
     const cardWidth = this.cardSizePercent();
@@ -158,7 +177,7 @@ export class TableComponent implements AfterViewInit {
     const gap = n > 1 ? (usable - cardWidth) / (n - 1) : 0;
     const lines = cards.length > 0 ? Math.ceil(cards.length / n) : 0;
 
-    const placed: TableDeckCard[] = cards.map((card, i) => ({
+    const placed: TableDeckCard[] = this.shuffle(cards).map((card, i) => ({
       ...card,
       x: 5 + (i % n) * gap,
       y: 7 + Math.floor(i / n) * (cardHeight + 5),

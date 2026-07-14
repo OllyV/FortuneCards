@@ -10,6 +10,7 @@ describe('TableCardComponent', () => {
     kind: 'deck', id: 'c1', x: 10, y: 20, rotation: 0, flipped: false,
     deckId: 1, cardId: 1, colorIndex: 0,
     frontImageUrl: '/images/front.png', backImageUrl: '/images/back.png',
+    title: 'The Sun', description: 'A bright card.',
   };
 
   beforeEach(async () => {
@@ -136,6 +137,38 @@ describe('TableCardComponent', () => {
     const handle = root().querySelector('.rotate-handle')!;
     handle.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 300, clientY: 250 }));
     root().dispatchEvent(new MouseEvent('pointermove', { bubbles: true, clientX: 310, clientY: 260 }));
+    expect(moved).not.toHaveBeenCalled();
+  });
+
+  it('shows the info handle only when selected and flipped to the front', () => {
+    // selected but back face up → no handle
+    fixture.componentRef.setInput('selected', true);
+    fixture.detectChanges();
+    expect(root().querySelector('.info-handle')).toBeNull();
+    // selected + flipped → handle appears
+    fixture.componentRef.setInput('card', { ...baseCard, flipped: true });
+    fixture.detectChanges();
+    expect(root().querySelector('.info-handle')).not.toBeNull();
+    // flipped but not selected → no handle
+    fixture.componentRef.setInput('selected', false);
+    fixture.detectChanges();
+    expect(root().querySelector('.info-handle')).toBeNull();
+  });
+
+  it('emits cardInfo when the info handle is clicked without starting a move', () => {
+    fixture.componentRef.setInput('card', { ...baseCard, flipped: true });
+    fixture.componentRef.setInput('selected', true);
+    fixture.detectChanges();
+    const info = vi.fn();
+    const moved = vi.fn();
+    fixture.componentInstance.cardInfo.subscribe(info);
+    fixture.componentInstance.cardMove.subscribe(moved);
+    const handle = root().querySelector('.info-handle')!;
+    handle.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 150, clientY: 150 }));
+    handle.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    // moving the pointer afterwards must not drag the card
+    root().dispatchEvent(new MouseEvent('pointermove', { bubbles: true, clientX: 300, clientY: 300 }));
+    expect(info).toHaveBeenCalledTimes(1);
     expect(moved).not.toHaveBeenCalled();
   });
 });

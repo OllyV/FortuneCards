@@ -36,6 +36,7 @@ describe('TableComponent', () => {
       kind: 'deck', id: 'c1', x: 0, y: 0, rotation: 0, flipped: false,
       deckId: 1, cardId: 1, colorIndex: 0,
       frontImageUrl: '/images/front.png', backImageUrl: '/images/back.png',
+      title: 'The Sun', description: 'A bright card.',
       ...overrides,
     };
   }
@@ -293,6 +294,15 @@ describe('TableComponent', () => {
     expect(component.cards().map((c) => c.z)).toEqual([0, 1, 2]);
   });
 
+  it('placeCards deals cards into the slots in the order shuffle returns', () => {
+    // Pin the shuffle to a reversal so placement order is deterministic to assert.
+    vi.spyOn(component as unknown as { shuffle(items: TableDeckCard[]): TableDeckCard[] }, 'shuffle')
+      .mockImplementation((items) => [...items].reverse());
+    component.loadDeck(deck([card(1), card(2), card(3)]));
+    // Reversed deck → slots fill back-to-front by cardId.
+    expect(component.cards().map((c) => c.cardId)).toEqual([3, 2, 1]);
+  });
+
   it('selecting a freshly loaded card brings it above the deck cascade', () => {
     component.loadDeck(deck([card(1), card(2), card(3)]));
     const zOf = (i: number) => component.cards()[i].z!;
@@ -347,6 +357,13 @@ describe('TableComponent', () => {
     expect(component.patternCards()[0].y).toBe(5);
   });
 
+  it('loadDeck carries the card title and description onto the table cards', () => {
+    component.loadDeck(deck([card(1), card(2)]));
+    // Order is randomized by placeCards, so compare as an unordered set.
+    expect(component.cards().map((c) => c.title).sort()).toEqual(['t1', 't2']);
+    expect(component.cards().every((c) => c.description === '')).toBe(true);
+  });
+
   it('opens the deck-selector dialog from the Deck menu', () => {
     expect(fixture.nativeElement.querySelector('deck-selector')).toBeNull();
     openMenu('.deck-menu-btn');
@@ -371,6 +388,9 @@ describe('TableComponent', () => {
     component.closeMenus();
     fixture.detectChanges();
 
+    // Pin the shuffle to identity so the disturbed card returns to the same slot on re-load.
+    vi.spyOn(component as unknown as { shuffle(items: TableDeckCard[]): TableDeckCard[] }, 'shuffle')
+      .mockImplementation((items) => items);
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(100);
     component.onDeckSelected(deck([card(1), card(2), card(3)]));
@@ -390,5 +410,51 @@ describe('TableComponent', () => {
     const c0 = component.cards()[0];
     expect(c0.id).toBe(movedId);
     expect(c0).toMatchObject({ x: 5, y: 7, rotation: 0, flipped: false });
+  });
+
+  it('openCardInfo sets infoCardId and infoCard resolves to that card', () => {
+    component.loadDeck(deck([card(1), card(2)]));
+    const target = component.cards()[1];
+    component.openCardInfo(target.id);
+    expect(component.infoCardId()).toBe(target.id);
+    expect(component.infoCard()!.id).toBe(target.id);
+  });
+
+  it('renders card-info-dialog while a card info is open and closing clears it', () => {
+    component.loadDeck(deck([card(1)]));
+    expect(fixture.nativeElement.querySelector('card-info-dialog')).toBeNull();
+    component.openCardInfo(component.cards()[0].id);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('card-info-dialog')).not.toBeNull();
+    (fixture.nativeElement.querySelector('card-info-dialog .dialog-backdrop') as HTMLElement).click();
+    fixture.detectChanges();
+    expect(component.infoCardId()).toBeNull();
+    expect(fixture.nativeElement.querySelector('card-info-dialog')).toBeNull();
+  });
+
+  it("the info dialog renders the selected card's picture, title and description through the table wiring", () => {
+    const distinctCard: Card = {
+      id: 42,
+      title: 'The Moon',
+      description: 'A card of illusion and intuition.',
+      imageUrl: '/images/moon.png',
+      createdAt: '',
+      deckId: 7,
+    };
+    component.loadDeck(deck([distinctCard]));
+    component.openCardInfo(component.cards()[0].id);
+    fixture.detectChanges();
+
+    const dialog = fixture.nativeElement.querySelector('card-info-dialog') as HTMLElement;
+    const img = dialog.querySelector('.card-info-img') as HTMLImageElement;
+    const title = dialog.querySelector('.card-info-title') as HTMLElement;
+    const description = dialog.querySelector('.card-info-description') as HTMLElement;
+
+    expect(img.src.endsWith(distinctCard.imageUrl)).toBe(true);
+    expect(title.textContent).toContain(distinctCard.title);
+    expect(description.textContent).toContain(distinctCard.description);
+    // and cross-check they didn't land in each other's slot (would catch a swapped binding)
+    expect(title.textContent).not.toContain(distinctCard.description);
+    expect(description.textContent).not.toContain(distinctCard.title);
   });
 });

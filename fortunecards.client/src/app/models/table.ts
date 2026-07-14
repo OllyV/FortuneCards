@@ -24,6 +24,10 @@ export interface TableDeckCard extends TableItemBase {
   frontImageUrl: string;
   /** Deck back image; null → render the deck gradient instead. */
   backImageUrl: string | null;
+  /** Card title, shown in the info dialog. */
+  title: string;
+  /** Card description, shown in the info dialog. */
+  description: string;
   /** Reserved for the deferred manual-pick link to a pattern slot; unused for now. */
   patternId?: string;
 }

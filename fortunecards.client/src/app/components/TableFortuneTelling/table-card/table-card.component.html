@@ -25,4 +25,7 @@
   @if (selected()) {
     <div class="rotate-handle" title="Drag to rotate" (pointerdown)="onRotateStart($event)">⤾</div>
   }
+  @if (selected() && card().flipped) {
+    <div class="info-handle" title="Card info" (pointerdown)="onInfoClick($event)">ⓘ</div>
+  }
 </div>
