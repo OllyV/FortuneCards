@@ -30,6 +30,7 @@
         (cardFlip)="flipCard(card.id)"
         (cardMove)="moveCard(card.id, $event)"
         (cardRotate)="rotateCard(card.id, $event)"
+        (cardInfo)="openCardInfo(card.id)"
       />
     }
   </div>
@@ -93,5 +94,14 @@
   <deck-selector
     (deckSelected)="onDeckSelected($event)"
     (closed)="deckSelectorOpen.set(false)"
+  />
+}
+
+@if (infoCard(); as info) {
+  <card-info-dialog
+    [imageUrl]="info.frontImageUrl"
+    [title]="info.title"
+    [description]="info.description"
+    (closed)="infoCardId.set(null)"
   />
 }

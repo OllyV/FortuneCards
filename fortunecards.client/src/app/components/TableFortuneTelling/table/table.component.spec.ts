@@ -398,4 +398,24 @@ describe('TableComponent', () => {
     expect(c0.id).toBe(movedId);
     expect(c0).toMatchObject({ x: 5, y: 7, rotation: 0, flipped: false });
   });
+
+  it('openCardInfo sets infoCardId and infoCard resolves to that card', () => {
+    component.loadDeck(deck([card(1), card(2)]));
+    const target = component.cards()[1];
+    component.openCardInfo(target.id);
+    expect(component.infoCardId()).toBe(target.id);
+    expect(component.infoCard()!.id).toBe(target.id);
+  });
+
+  it('renders card-info-dialog while a card info is open and closing clears it', () => {
+    component.loadDeck(deck([card(1)]));
+    expect(fixture.nativeElement.querySelector('card-info-dialog')).toBeNull();
+    component.openCardInfo(component.cards()[0].id);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('card-info-dialog')).not.toBeNull();
+    (fixture.nativeElement.querySelector('card-info-dialog .dialog-backdrop') as HTMLElement).click();
+    fixture.detectChanges();
+    expect(component.infoCardId()).toBeNull();
+    expect(fixture.nativeElement.querySelector('card-info-dialog')).toBeNull();
+  });
 });
