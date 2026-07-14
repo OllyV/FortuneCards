@@ -418,4 +418,30 @@ describe('TableComponent', () => {
     expect(component.infoCardId()).toBeNull();
     expect(fixture.nativeElement.querySelector('card-info-dialog')).toBeNull();
   });
+
+  it("the info dialog renders the selected card's picture, title and description through the table wiring", () => {
+    const distinctCard: Card = {
+      id: 42,
+      title: 'The Moon',
+      description: 'A card of illusion and intuition.',
+      imageUrl: '/images/moon.png',
+      createdAt: '',
+      deckId: 7,
+    };
+    component.loadDeck(deck([distinctCard]));
+    component.openCardInfo(component.cards()[0].id);
+    fixture.detectChanges();
+
+    const dialog = fixture.nativeElement.querySelector('card-info-dialog') as HTMLElement;
+    const img = dialog.querySelector('.card-info-img') as HTMLImageElement;
+    const title = dialog.querySelector('.card-info-title') as HTMLElement;
+    const description = dialog.querySelector('.card-info-description') as HTMLElement;
+
+    expect(img.src.endsWith(distinctCard.imageUrl)).toBe(true);
+    expect(title.textContent).toContain(distinctCard.title);
+    expect(description.textContent).toContain(distinctCard.description);
+    // and cross-check they didn't land in each other's slot (would catch a swapped binding)
+    expect(title.textContent).not.toContain(distinctCard.description);
+    expect(description.textContent).not.toContain(distinctCard.title);
+  });
 });
