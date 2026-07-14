@@ -23,7 +23,7 @@
 
 .card-info-body {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 20px;
   align-items: flex-start;
 }
@@ -41,6 +41,7 @@
 .card-info-text {
   flex: 1 1 240px;
   min-width: 0;
+  text-align: left;
 }
 
 .card-info-title {
