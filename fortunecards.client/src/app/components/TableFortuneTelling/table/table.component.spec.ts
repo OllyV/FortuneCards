@@ -36,6 +36,7 @@ describe('TableComponent', () => {
       kind: 'deck', id: 'c1', x: 0, y: 0, rotation: 0, flipped: false,
       deckId: 1, cardId: 1, colorIndex: 0,
       frontImageUrl: '/images/front.png', backImageUrl: '/images/back.png',
+      title: 'The Sun', description: 'A bright card.',
       ...overrides,
     };
   }
@@ -345,6 +346,12 @@ describe('TableComponent', () => {
     expect(component.cards()).toEqual([]);
     expect(component.patternCards().length).toBe(1);
     expect(component.patternCards()[0].y).toBe(5);
+  });
+
+  it('loadDeck carries the card title and description onto the table cards', () => {
+    component.loadDeck(deck([card(1), card(2)]));
+    expect(component.cards().map((c) => c.title)).toEqual(['t1', 't2']);
+    expect(component.cards().every((c) => c.description === '')).toBe(true);
   });
 
   it('opens the deck-selector dialog from the Deck menu', () => {

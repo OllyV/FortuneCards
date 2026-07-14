@@ -138,6 +138,8 @@ export class TableComponent implements AfterViewInit {
       colorIndex: deck.colorIndex,
       frontImageUrl: card.imageUrl,
       backImageUrl: deck.cardBackImageUrl,
+      title: card.title,
+      description: card.description,
     }));
     this.placeCards(cards);
   }
