@@ -21,6 +21,7 @@ export class TableCardComponent {
   readonly cardMove = output<{ x: number; y: number }>();
   /** New absolute rotation in degrees; parent is responsible for normalizing. */
   readonly cardRotate = output<number>();
+  readonly cardInfo = output<void>();
 
   readonly leftPx = computed(() => (this.card().x / 100) * this.tableWidthPx());
   readonly topPx = computed(() => (this.card().y / 100) * this.tableWidthPx());
@@ -78,6 +79,11 @@ export class TableCardComponent {
     this.startAngle = this.pointerAngle(event);
     this.startRotation = this.card().rotation;
     (event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
+  }
+
+  onInfoClick(event: PointerEvent): void {
+    event.stopPropagation();
+    this.cardInfo.emit();
   }
 
   private pointerAngle(event: PointerEvent): number {
