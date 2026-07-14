@@ -22,5 +22,6 @@ The development by days:
 - Day 10: Split table-cards for deck cards and pattern. Move from NgModules to standalone components.
 - Day 11: Make deck loading on table.
 - Day 12: Work on table cards behaviour, add table dropdown menus.
+- Day 13: Table card info and deck place in random order
 
 It can: create decks of cards with image and description. Randomly pull out one card.
