@@ -36,6 +36,14 @@ export class TableComponent implements AfterViewInit {
   readonly patternCards = signal<TablePatternCard[]>([]);
   readonly patternsLocked = signal(false);
   readonly selectedCardId = signal<string | null>(null);
+  /** `order` of the pattern card whose question is being asked; null = not running. */
+  readonly fortuneStepOrder = signal<number | null>(null);
+  readonly fortuneActive = computed(() => this.fortuneStepOrder() !== null);
+  readonly activePatternId = computed(() => {
+    const step = this.fortuneStepOrder();
+    if (step === null) return null;
+    return this.patternCards().find((p) => p.order === step)?.id ?? null;
+  });
   readonly infoCardId = signal<string | null>(null);
   readonly infoCard = computed(() => this.cards().find((c) => c.id === this.infoCardId()) ?? null);
 
@@ -280,5 +288,45 @@ export class TableComponent implements AfterViewInit {
   reloadDeck(): void {
     this.closeMenus();
     this.placeCards(this.cards());
+  }
+
+  startFortuneTelling(): void {
+    this.closeMenus();
+    if (this.patternCards().length === 0) return;
+    // 1) block the pattern (locks + sends the slots behind the deck cards)
+    if (!this.patternsLocked()) this.toggleLockPattern();
+    // lift the pattern so its topmost card sits at y = 5
+    const minY = this.patternCards().reduce((min, c) => Math.min(min, c.y), Infinity);
+    const shift = minY - 5;
+    if (shift !== 0) {
+      this.patternCards.update((cards) => cards.map((c) => ({ ...c, y: c.y - shift })));
+    }
+    // 2) re-load the deck (shuffles, deals on top, pushes the pattern below, clears patternText)
+    this.placeCards(this.cards());
+    // 3) start asking from the first question
+    this.fortuneStepOrder.set(1);
+  }
+
+  pickCard(id: string): void {
+    const step = this.fortuneStepOrder();
+    if (step === null) return;
+    const target = this.patternCards().find((p) => p.order === step);
+    if (!target) return;
+    const z = this.nextZ++;
+    this.cards.update((cards) =>
+      cards.map((c) =>
+        c.id === id
+          ? { ...c, x: target.x, y: target.y, z, flipped: true, patternText: `${target.order}. ${target.text}` }
+          : c
+      )
+    );
+    this.advanceFortune();
+  }
+
+  /** Move to the next question, or end when the pattern is finished or the deck is exhausted. */
+  private advanceFortune(): void {
+    const next = (this.fortuneStepOrder() ?? 0) + 1;
+    const maxOrder = this.patternCards().reduce((max, c) => Math.max(max, c.order), 0);
+    this.fortuneStepOrder.set(next > maxOrder || next > this.cards().length ? null : next);
   }
 }

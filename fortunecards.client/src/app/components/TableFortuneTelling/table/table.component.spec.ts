@@ -483,4 +483,88 @@ describe('TableComponent', () => {
     component.reloadDeck();
     expect(component.cards().every((c) => c.patternText === undefined)).toBe(true);
   });
+
+  describe('fortune-telling', () => {
+    beforeEach(() => {
+      component.cards.set([]); // drop the seeded single card
+      component.tableWidthPx.set(1000);
+      component.tableHeightPercent.set(100);
+      // deterministic deck order so placement is assertable
+      vi.spyOn(component as unknown as { shuffle(items: TableDeckCard[]): TableDeckCard[] }, 'shuffle')
+        .mockImplementation((items) => items);
+    });
+
+    it('start locks the pattern, reloads the deck (clearing patternText) and asks order 1', () => {
+      component.addPatternCard(); // order 1
+      component.addPatternCard(); // order 2
+      component.loadDeck(deck([card(1), card(2), card(3)]));
+
+      component.startFortuneTelling();
+
+      expect(component.patternsLocked()).toBe(true);
+      expect(component.fortuneStepOrder()).toBe(1);
+      expect(component.fortuneActive()).toBe(true);
+      const active = component.patternCards().find((p) => p.id === component.activePatternId());
+      expect(active!.order).toBe(1);
+      expect(component.cards().every((c) => c.patternText === undefined)).toBe(true);
+    });
+
+    it('start lifts the topmost pattern card to y=5 before dealing the deck', () => {
+      component.addPatternCard();
+      component.addPatternCard();
+      // move both patterns down so the lift is observable
+      component.patternCards.update((cards) => cards.map((c) => ({ ...c, y: c.y + 30 })));
+      // stub placeCards so it doesn't push the pattern back down after the lift
+      vi.spyOn(component as unknown as { placeCards(cards: TableDeckCard[]): void }, 'placeCards')
+        .mockImplementation(() => {});
+
+      component.startFortuneTelling();
+
+      const minY = Math.min(...component.patternCards().map((p) => p.y));
+      expect(minY).toBe(5);
+    });
+
+    it('pickCard deals the chosen card onto the active pattern slot, flips it, stamps patternText and advances', () => {
+      component.addPatternCard(); // order 1
+      component.addPatternCard(); // order 2
+      component.setPatternText(component.patternCards()[0].id, 'Position 1');
+      component.loadDeck(deck([card(1), card(2), card(3)]));
+      component.startFortuneTelling();
+
+      const slot1 = component.patternCards().find((p) => p.id === component.activePatternId())!;
+      const chosen = component.cards()[0];
+      component.pickCard(chosen.id);
+
+      const placed = component.cards().find((c) => c.id === chosen.id)!;
+      expect(placed).toMatchObject({ x: slot1.x, y: slot1.y, flipped: true, patternText: '1. Position 1' });
+      // it comes to the front
+      expect(placed.z!).toBeGreaterThanOrEqual(Math.max(...component.cards().map((c) => c.z ?? 0)));
+      // and the next question is now asked
+      expect(component.fortuneStepOrder()).toBe(2);
+    });
+
+    it('ends when the last pattern card is filled', () => {
+      component.addPatternCard(); // order 1
+      component.addPatternCard(); // order 2
+      component.loadDeck(deck([card(1), card(2), card(3)]));
+      component.startFortuneTelling();
+
+      component.pickCard(component.cards()[0].id); // fills order 1 → step 2
+      component.pickCard(component.cards()[1].id); // fills order 2 → done
+      expect(component.fortuneStepOrder()).toBeNull();
+      expect(component.fortuneActive()).toBe(false);
+    });
+
+    it('ends when the deck is exhausted before all pattern cards are filled', () => {
+      component.addPatternCard(); // order 1
+      component.addPatternCard(); // order 2
+      component.addPatternCard(); // order 3
+      component.loadDeck(deck([card(1), card(2)])); // only two cards
+      component.startFortuneTelling();
+
+      component.pickCard(component.cards()[0].id); // step → 2
+      component.pickCard(component.cards()[1].id); // deck exhausted → done, order 3 never asked
+      expect(component.fortuneStepOrder()).toBeNull();
+    });
+  });
 });
