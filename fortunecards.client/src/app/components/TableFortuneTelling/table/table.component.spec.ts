@@ -567,4 +567,59 @@ describe('TableComponent', () => {
       expect(component.fortuneStepOrder()).toBeNull();
     });
   });
+
+  it('the Pattern menu starts fortune-telling and the item is disabled with no pattern cards', () => {
+    component.cards.set([]);
+    fixture.detectChanges();
+    openMenu('.pattern-menu-btn');
+    const startItem = fixture.nativeElement.querySelector('.start-fortune-item') as HTMLButtonElement;
+    expect(startItem.disabled).toBe(true); // no pattern cards yet
+    component.closeMenus();
+    fixture.detectChanges();
+
+    component.addPatternCard();
+    component.loadDeck(deck([card(1), card(2)]));
+    openMenu('.pattern-menu-btn');
+    (fixture.nativeElement.querySelector('.start-fortune-item') as HTMLButtonElement).click();
+    expect(component.fortuneActive()).toBe(true);
+  });
+
+  it('blocks the Deck and Pattern menu buttons while fortune-telling is active', () => {
+    component.addPatternCard();
+    component.loadDeck(deck([card(1), card(2)]));
+    component.startFortuneTelling();
+    fixture.detectChanges();
+    expect((fixture.nativeElement.querySelector('.deck-menu-btn') as HTMLButtonElement).disabled).toBe(true);
+    expect((fixture.nativeElement.querySelector('.pattern-menu-btn') as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it('a face-down deck card is click-to-place while active and places onto the active slot', () => {
+    vi.spyOn(component as unknown as { shuffle(items: TableDeckCard[]): TableDeckCard[] }, 'shuffle')
+      .mockImplementation((items) => items);
+    component.addPatternCard();
+    component.setPatternText(component.patternCards()[0].id, 'Position 1');
+    component.loadDeck(deck([card(1), card(2)]));
+    component.startFortuneTelling();
+    fixture.detectChanges();
+
+    // the first table-card is in pick mode; a pointerdown places it (no drag)
+    const firstCardEl = fixture.nativeElement.querySelector('table-card .table-card') as HTMLElement;
+    firstCardEl.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 10, clientY: 10 }));
+    const placed = component.cards().find((c) => c.patternText === '1. Position 1');
+    expect(placed).toBeDefined();
+    expect(placed!.flipped).toBe(true);
+  });
+
+  it('marks the active pattern card and dims the rest while running', () => {
+    component.addPatternCard(); // order 1
+    component.addPatternCard(); // order 2
+    component.loadDeck(deck([card(1), card(2)]));
+    component.startFortuneTelling();
+    fixture.detectChanges();
+    const patternEls: NodeListOf<Element> = fixture.nativeElement.querySelectorAll('table-pattern-card .table-pattern-card');
+    const activeCount = Array.from(patternEls).filter((el: Element) => el.classList.contains('active')).length;
+    const dimmedCount = Array.from(patternEls).filter((el: Element) => el.classList.contains('dimmed')).length;
+    expect(activeCount).toBe(1);
+    expect(dimmedCount).toBe(1);
+  });
 });
