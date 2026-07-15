@@ -95,4 +95,19 @@ describe('TablePatternCardComponent', () => {
     expect(selected).not.toHaveBeenCalled();
     expect(moved).not.toHaveBeenCalled();
   });
+
+  it('applies the active class when active and the dimmed class when dimmed', async () => {
+    await setup();
+    expect(root().classList.contains('active')).toBe(false);
+    expect(root().classList.contains('dimmed')).toBe(false);
+
+    fixture.componentRef.setInput('active', true);
+    fixture.detectChanges();
+    expect(root().classList.contains('active')).toBe(true);
+
+    fixture.componentRef.setInput('active', false);
+    fixture.componentRef.setInput('dimmed', true);
+    fixture.detectChanges();
+    expect(root().classList.contains('dimmed')).toBe(true);
+  });
 });

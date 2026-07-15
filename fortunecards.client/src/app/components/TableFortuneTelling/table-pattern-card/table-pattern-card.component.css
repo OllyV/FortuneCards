@@ -77,3 +77,18 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
   font-size: 14px;
 }
+
+.table-pattern-card.dimmed {
+  opacity: 0.4;
+}
+
+.table-pattern-card.active {
+  opacity: 1;
+}
+
+.table-pattern-card.active .pattern-face {
+  border-color: #ffd76a;
+  box-shadow:
+    0 0 0 3px rgba(255, 215, 106, 0.9),
+    0 0 18px 6px rgba(255, 215, 106, 0.6);
+}
