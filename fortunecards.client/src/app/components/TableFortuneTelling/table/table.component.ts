@@ -207,7 +207,13 @@ export class TableComponent implements AfterViewInit {
   toggleLockPattern(): void {
     const locked = !this.patternsLocked();
     this.patternsLocked.set(locked);
-    this.patternCards.update((cards) => cards.map((c) => ({ ...c, locked })));
+    // Send the pattern cards behind every deck card — they act as background slots the
+    // deck cards get dealt onto — while keeping their relative stacking order among themselves.
+    const minCardZ = this.cards().reduce((min, c) => Math.min(min, c.z ?? 0), 0);
+    const ordered = [...this.patternCards()].sort((a, b) => (a.z ?? 0) - (b.z ?? 0));
+    const baseZ = minCardZ - ordered.length;
+    const zById = new Map(ordered.map((c, i) => [c.id, baseZ + i]));
+    this.patternCards.update((cards) => cards.map((c) => ({ ...c, locked, z: zById.get(c.id) })));
   }
 
   movePatternCard(id: string, pos: { x: number; y: number }): void {

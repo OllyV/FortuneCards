@@ -206,6 +206,22 @@ describe('TableComponent', () => {
     expect(component.patternCards().every((p) => !p.locked)).toBe(true);
   });
 
+  it('toggleLockPattern sends pattern cards behind the deck cards, keeping their relative order', () => {
+    component.cards.set([makeDeckCard({ id: 'd1', z: 0 }), makeDeckCard({ id: 'd2', z: 3 })]);
+    component.addPatternCard();
+    component.addPatternCard();
+    const [p1, p2] = component.patternCards();
+    component.selectCard(p1.id); // p1 gets a z
+    component.selectCard(p2.id); // p2 ends up in front of p1
+    component.toggleLockPattern();
+    const patterns = component.patternCards();
+    const minDeckZ = Math.min(...component.cards().map((c) => c.z ?? 0));
+    expect(patterns.every((p) => (p.z ?? 0) < minDeckZ)).toBe(true);
+    const zp1 = patterns.find((p) => p.id === p1.id)!.z!;
+    const zp2 = patterns.find((p) => p.id === p2.id)!.z!;
+    expect(zp2).toBeGreaterThan(zp1); // relative order preserved
+  });
+
   it('movePatternCard clamps inside the table and is a no-op when locked', () => {
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(60);
