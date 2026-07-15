@@ -14,6 +14,8 @@
         [widthPercent]="cardSizePercent()"
         [tableWidthPx]="tableWidthPx()"
         [selected]="selectedCardId() === pattern.id"
+        [active]="activePatternId() === pattern.id"
+        [dimmed]="fortuneActive() && activePatternId() !== pattern.id"
         (cardSelect)="selectCard(pattern.id)"
         (cardMove)="movePatternCard(pattern.id, $event)"
         (cardRotate)="rotatePatternCard(pattern.id, $event)"
@@ -26,11 +28,13 @@
         [widthPercent]="cardSizePercent()"
         [tableWidthPx]="tableWidthPx()"
         [selected]="selectedCardId() === card.id"
+        [pickMode]="fortuneActive() && !card.patternText"
         (cardSelect)="selectCard(card.id)"
         (cardFlip)="flipCard(card.id)"
         (cardMove)="moveCard(card.id, $event)"
         (cardRotate)="rotateCard(card.id, $event)"
         (cardInfo)="openCardInfo(card.id)"
+        (cardPick)="pickCard(card.id)"
       />
     }
   </div>
@@ -49,6 +53,7 @@
         type="button"
         aria-haspopup="menu"
         [attr.aria-expanded]="deckMenuOpen()"
+        [disabled]="fortuneActive()"
         (click)="toggleDeckMenu()"
         (keydown.escape)="closeMenus()"
       >Deck ▾</button>
@@ -65,6 +70,7 @@
         type="button"
         aria-haspopup="menu"
         [attr.aria-expanded]="patternMenuOpen()"
+        [disabled]="fortuneActive()"
         (click)="togglePatternMenu()"
         (keydown.escape)="closeMenus()"
       >Pattern ▾</button>
@@ -73,6 +79,9 @@
           <button class="dropdown-item add-pattern-item" type="button" (click)="closeMenus(); addPatternCard()">Add pattern card</button>
           <button class="dropdown-item lock-pattern-item" type="button" (click)="closeMenus(); toggleLockPattern()">
             {{ patternsLocked() ? 'Unlock pattern' : 'Lock pattern' }}
+          </button>
+          <button class="dropdown-item start-fortune-item" type="button" [disabled]="patternCards().length === 0 || cards().length === 0" (click)="closeMenus(); startFortuneTelling()">
+            Start fortune-telling
           </button>
         </div>
       }

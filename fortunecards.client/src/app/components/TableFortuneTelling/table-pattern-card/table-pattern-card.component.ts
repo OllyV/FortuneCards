@@ -13,6 +13,8 @@ export class TablePatternCardComponent {
   readonly widthPercent = input.required<number>();
   readonly tableWidthPx = input.required<number>();
   readonly selected = input(false);
+  readonly active = input(false);
+  readonly dimmed = input(false);
 
   readonly cardSelect = output<void>();
   /** New top-left in % of table width; parent is responsible for clamping. */

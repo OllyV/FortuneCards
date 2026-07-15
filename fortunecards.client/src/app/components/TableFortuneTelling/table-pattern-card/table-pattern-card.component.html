@@ -2,6 +2,8 @@
   class="table-pattern-card"
   [class.selected]="selected()"
   [class.locked]="card().locked"
+  [class.active]="active()"
+  [class.dimmed]="dimmed()"
   [style.left.px]="leftPx()"
   [style.top.px]="topPx()"
   [style.width.px]="widthPx()"

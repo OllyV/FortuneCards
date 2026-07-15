@@ -14,6 +14,7 @@ export class TableCardComponent {
   readonly widthPercent = input.required<number>();
   readonly tableWidthPx = input.required<number>();
   readonly selected = input(false);
+  readonly pickMode = input(false);
 
   readonly cardSelect = output<void>();
   readonly cardFlip = output<void>();
@@ -22,6 +23,7 @@ export class TableCardComponent {
   /** New absolute rotation in degrees; parent is responsible for normalizing. */
   readonly cardRotate = output<number>();
   readonly cardInfo = output<void>();
+  readonly cardPick = output<void>();
 
   readonly leftPx = computed(() => (this.card().x / 100) * this.tableWidthPx());
   readonly topPx = computed(() => (this.card().y / 100) * this.tableWidthPx());
@@ -42,6 +44,10 @@ export class TableCardComponent {
   private startRotation = 0;
 
   onPointerDown(event: PointerEvent): void {
+    if (this.pickMode()) {
+      this.cardPick.emit();
+      return;
+    }
     this.cardSelect.emit();
     this.dragging = true;
     this.startPointerX = event.clientX;

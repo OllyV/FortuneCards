@@ -206,6 +206,22 @@ describe('TableComponent', () => {
     expect(component.patternCards().every((p) => !p.locked)).toBe(true);
   });
 
+  it('toggleLockPattern sends pattern cards behind the deck cards, keeping their relative order', () => {
+    component.cards.set([makeDeckCard({ id: 'd1', z: 0 }), makeDeckCard({ id: 'd2', z: 3 })]);
+    component.addPatternCard();
+    component.addPatternCard();
+    const [p1, p2] = component.patternCards();
+    component.selectCard(p1.id); // p1 gets a z
+    component.selectCard(p2.id); // p2 ends up in front of p1
+    component.toggleLockPattern();
+    const patterns = component.patternCards();
+    const minDeckZ = Math.min(...component.cards().map((c) => c.z ?? 0));
+    expect(patterns.every((p) => (p.z ?? 0) < minDeckZ)).toBe(true);
+    const zp1 = patterns.find((p) => p.id === p1.id)!.z!;
+    const zp2 = patterns.find((p) => p.id === p2.id)!.z!;
+    expect(zp2).toBeGreaterThan(zp1); // relative order preserved
+  });
+
   it('movePatternCard clamps inside the table and is a no-op when locked', () => {
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(60);
@@ -456,5 +472,179 @@ describe('TableComponent', () => {
     // and cross-check they didn't land in each other's slot (would catch a swapped binding)
     expect(title.textContent).not.toContain(distinctCard.description);
     expect(description.textContent).not.toContain(distinctCard.title);
+  });
+
+  it('placeCards clears patternText on every deck card when the deck is re-loaded', () => {
+    component.loadDeck(deck([card(1), card(2)]));
+    // simulate a prior reading having stamped a card
+    component.cards.update((cards) =>
+      cards.map((c, i) => (i === 0 ? { ...c, patternText: '1. Position 1' } : c))
+    );
+    component.reloadDeck();
+    expect(component.cards().every((c) => c.patternText === undefined)).toBe(true);
+  });
+
+  describe('fortune-telling', () => {
+    beforeEach(() => {
+      component.cards.set([]); // drop the seeded single card
+      component.tableWidthPx.set(1000);
+      component.tableHeightPercent.set(100);
+      // deterministic deck order so placement is assertable
+      vi.spyOn(component as unknown as { shuffle(items: TableDeckCard[]): TableDeckCard[] }, 'shuffle')
+        .mockImplementation((items) => items);
+    });
+
+    it('start locks the pattern, reloads the deck (clearing patternText) and asks order 1', () => {
+      component.addPatternCard(); // order 1
+      component.addPatternCard(); // order 2
+      component.loadDeck(deck([card(1), card(2), card(3)]));
+
+      component.startFortuneTelling();
+
+      expect(component.patternsLocked()).toBe(true);
+      expect(component.fortuneStepOrder()).toBe(1);
+      expect(component.fortuneActive()).toBe(true);
+      const active = component.patternCards().find((p) => p.id === component.activePatternId());
+      expect(active!.order).toBe(1);
+      expect(component.cards().every((c) => c.patternText === undefined)).toBe(true);
+    });
+
+    it('start lifts the topmost pattern card to y=5 before dealing the deck', () => {
+      component.addPatternCard();
+      component.addPatternCard();
+      component.loadDeck(deck([card(1), card(2)]));
+      // move both patterns down so the lift is observable
+      component.patternCards.update((cards) => cards.map((c) => ({ ...c, y: c.y + 30 })));
+      // stub placeCards so it doesn't push the pattern back down after the lift
+      vi.spyOn(component as unknown as { placeCards(cards: TableDeckCard[]): void }, 'placeCards')
+        .mockImplementation(() => {});
+
+      component.startFortuneTelling();
+
+      const minY = Math.min(...component.patternCards().map((p) => p.y));
+      expect(minY).toBe(5);
+    });
+
+    it('pickCard deals the chosen card onto the active pattern slot, flips it, stamps patternText and advances', () => {
+      component.addPatternCard(); // order 1
+      component.addPatternCard(); // order 2
+      component.setPatternText(component.patternCards()[0].id, 'Position 1');
+      component.loadDeck(deck([card(1), card(2), card(3)]));
+      component.startFortuneTelling();
+
+      const slot1 = component.patternCards().find((p) => p.id === component.activePatternId())!;
+      const chosen = component.cards()[0];
+      component.pickCard(chosen.id);
+
+      const placed = component.cards().find((c) => c.id === chosen.id)!;
+      expect(placed).toMatchObject({ x: slot1.x, y: slot1.y, flipped: true, patternText: '1. Position 1' });
+      // it comes to the front
+      expect(placed.z!).toBeGreaterThanOrEqual(Math.max(...component.cards().map((c) => c.z ?? 0)));
+      // and the next question is now asked
+      expect(component.fortuneStepOrder()).toBe(2);
+    });
+
+    it('ends when the last pattern card is filled', () => {
+      component.addPatternCard(); // order 1
+      component.addPatternCard(); // order 2
+      component.loadDeck(deck([card(1), card(2), card(3)]));
+      component.startFortuneTelling();
+
+      component.pickCard(component.cards()[0].id); // fills order 1 → step 2
+      component.pickCard(component.cards()[1].id); // fills order 2 → done
+      expect(component.fortuneStepOrder()).toBeNull();
+      expect(component.fortuneActive()).toBe(false);
+    });
+
+    it('ends when the deck is exhausted before all pattern cards are filled', () => {
+      component.addPatternCard(); // order 1
+      component.addPatternCard(); // order 2
+      component.addPatternCard(); // order 3
+      component.loadDeck(deck([card(1), card(2)])); // only two cards
+      component.startFortuneTelling();
+
+      component.pickCard(component.cards()[0].id); // step → 2
+      component.pickCard(component.cards()[1].id); // deck exhausted → done, order 3 never asked
+      expect(component.fortuneStepOrder()).toBeNull();
+    });
+
+    it('does not activate when pattern cards exist but no deck is loaded', () => {
+      component.addPatternCard();
+      component.cards.set([]);
+      component.startFortuneTelling();
+      expect(component.fortuneActive()).toBe(false);
+      expect(component.fortuneStepOrder()).toBeNull();
+    });
+  });
+
+  it('the Pattern menu starts fortune-telling and the item is disabled with no pattern cards', () => {
+    component.cards.set([]);
+    fixture.detectChanges();
+    openMenu('.pattern-menu-btn');
+    const startItem = fixture.nativeElement.querySelector('.start-fortune-item') as HTMLButtonElement;
+    expect(startItem.disabled).toBe(true); // no pattern cards yet
+    component.closeMenus();
+    fixture.detectChanges();
+
+    component.addPatternCard();
+    component.loadDeck(deck([card(1), card(2)]));
+    openMenu('.pattern-menu-btn');
+    (fixture.nativeElement.querySelector('.start-fortune-item') as HTMLButtonElement).click();
+    expect(component.fortuneActive()).toBe(true);
+  });
+
+  it('the start-fortune-item is disabled when pattern cards exist but no deck is loaded, and enables once a deck loads', () => {
+    component.addPatternCard();
+    component.cards.set([]);
+    fixture.detectChanges();
+    openMenu('.pattern-menu-btn');
+    let startItem = fixture.nativeElement.querySelector('.start-fortune-item') as HTMLButtonElement;
+    expect(startItem.disabled).toBe(true); // pattern cards present, but no deck
+    component.closeMenus();
+    fixture.detectChanges();
+
+    component.loadDeck(deck([card(1), card(2)]));
+    openMenu('.pattern-menu-btn');
+    startItem = fixture.nativeElement.querySelector('.start-fortune-item') as HTMLButtonElement;
+    expect(startItem.disabled).toBe(false);
+  });
+
+  it('blocks the Deck and Pattern menu buttons while fortune-telling is active', () => {
+    component.addPatternCard();
+    component.loadDeck(deck([card(1), card(2)]));
+    component.startFortuneTelling();
+    fixture.detectChanges();
+    expect((fixture.nativeElement.querySelector('.deck-menu-btn') as HTMLButtonElement).disabled).toBe(true);
+    expect((fixture.nativeElement.querySelector('.pattern-menu-btn') as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it('a face-down deck card is click-to-place while active and places onto the active slot', () => {
+    vi.spyOn(component as unknown as { shuffle(items: TableDeckCard[]): TableDeckCard[] }, 'shuffle')
+      .mockImplementation((items) => items);
+    component.addPatternCard();
+    component.setPatternText(component.patternCards()[0].id, 'Position 1');
+    component.loadDeck(deck([card(1), card(2)]));
+    component.startFortuneTelling();
+    fixture.detectChanges();
+
+    // the first table-card is in pick mode; a pointerdown places it (no drag)
+    const firstCardEl = fixture.nativeElement.querySelector('table-card .table-card') as HTMLElement;
+    firstCardEl.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 10, clientY: 10 }));
+    const placed = component.cards().find((c) => c.patternText === '1. Position 1');
+    expect(placed).toBeDefined();
+    expect(placed!.flipped).toBe(true);
+  });
+
+  it('marks the active pattern card and dims the rest while running', () => {
+    component.addPatternCard(); // order 1
+    component.addPatternCard(); // order 2
+    component.loadDeck(deck([card(1), card(2)]));
+    component.startFortuneTelling();
+    fixture.detectChanges();
+    const patternEls: NodeListOf<Element> = fixture.nativeElement.querySelectorAll('table-pattern-card .table-pattern-card');
+    const activeCount = Array.from(patternEls).filter((el: Element) => el.classList.contains('active')).length;
+    const dimmedCount = Array.from(patternEls).filter((el: Element) => el.classList.contains('dimmed')).length;
+    expect(activeCount).toBe(1);
+    expect(dimmedCount).toBe(1);
   });
 });
