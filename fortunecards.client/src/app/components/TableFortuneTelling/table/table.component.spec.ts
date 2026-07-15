@@ -473,4 +473,14 @@ describe('TableComponent', () => {
     expect(title.textContent).not.toContain(distinctCard.description);
     expect(description.textContent).not.toContain(distinctCard.title);
   });
+
+  it('placeCards clears patternText on every deck card when the deck is re-loaded', () => {
+    component.loadDeck(deck([card(1), card(2)]));
+    // simulate a prior reading having stamped a card
+    component.cards.update((cards) =>
+      cards.map((c, i) => (i === 0 ? { ...c, patternText: '1. Position 1' } : c))
+    );
+    component.reloadDeck();
+    expect(component.cards().every((c) => c.patternText === undefined)).toBe(true);
+  });
 });

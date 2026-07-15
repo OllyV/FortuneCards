@@ -184,6 +184,7 @@ export class TableComponent implements AfterViewInit {
       z: i,
       rotation: 0,
       flipped: false,
+      patternText: undefined,
     }));
 
     // Push existing pattern cards below the new deck block so they don't overlap it.

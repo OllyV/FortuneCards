@@ -28,8 +28,12 @@ export interface TableDeckCard extends TableItemBase {
   title: string;
   /** Card description, shown in the info dialog. */
   description: string;
-  /** Reserved for the deferred manual-pick link to a pattern slot; unused for now. */
-  patternId?: string;
+  /**
+   * The answered pattern question this card was dealt onto, as `"{order}. {text}"`
+   * (e.g. "1. Position 1"). Undefined until the card is placed on a pattern slot;
+   * cleared whenever the deck is (re)placed.
+   */
+  patternText?: string;
 }
 
 export interface TablePatternCard extends TableItemBase {
