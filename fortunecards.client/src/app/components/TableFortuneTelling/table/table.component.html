@@ -80,7 +80,7 @@
           <button class="dropdown-item lock-pattern-item" type="button" (click)="closeMenus(); toggleLockPattern()">
             {{ patternsLocked() ? 'Unlock pattern' : 'Lock pattern' }}
           </button>
-          <button class="dropdown-item start-fortune-item" type="button" [disabled]="patternCards().length === 0" (click)="closeMenus(); startFortuneTelling()">
+          <button class="dropdown-item start-fortune-item" type="button" [disabled]="patternCards().length === 0 || cards().length === 0" (click)="closeMenus(); startFortuneTelling()">
             Start fortune-telling
           </button>
         </div>

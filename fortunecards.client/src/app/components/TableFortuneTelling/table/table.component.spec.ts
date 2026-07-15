@@ -512,6 +512,7 @@ describe('TableComponent', () => {
     it('start lifts the topmost pattern card to y=5 before dealing the deck', () => {
       component.addPatternCard();
       component.addPatternCard();
+      component.loadDeck(deck([card(1), card(2)]));
       // move both patterns down so the lift is observable
       component.patternCards.update((cards) => cards.map((c) => ({ ...c, y: c.y + 30 })));
       // stub placeCards so it doesn't push the pattern back down after the lift
@@ -566,6 +567,14 @@ describe('TableComponent', () => {
       component.pickCard(component.cards()[1].id); // deck exhausted → done, order 3 never asked
       expect(component.fortuneStepOrder()).toBeNull();
     });
+
+    it('does not activate when pattern cards exist but no deck is loaded', () => {
+      component.addPatternCard();
+      component.cards.set([]);
+      component.startFortuneTelling();
+      expect(component.fortuneActive()).toBe(false);
+      expect(component.fortuneStepOrder()).toBeNull();
+    });
   });
 
   it('the Pattern menu starts fortune-telling and the item is disabled with no pattern cards', () => {
@@ -582,6 +591,22 @@ describe('TableComponent', () => {
     openMenu('.pattern-menu-btn');
     (fixture.nativeElement.querySelector('.start-fortune-item') as HTMLButtonElement).click();
     expect(component.fortuneActive()).toBe(true);
+  });
+
+  it('the start-fortune-item is disabled when pattern cards exist but no deck is loaded, and enables once a deck loads', () => {
+    component.addPatternCard();
+    component.cards.set([]);
+    fixture.detectChanges();
+    openMenu('.pattern-menu-btn');
+    let startItem = fixture.nativeElement.querySelector('.start-fortune-item') as HTMLButtonElement;
+    expect(startItem.disabled).toBe(true); // pattern cards present, but no deck
+    component.closeMenus();
+    fixture.detectChanges();
+
+    component.loadDeck(deck([card(1), card(2)]));
+    openMenu('.pattern-menu-btn');
+    startItem = fixture.nativeElement.querySelector('.start-fortune-item') as HTMLButtonElement;
+    expect(startItem.disabled).toBe(false);
   });
 
   it('blocks the Deck and Pattern menu buttons while fortune-telling is active', () => {

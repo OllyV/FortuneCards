@@ -292,7 +292,7 @@ export class TableComponent implements AfterViewInit {
 
   startFortuneTelling(): void {
     this.closeMenus();
-    if (this.patternCards().length === 0) return;
+    if (this.patternCards().length === 0 || this.cards().length === 0) return;
     // 1) block the pattern (locks + sends the slots behind the deck cards)
     if (!this.patternsLocked()) this.toggleLockPattern();
     // lift the pattern so its topmost card sits at y = 5
