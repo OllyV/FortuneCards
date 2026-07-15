@@ -171,4 +171,30 @@ describe('TableCardComponent', () => {
     expect(info).toHaveBeenCalledTimes(1);
     expect(moved).not.toHaveBeenCalled();
   });
+
+  it('in pickMode, pointerdown emits cardPick and does not select or drag', () => {
+    fixture.componentRef.setInput('pickMode', true);
+    fixture.detectChanges();
+    const picked = vi.fn();
+    const selected = vi.fn();
+    const moved = vi.fn();
+    fixture.componentInstance.cardPick.subscribe(picked);
+    fixture.componentInstance.cardSelect.subscribe(selected);
+    fixture.componentInstance.cardMove.subscribe(moved);
+    root().dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 500, clientY: 300 }));
+    root().dispatchEvent(new MouseEvent('pointermove', { bubbles: true, clientX: 600, clientY: 350 }));
+    expect(picked).toHaveBeenCalledTimes(1);
+    expect(selected).not.toHaveBeenCalled();
+    expect(moved).not.toHaveBeenCalled();
+  });
+
+  it('without pickMode, pointerdown still selects (no cardPick)', () => {
+    const picked = vi.fn();
+    const selected = vi.fn();
+    fixture.componentInstance.cardPick.subscribe(picked);
+    fixture.componentInstance.cardSelect.subscribe(selected);
+    root().dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 500, clientY: 300 }));
+    expect(picked).not.toHaveBeenCalled();
+    expect(selected).toHaveBeenCalledTimes(1);
+  });
 });
