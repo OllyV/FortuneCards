@@ -51,9 +51,12 @@ question is recorded on the deck card.
      **auto-flips face-up** (`flipped = true`);
    - is assigned `patternText = "{order}. {text}"` of the active pattern card;
    - then `fortuneStepOrder` advances to the next pattern order.
-5. **End** — once the last pattern card is filled (the next order exceeds the
-   maximum pattern `order`), set `fortuneStepOrder = null`. The Deck and Pattern
-   menus re-enable. The pattern stays locked and all placed cards stay in place.
+5. **End** — the process ends when either the last pattern card is filled (the
+   next order exceeds the maximum pattern `order`) **or** the deck is exhausted
+   (`fortuneStepOrder()` exceeds the number of deck cards, i.e. no unplaced card
+   remains to pick). On either, set `fortuneStepOrder = null`. The Deck and
+   Pattern menus re-enable. The pattern stays locked and all placed cards stay
+   in place.
 
 ## Component wiring
 
@@ -84,6 +87,8 @@ question is recorded on the deck card.
   card's position, flips it face-up, sets `patternText` to `"{order}. {text}"`,
   and advances to the next order.
 - **End**: the final pick clears `fortuneStepOrder` and re-enables the menus.
+- **Deck exhaustion**: with fewer deck cards than pattern cards, the process ends
+  once the last deck card is picked, even though pattern slots remain.
 - **placeCards** clears `patternText` on every deck card.
 
 ## Out of scope
@@ -91,4 +96,3 @@ question is recorded on the deck card.
 - Persistence of the reading (deferred with the rest of the table persistence
   work).
 - Undo / re-pick of an already-placed card.
-- Deck-exhaustion handling (decks are far larger than any pattern).
