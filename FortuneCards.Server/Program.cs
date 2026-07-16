@@ -57,7 +57,6 @@ if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("EnableA
 }
 
 app.UseDefaultFiles();
-app.UseStaticFiles();      // serves wwwroot/images/ (runtime-uploaded card images)
 app.MapStaticAssets();     // serves compiled Angular assets with optimized headers
 
 
