@@ -11,13 +11,13 @@ namespace FortuneCards.Server.Services
 
         private readonly FortuneCardsDbContext _db;
         private readonly IMemoryCache _cache;
-        private readonly IWebHostEnvironment _env;
+        private readonly IImageStorage _imageStorage;
 
-        public CardService(FortuneCardsDbContext db, IMemoryCache cache, IWebHostEnvironment env)
+        public CardService(FortuneCardsDbContext db, IMemoryCache cache, IImageStorage imageStorage)
         {
             _db = db;
             _cache = cache;
-            _env = env;
+            _imageStorage = imageStorage;
         }
 
         public async Task<bool> DeleteAsync(int id, int userId)
@@ -28,10 +28,7 @@ namespace FortuneCards.Server.Services
 
             if (card is null || card.Deck?.UserId != userId) return false;
 
-            var filePath = Path.Combine(
-                _env.WebRootPath,
-                card.ImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
-            if (File.Exists(filePath)) File.Delete(filePath);
+            await _imageStorage.DeleteAsync(card.ImageUrl);
 
             var deckId = card.DeckId;
             _db.Cards.Remove(card);
@@ -56,8 +53,8 @@ namespace FortuneCards.Server.Services
 
             if (image is { Length: > 0 })
             {
-                ImageStorage.Delete(_env, card.ImageUrl);
-                card.ImageUrl = await ImageStorage.SaveAsync(_env, image);
+                await _imageStorage.DeleteAsync(card.ImageUrl);
+                card.ImageUrl = await _imageStorage.SaveAsync(image);
             }
 
             await _db.SaveChangesAsync();
