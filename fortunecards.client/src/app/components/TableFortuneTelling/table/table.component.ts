@@ -134,6 +134,7 @@ export class TableComponent implements AfterViewInit {
           text: `Position ${order}`,
           order,
           locked: this.patternsLocked(),
+          z: this.nextZ++, // start on top of everything currently on the table
         },
       ];
     });

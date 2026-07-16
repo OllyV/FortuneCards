@@ -195,6 +195,17 @@ describe('TableComponent', () => {
     expect(patterns.every((p) => p.kind === 'pattern' && !p.locked)).toBe(true);
   });
 
+  it('addPatternCard places the new card on top (frontmost z)', () => {
+    component.cards.set([makeDeckCard({ id: 'd1' })]);
+    component.selectCard('d1'); // brings d1 to the front, giving it the current top z
+    const deckZ = component.cards()[0].z!;
+
+    component.addPatternCard();
+
+    const pattern = component.patternCards()[0];
+    expect(pattern.z).toBeGreaterThan(deckZ);
+  });
+
   it('toggleLockPattern locks then unlocks all pattern cards', () => {
     component.addPatternCard();
     component.addPatternCard();
