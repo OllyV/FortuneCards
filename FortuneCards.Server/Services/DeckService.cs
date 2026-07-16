@@ -13,13 +13,13 @@ namespace FortuneCards.Server.Services
 
         private readonly FortuneCardsDbContext _db;
         private readonly IMemoryCache _cache;
-        private readonly IWebHostEnvironment _env;
+        private readonly IImageStorage _imageStorage;
 
-        public DeckService(FortuneCardsDbContext db, IMemoryCache cache, IWebHostEnvironment env)
+        public DeckService(FortuneCardsDbContext db, IMemoryCache cache, IImageStorage imageStorage)
         {
             _db = db;
             _cache = cache;
-            _env = env;
+            _imageStorage = imageStorage;
         }
 
         public async Task<IEnumerable<DeckSummary>> GetAllAsync(int? userId = null)
@@ -71,7 +71,7 @@ namespace FortuneCards.Server.Services
         {
             string? cardBackImageUrl = null;
             if (cardBackImage is { Length: > 0 })
-                cardBackImageUrl = await ImageStorage.SaveAsync(_env, cardBackImage);
+                cardBackImageUrl = await _imageStorage.SaveAsync(cardBackImage);
 
             var deck = new Deck
             {
@@ -97,7 +97,7 @@ namespace FortuneCards.Server.Services
             if (deck is null || deck.UserId != userId) return false;
 
             if (deck.CardBackImageUrl is not null)
-                DeleteImage(deck.CardBackImageUrl);
+                await _imageStorage.DeleteAsync(deck.CardBackImageUrl);
 
             _db.Decks.Remove(deck);
             await _db.SaveChangesAsync();
@@ -111,18 +111,13 @@ namespace FortuneCards.Server.Services
             var deck = await _db.Decks.FindAsync(deckId);
             if (deck is null || deck.UserId != userId) return null;
 
-            var imagesDir = Path.Combine(_env.WebRootPath, "images");
-            Directory.CreateDirectory(imagesDir);
-            var ext = Path.GetExtension(image.FileName);
-            var fileName = $"{Guid.NewGuid()}{ext}";
-            using (var stream = File.Create(Path.Combine(imagesDir, fileName)))
-                await image.CopyToAsync(stream);
+            var imageUrl = await _imageStorage.SaveAsync(image);
 
             var card = new Card
             {
                 Title = title,
                 Description = description,
-                ImageUrl = $"/images/{fileName}",
+                ImageUrl = imageUrl,
                 DeckId = deckId
             };
             _db.Cards.Add(card);
@@ -147,8 +142,8 @@ namespace FortuneCards.Server.Services
 
             if (cardBackImage is { Length: > 0 })
             {
-                if (deck.CardBackImageUrl is not null) ImageStorage.Delete(_env, deck.CardBackImageUrl);
-                deck.CardBackImageUrl = await ImageStorage.SaveAsync(_env, cardBackImage);
+                if (deck.CardBackImageUrl is not null) await _imageStorage.DeleteAsync(deck.CardBackImageUrl);
+                deck.CardBackImageUrl = await _imageStorage.SaveAsync(cardBackImage);
             }
 
             await _db.SaveChangesAsync();
@@ -156,13 +151,6 @@ namespace FortuneCards.Server.Services
             _cache.Remove(DeckKey(deckId));
 
             return await GetByIdAsync(deckId, userId);
-        }
-
-        private void DeleteImage(string imageUrl)
-        {
-            var fileName = Path.GetFileName(imageUrl);
-            var path = Path.Combine(_env.WebRootPath, "images", fileName);
-            if (File.Exists(path)) File.Delete(path);
         }
     }
 }

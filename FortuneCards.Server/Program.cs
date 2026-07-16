@@ -1,3 +1,5 @@
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using FortuneCards.Server.Data;
 using FortuneCards.Server.Middleware;
 using FortuneCards.Server.Services;
@@ -16,6 +18,20 @@ builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddScoped<IDeckService, DeckService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+var blobConnection = builder.Configuration["BlobStorage:ConnectionString"]
+    ?? throw new InvalidOperationException("BlobStorage:ConnectionString is not configured.");
+var blobContainerName = builder.Configuration["BlobStorage:Container"] ?? "images";
+
+builder.Services.AddSingleton(_ =>
+{
+    var service = new BlobServiceClient(blobConnection);
+    var container = service.GetBlobContainerClient(blobContainerName);
+    container.CreateIfNotExists(PublicAccessType.Blob);
+    return container;
+});
+builder.Services.AddSingleton<IImageStorage, BlobImageStorage>();
+
 builder.Services.AddHttpClient("google");
 
 builder.Services.AddCors(options =>
