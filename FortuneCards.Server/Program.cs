@@ -45,6 +45,11 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+// Resolve the blob container eagerly so an invalid/unreachable storage account or a
+// container that cannot be created with public access fails fast at startup, not on
+// the first image request.
+app.Services.GetRequiredService<Azure.Storage.Blobs.BlobContainerClient>();
+
 if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("EnableApiDocs"))
 {
     app.MapOpenApi();

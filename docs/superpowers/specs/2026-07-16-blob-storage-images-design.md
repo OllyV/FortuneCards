@@ -22,6 +22,14 @@ Resolved the same way Application Insights already is in this project:
 - **Prod:** Azure App Service application setting for `BlobStorage:ConnectionString`.
 - **Container name:** `BlobStorage:Container` (default `images`).
 
+## Deployment prerequisites
+
+The chosen design uses a public-read container. Azure storage accounts created since ~mid-2023 default **`AllowBlobPublicAccess`** to **false** at the account level; with that off, creating the container with `PublicAccessType.Blob` fails (`PublicAccessNotPermitted`). Before running the app against an account:
+- Enable **"Allow blob public access"** on the storage account, **or**
+- Pre-provision the `images` container with blob-level public read (then `CreateIfNotExists` is a no-op and won't attempt to set access).
+
+With the eager startup resolution of the container client, a misconfigured account (missing/invalid connection string, unreachable account, or public access disabled) fails at application startup with a clear error rather than on the first image request.
+
 On startup the app creates the `BlobContainerClient` and ensures the container exists with public-blob access (`CreateIfNotExists(PublicAccessType.Blob)`).
 
 With no connection string configured, container-client registration should fail fast at startup (image upload is a core feature — unlike telemetry, it should not silently no-op).
