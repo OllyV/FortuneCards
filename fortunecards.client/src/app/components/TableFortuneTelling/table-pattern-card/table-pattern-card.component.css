@@ -28,19 +28,27 @@
 }
 
 .pattern-order {
+  flex: none;
   font-weight: 700;
   font-size: 1.5em;
   opacity: 0.7;
 }
 
 .pattern-text {
+  flex: 1;
+  min-height: 0;
   width: 100%;
   border: none;
   background: transparent;
   text-align: center;
   font-family: inherit;
   font-size: 1em;
+  line-height: 1.15;
   color: inherit;
+  resize: none;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .pattern-text:disabled {
