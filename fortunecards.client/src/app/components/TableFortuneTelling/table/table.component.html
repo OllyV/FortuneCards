@@ -46,7 +46,7 @@
   @if (deckMenuOpen() || patternMenuOpen()) {
     <div class="menu-backdrop" (click)="closeMenus()"></div>
   }
-  <div class="table-controls">
+  <div #controls class="table-controls">
     <div class="dropdown">
       <button
         class="dropdown-btn deck-menu-btn"

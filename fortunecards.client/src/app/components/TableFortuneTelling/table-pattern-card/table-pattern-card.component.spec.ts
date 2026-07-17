@@ -96,6 +96,40 @@ describe('TablePatternCardComponent', () => {
     expect(moved).not.toHaveBeenCalled();
   });
 
+  it('shrinks the font until the text fits, down to a floor', async () => {
+    await setup(); // widthPercent 20% of 1000px → 200px card → max font round(200*0.16) = 32
+    const ta = root().querySelector('.pattern-text') as HTMLTextAreaElement;
+    // Simulate a 100px-tall box whose content is 4 lines of the current font size,
+    // and a width that never overflows.
+    Object.defineProperty(ta, 'clientHeight', { value: 100, configurable: true });
+    Object.defineProperty(ta, 'clientWidth', { value: 200, configurable: true });
+    Object.defineProperty(ta, 'scrollWidth', { value: 0, configurable: true });
+    Object.defineProperty(ta, 'scrollHeight', {
+      get() {
+        return parseFloat(this.style.fontSize || '0') * 4;
+      },
+      configurable: true,
+    });
+
+    (fixture.componentInstance as unknown as { fitText(): void }).fitText();
+
+    // 32→…→25: at 25px, 25*4 = 100 no longer exceeds the 100px box.
+    expect(ta.style.fontSize).toBe('25px');
+  });
+
+  it('keeps the max font size when the text already fits', async () => {
+    await setup();
+    const ta = root().querySelector('.pattern-text') as HTMLTextAreaElement;
+    Object.defineProperty(ta, 'clientHeight', { value: 100, configurable: true });
+    Object.defineProperty(ta, 'clientWidth', { value: 200, configurable: true });
+    Object.defineProperty(ta, 'scrollWidth', { value: 0, configurable: true });
+    Object.defineProperty(ta, 'scrollHeight', { value: 10, configurable: true });
+
+    (fixture.componentInstance as unknown as { fitText(): void }).fitText();
+
+    expect(ta.style.fontSize).toBe('32px'); // round(200 * 0.16)
+  });
+
   it('applies the active class when active and the dimmed class when dimmed', async () => {
     await setup();
     expect(root().classList.contains('active')).toBe(false);

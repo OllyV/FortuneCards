@@ -195,6 +195,53 @@ describe('TableComponent', () => {
     expect(patterns.every((p) => p.kind === 'pattern' && !p.locked)).toBe(true);
   });
 
+  it('addPatternCard defaults to y=5 when the controls have no measured size', () => {
+    component.tableWidthPx.set(1000);
+    component.addPatternCard();
+    expect(component.patternCards()[0].y).toBe(5);
+  });
+
+  it('addPatternCard pushes the card below the controls on a narrow table', () => {
+    const controls = fixture.nativeElement.querySelector('.table-controls') as HTMLElement;
+    Object.defineProperty(controls, 'offsetTop', { value: 12, configurable: true });
+    Object.defineProperty(controls, 'offsetHeight', { value: 34, configurable: true });
+    component.tableWidthPx.set(200); // narrow: controls bottom+gap (54px) = 27% of width
+
+    component.addPatternCard();
+
+    expect(component.patternCards()[0].y).toBeCloseTo(27, 5);
+  });
+
+  it('loadDeck pushes the top row below the controls on a narrow table', () => {
+    const controls = fixture.nativeElement.querySelector('.table-controls') as HTMLElement;
+    Object.defineProperty(controls, 'offsetTop', { value: 12, configurable: true });
+    Object.defineProperty(controls, 'offsetHeight', { value: 34, configurable: true });
+    component.tableWidthPx.set(200); // controls bottom+gap (54px) = 27% of width
+    vi.spyOn(component as unknown as { shuffle(items: TableDeckCard[]): TableDeckCard[] }, 'shuffle')
+      .mockImplementation((items) => items);
+
+    component.loadDeck(deck([card(1)]));
+
+    expect(component.cards()[0].y).toBeCloseTo(27, 5);
+  });
+
+  it('loadDeck pushes existing patterns below an elevated base row on a narrow table', () => {
+    const controls = fixture.nativeElement.querySelector('.table-controls') as HTMLElement;
+    Object.defineProperty(controls, 'offsetTop', { value: 12, configurable: true });
+    Object.defineProperty(controls, 'offsetHeight', { value: 34, configurable: true });
+    component.tableWidthPx.set(200); // controls bottom+gap (54px) = 27% of width → baseY 27
+    component.tableHeightPercent.set(200);
+    vi.spyOn(component as unknown as { shuffle(items: TableDeckCard[]): TableDeckCard[] }, 'shuffle')
+      .mockImplementation((items) => items);
+
+    component.addPatternCard(); // pattern cleared by the controls → y=27
+    expect(component.patternCards()[0].y).toBeCloseTo(27, 5);
+
+    component.loadDeck(deck([card(1)])); // 1 row; deck block bottom = 27 + (22.5 + 5) = 54.5
+    // distance = 1*(22.5 + 5) + baseY(27) - topmost(27) = 27.5 → pattern moves to 54.5
+    expect(component.patternCards()[0].y).toBeCloseTo(54.5, 5);
+  });
+
   it('addPatternCard places the new card on top (frontmost z)', () => {
     component.cards.set([makeDeckCard({ id: 'd1' })]);
     component.selectCard('d1'); // brings d1 to the front, giving it the current top z
@@ -317,7 +364,7 @@ describe('TableComponent', () => {
   it('loadDeck lays a single row as a justified cascade, stacked by index (cardSize 15% → stride 3)', () => {
     component.loadDeck(deck([card(1), card(2), card(3)]));
     expect(component.cards().map((c) => c.x)).toEqual([5, 8, 11]);
-    expect(component.cards().every((c) => c.y === 7)).toBe(true);
+    expect(component.cards().every((c) => c.y === 5)).toBe(true);
     expect(component.cards().map((c) => c.z)).toEqual([0, 1, 2]);
   });
 
@@ -341,9 +388,9 @@ describe('TableComponent', () => {
   it('loadDeck wraps overflow onto a second row below the first', () => {
     component.cardSizePercent.set(50); // n=5 per row, cardHeight 75
     component.loadDeck(deck([1, 2, 3, 4, 5, 6, 7].map(card)));
-    // n=5: indices 5 and 6 land on row 1 at y = 7 + (75 + 5) = 87
-    expect(component.cards()[5]).toMatchObject({ x: 5, y: 87 });
-    expect(component.cards()[6]).toMatchObject({ x: 15, y: 87 });
+    // n=5: indices 5 and 6 land on row 1 at y = 5 + (75 + 5) = 85
+    expect(component.cards()[5]).toMatchObject({ x: 5, y: 85 });
+    expect(component.cards()[6]).toMatchObject({ x: 15, y: 85 });
   });
 
   it('loadDeck pushes existing pattern cards below the deck block without extending a table that still fits', () => {
@@ -371,8 +418,8 @@ describe('TableComponent', () => {
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(10);
     component.loadDeck(deck([card(1), card(2), card(3)]));
-    // one line: lowest bottom = 7 + 22.5 = 29.5 → min height 34.5
-    expect(component.tableHeightPercent()).toBe(34.5);
+    // one line: lowest bottom = 5 + 22.5 = 27.5 → min height 32.5
+    expect(component.tableHeightPercent()).toBe(32.5);
   });
 
   it('loadDeck with an empty deck clears deck cards without pushing patterns', () => {
@@ -436,7 +483,7 @@ describe('TableComponent', () => {
     // the same card object is reset to its clean starting position, not recreated
     const c0 = component.cards()[0];
     expect(c0.id).toBe(movedId);
-    expect(c0).toMatchObject({ x: 5, y: 7, rotation: 0, flipped: false });
+    expect(c0).toMatchObject({ x: 5, y: 5, rotation: 0, flipped: false });
   });
 
   it('openCardInfo sets infoCardId and infoCard resolves to that card', () => {

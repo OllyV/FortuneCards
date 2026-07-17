@@ -18,6 +18,7 @@ import { Deck } from '../../../models/deck';
 export class TableComponent implements AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly tableRef = viewChild.required<ElementRef<HTMLDivElement>>('table');
+  private readonly controlsRef = viewChild.required<ElementRef<HTMLDivElement>>('controls');
   private nextPatternId = 1;
   private nextDeckCardId = 1;
   private nextZ = 1;
@@ -120,7 +121,22 @@ export class TableComponent implements AfterViewInit {
     this.cards.update((cards) => cards.map((c) => (c.id === id ? { ...c, rotation: normalized } : c)));
   }
 
+  /**
+   * Minimum y (% of table width) for a new pattern card so it clears the top-left
+   * Deck/Pattern controls. On wide tables this is below the default 5%; on narrow
+   * (mobile) tables the fixed-pixel controls take up a larger share of the width,
+   * so a card at y=5 would overlap the menu buttons — this pushes it below them.
+   */
+  private controlsClearanceY(): number {
+    const width = this.tableWidthPx();
+    if (width <= 0) return 5;
+    const controls = this.controlsRef().nativeElement;
+    const bottomPx = controls.offsetTop + controls.offsetHeight + 8; // + small gap
+    return (bottomPx / width) * 100;
+  }
+
   addPatternCard(): void {
+    const y = Math.max(5, this.controlsClearanceY());
     this.patternCards.update((cards) => {
       const order = cards.length + 1;
       return [
@@ -129,7 +145,7 @@ export class TableComponent implements AfterViewInit {
           kind: 'pattern' as const,
           id: `pattern-${this.nextPatternId++}`,
           x: 5,
-          y: 5,
+          y,
           rotation: 0,
           text: `Position ${order}`,
           order,
@@ -185,11 +201,14 @@ export class TableComponent implements AfterViewInit {
     const n = Math.max(1, Math.floor((usable - cardWidth) / minGap ) + 1);
     const gap = n > 1 ? (usable - cardWidth) / (n - 1) : 0;
     const lines = cards.length > 0 ? Math.ceil(cards.length / n) : 0;
+    // Base y for the top row: normally 5%, but pushed below the top-left controls on
+    // narrow (mobile) tables where those fixed-pixel buttons overlap the default row.
+    const baseY = Math.max(5, this.controlsClearanceY());
 
     const placed: TableDeckCard[] = this.shuffle(cards).map((card, i) => ({
       ...card,
       x: 5 + (i % n) * gap,
-      y: 7 + Math.floor(i / n) * (cardHeight + 5),
+      y: baseY + Math.floor(i / n) * (cardHeight + 5),
       z: i,
       rotation: 0,
       flipped: false,
@@ -200,7 +219,7 @@ export class TableComponent implements AfterViewInit {
     const existing = this.patternCards();
     if (placed.length > 0 && existing.length > 0) {
       const topmost = existing.reduce((min, c) => Math.min(min, c.y), Infinity);
-      const distance = Math.max(0, lines * (cardHeight + 5) + 5 - topmost);
+      const distance = Math.max(0, lines * (cardHeight + 5) + baseY - topmost);
       if (distance > 0) {
         this.patternCards.update((items) => items.map((c) => ({ ...c, y: c.y + distance })));
       }

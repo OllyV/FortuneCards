@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, ElementRef, afterRenderEffect, computed, input, output, viewChild } from '@angular/core';
 import { TablePatternCard } from '../../../models/table';
 
 @Component({
@@ -26,6 +26,43 @@ export class TablePatternCardComponent {
   readonly leftPx = computed(() => (this.card().x / 100) * this.tableWidthPx());
   readonly topPx = computed(() => (this.card().y / 100) * this.tableWidthPx());
   readonly widthPx = computed(() => (this.widthPercent() / 100) * this.tableWidthPx());
+
+  private readonly textRef = viewChild<ElementRef<HTMLTextAreaElement>>('text');
+
+  /** Smallest font we shrink to before letting the text clip, in px. */
+  private static readonly MIN_FONT_PX = 7;
+
+  constructor() {
+    // Re-fit the font whenever the text or the card size changes.
+    afterRenderEffect(() => {
+      this.card().text;
+      this.widthPx();
+      this.fitText();
+    });
+  }
+
+  /**
+   * Shrink the pattern text's font until it fits inside the card. Starts at a max
+   * scaled to the card width and steps down 1px at a time while the content
+   * overflows, down to MIN_FONT_PX. Applied imperatively so it doesn't fight a
+   * template binding (and is an inert no-op where the DOM isn't laid out, e.g. tests).
+   */
+  private fitText(): void {
+    const el = this.textRef()?.nativeElement;
+    const width = this.widthPx();
+    if (!el || width <= 0) return;
+
+    const max = Math.max(TablePatternCardComponent.MIN_FONT_PX, Math.round(width * 0.16));
+    let size = max;
+    el.style.fontSize = `${size}px`;
+    while (
+      size > TablePatternCardComponent.MIN_FONT_PX &&
+      (el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)
+    ) {
+      size -= 1;
+      el.style.fontSize = `${size}px`;
+    }
+  }
 
   private dragging = false;
   private rotating = false;
