@@ -1,6 +1,7 @@
 # FortuneCards
 
 Available at: https://fortunecards-b2gmfjgkg4dteag4.westeurope-01.azurewebsites.net/decks
+May load 2-3 minutes because of free AzureDb tier.
 
 Asp.Net core + Angular + AzureDB SqlServer solution for creating fortune card decks.
 Created together with Claude Code by principle "not a single line human-written".
@@ -24,5 +25,6 @@ The development by days:
 - Day 12: Work on table cards behaviour, add table dropdown menus.
 - Day 13: Table card info and deck place in random order
 - Day 14: Fortune-telling process
+- Day 15: BlobStorage connection
 
 It can: create decks of cards with image and description. Randomly pull out one card.
