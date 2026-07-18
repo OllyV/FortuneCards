@@ -403,6 +403,20 @@ describe('TableComponent', () => {
     expect(component.cards()[6]).toMatchObject({ x: 15, y: 85 });
   });
 
+  it("placeCards uses the newly loaded deck's aspect ratio for row layout, not the previously loaded one", () => {
+    // beforeEach seeded a 2:3 card (multiplier 1.5); a stale-signal read would use that.
+    component.cardSizePercent.set(50); // n=5 cards per row
+    component.loadDeck({
+      ...deck([card(1), card(2), card(3), card(4), card(5), card(6)]),
+      aspectWidth: 3,
+      aspectHeight: 6,
+    }); // multiplier 2 → cardHeight 100; 6 cards → 2 rows
+    // baseY defaults to 5 (tableWidthPx unset). Correct: 5 + (50*2 + 5) = 110.
+    // Buggy (stale 1.5 multiplier, cardHeight 75): 5 + (75 + 5) = 85.
+    const maxY = Math.max(...component.cards().map((c) => c.y));
+    expect(maxY).toBe(110);
+  });
+
   it('loadDeck pushes existing pattern cards below the deck block without extending a table that still fits', () => {
     component.tableWidthPx.set(1000);
     component.tableHeightPercent.set(100);

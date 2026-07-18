@@ -206,7 +206,12 @@ export class TableComponent implements AfterViewInit {
    */
   private placeCards(cards: TableDeckCard[]): void {
     const cardWidth = this.cardSizePercent();
-    const cardHeight = cardWidth * this.cardHeightMultiplier();
+    // Derive the multiplier from the cards being placed, not the `cardHeightMultiplier()`
+    // signal — this method runs before `this.cards.set(placed)`, so the signal still
+    // reflects the previously loaded deck (or the 3:5 default) rather than these cards.
+    const first = cards[0];
+    const multiplier = first && first.aspectWidth > 0 ? first.aspectHeight / first.aspectWidth : 5 / 3;
+    const cardHeight = cardWidth * multiplier;
 
     // Row capacity: max cards whose gaps stay >= 20% of card width across x = 5..95.
     const usable = 90;
