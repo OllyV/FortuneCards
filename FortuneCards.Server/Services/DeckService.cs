@@ -83,8 +83,8 @@ namespace FortuneCards.Server.Services
                 Emoji = emoji,
                 ColorIndex = colorIndex,
                 CardBackImageUrl = cardBackImageUrl,
-                AspectWidth = aspectWidth,
-                AspectHeight = aspectHeight,
+                AspectWidth = Math.Clamp(aspectWidth, 1, 100),
+                AspectHeight = Math.Clamp(aspectHeight, 1, 100),
                 UserId = userId,
                 IsPublic = isPublic
             };
@@ -143,8 +143,8 @@ namespace FortuneCards.Server.Services
             if (!string.IsNullOrWhiteSpace(emoji)) deck.Emoji = emoji;
             if (colorIndex.HasValue) deck.ColorIndex = colorIndex.Value;
             if (isPublic.HasValue) deck.IsPublic = isPublic.Value;
-            if (aspectWidth.HasValue) deck.AspectWidth = aspectWidth.Value;
-            if (aspectHeight.HasValue) deck.AspectHeight = aspectHeight.Value;
+            if (aspectWidth.HasValue) deck.AspectWidth = Math.Clamp(aspectWidth.Value, 1, 100);
+            if (aspectHeight.HasValue) deck.AspectHeight = Math.Clamp(aspectHeight.Value, 1, 100);
             // Edit form always submits the full description; empty clears it.
             deck.Description = string.IsNullOrWhiteSpace(description) ? null : description;
 
