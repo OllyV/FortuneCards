@@ -147,7 +147,7 @@ export class TableComponent implements AfterViewInit {
           x: 5,
           y,
           rotation: 0,
-          text: `Position ${order}`,
+          text: `Write question here ✏️`,
           order,
           locked: this.patternsLocked(),
           z: this.nextZ++, // start on top of everything currently on the table
