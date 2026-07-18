@@ -349,7 +349,7 @@ describe('TableComponent', () => {
   function deck(cards: Card[]): Deck {
     return {
       id: 7, name: 'D', description: null, createdAt: '', emoji: '🔮',
-      colorIndex: 2, cardBackImageUrl: '/images/back.png', isPublic: false, isOwner: true, cards,
+      colorIndex: 2, cardBackImageUrl: '/images/back.png', aspectWidth: 2, aspectHeight: 3, isPublic: false, isOwner: true, cards,
     };
   }
 

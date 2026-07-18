@@ -9,7 +9,7 @@ import { Deck } from '../../../models/deck';
 function deck(over: Partial<Deck>): Deck {
   return {
     id: 1, name: 'D', description: null, createdAt: '', emoji: '🔮',
-    colorIndex: 0, cardBackImageUrl: null, isPublic: false, isOwner: false, ...over,
+    colorIndex: 0, cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 5, isPublic: false, isOwner: false, ...over,
   };
 }
 

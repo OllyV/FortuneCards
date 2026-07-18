@@ -77,6 +77,8 @@ export class CreateDeckComponent {
       description: v.description ?? null,
       emoji: v.emoji ?? '🎴',
       colorIndex: v.colorIndex ?? 0,
+      aspectWidth: 3,
+      aspectHeight: 5,
       isPublic: v.isPublic ?? false,
       cardBackImage: this.cardBackFile() ?? undefined,
     }).pipe(takeUntilDestroyed(this.destroyRef))

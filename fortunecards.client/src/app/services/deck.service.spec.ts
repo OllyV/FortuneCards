@@ -26,7 +26,7 @@ describe('DeckService', () => {
 
   it('should PATCH /api/decks/:id with FormData including isPublic', () => {
     const payload: CreateDeckPayload = {
-      name: 'Updated', description: 'New desc', emoji: '🌟', colorIndex: 2, isPublic: true,
+      name: 'Updated', description: 'New desc', emoji: '🌟', colorIndex: 2, isPublic: true, aspectWidth: 4, aspectHeight: 7,
     };
     service.updateDeck(7, payload).subscribe();
 
@@ -36,6 +36,8 @@ describe('DeckService', () => {
     expect(body.get('name')).toBe('Updated');
     expect(body.get('isPublic')).toBe('true');
     expect(body.get('colorIndex')).toBe('2');
+    expect(body.get('aspectWidth')).toBe('4');
+    expect(body.get('aspectHeight')).toBe('7');
     req.flush({});
   });
 });

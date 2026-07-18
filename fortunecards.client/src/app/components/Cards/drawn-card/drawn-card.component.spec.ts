@@ -11,7 +11,7 @@ import { Card } from '../../../models/card';
 
 const mockCard: Card = { id: 1, title: 'The Journey', description: 'Step forward', imageUrl: '', createdAt: '2026-01-01', deckId: 1 };
 const mockCard2: Card = { id: 2, title: 'The Return', description: 'Come back', imageUrl: '', createdAt: '2026-01-01', deckId: 1 };
-const mockDeck: Deck = { id: 1, name: 'Adventure', description: null, createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0, cardBackImageUrl: null, cards: [mockCard], isPublic: false, isOwner: false };
+const mockDeck: Deck = { id: 1, name: 'Adventure', description: null, createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0, cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 5, cards: [mockCard], isPublic: false, isOwner: false };
 const mockDeckTwoCards: Deck = { ...mockDeck, cards: [mockCard, mockCard2] };
 
 describe('DrawnCardComponent', () => {

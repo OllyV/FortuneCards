@@ -44,6 +44,8 @@ export class DeckService {
     form.append('description', payload.description ?? '');
     form.append('emoji', payload.emoji);
     form.append('colorIndex', payload.colorIndex.toString());
+    form.append('aspectWidth', payload.aspectWidth.toString());
+    form.append('aspectHeight', payload.aspectHeight.toString());
     form.append('isPublic', payload.isPublic.toString());
     if (payload.cardBackImage) {
       form.append('cardBackImage', payload.cardBackImage, payload.cardBackImage.name);
