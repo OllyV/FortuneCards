@@ -115,3 +115,8 @@
   cursor: pointer;
 }
 .btn-danger:disabled { opacity: 0.4; }
+
+.aspect-row { display: flex; align-items: center; gap: 10px; }
+.aspect-input { width: 72px; text-align: center; }
+.aspect-colon { font-weight: 800; font-size: 18px; }
+.aspect-preview { height: 60px; border-radius: var(--radius-md); box-shadow: var(--shadow-card); margin-left: auto; }

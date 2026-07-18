@@ -32,6 +32,21 @@
         </div>
       </div>
 
+      <!-- Card shape / aspect ratio -->
+      <div class="form-field">
+        <label class="form-label">Card Shape (width : height)</label>
+        <div class="aspect-row">
+          <input class="form-input aspect-input" type="number" min="1" max="100" step="1"
+                 formControlName="aspectWidth" aria-label="Aspect width" />
+          <span class="aspect-colon">:</span>
+          <input class="form-input aspect-input" type="number" min="1" max="100" step="1"
+                 formControlName="aspectHeight" aria-label="Aspect height" />
+          <div class="aspect-preview"
+               [style.aspect-ratio]="(form.get('aspectWidth')!.value || 3) + ' / ' + (form.get('aspectHeight')!.value || 5)"
+               [style.background]="getSelectedGradient()"></div>
+        </div>
+      </div>
+
       <!-- Card back upload -->
       <div class="form-field">
         <label class="form-label">Card Back <span>(optional)</span></label>

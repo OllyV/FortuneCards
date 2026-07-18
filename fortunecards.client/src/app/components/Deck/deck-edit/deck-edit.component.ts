@@ -19,8 +19,6 @@ export class DeckEditComponent implements OnInit {
 
   form: FormGroup;
   deckId = signal(0);
-  aspectWidth = signal(3);
-  aspectHeight = signal(5);
   currentBackUrl = signal<string | null>(null);
   cardBackFile = signal<File | null>(null);
   cardBackPreview = signal<string | null>(null);
@@ -40,6 +38,8 @@ export class DeckEditComponent implements OnInit {
     this.form = this.fb.group({
       emoji:       ['🎴', [Validators.required, Validators.maxLength(10)]],
       colorIndex:  [0, Validators.required],
+      aspectWidth:  [3, [Validators.required, Validators.min(1), Validators.max(100)]],
+      aspectHeight: [5, [Validators.required, Validators.min(1), Validators.max(100)]],
       name:        ['', [Validators.required, Validators.maxLength(200)]],
       description: ['', Validators.maxLength(1000)],
       isPublic:    [false],
@@ -58,12 +58,12 @@ export class DeckEditComponent implements OnInit {
             this.form.patchValue({
               emoji: deck.emoji,
               colorIndex: deck.colorIndex,
+              aspectWidth: deck.aspectWidth,
+              aspectHeight: deck.aspectHeight,
               name: deck.name,
               description: deck.description ?? '',
               isPublic: deck.isPublic,
             });
-            this.aspectWidth.set(deck.aspectWidth);
-            this.aspectHeight.set(deck.aspectHeight);
             this.currentBackUrl.set(deck.cardBackImageUrl);
             this.loading.set(false);
           },
@@ -109,8 +109,8 @@ export class DeckEditComponent implements OnInit {
       description: v.description ?? null,
       emoji: v.emoji ?? '🎴',
       colorIndex: v.colorIndex ?? 0,
-      aspectWidth: this.aspectWidth(),
-      aspectHeight: this.aspectHeight(),
+      aspectWidth: v.aspectWidth ?? 3,
+      aspectHeight: v.aspectHeight ?? 5,
       isPublic: v.isPublic ?? false,
       cardBackImage: this.cardBackFile() ?? undefined,
     }).pipe(takeUntilDestroyed(this.destroyRef))
