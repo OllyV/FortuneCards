@@ -111,7 +111,7 @@ describe('TablePatternCardComponent', () => {
       configurable: true,
     });
 
-    (fixture.componentInstance as unknown as { fitText(): void }).fitText();
+    (fixture.componentInstance as unknown as { fitCard(): void }).fitCard();
 
     // 32→…→25: at 25px, 25*4 = 100 no longer exceeds the 100px box.
     expect(ta.style.fontSize).toBe('25px');
@@ -125,9 +125,48 @@ describe('TablePatternCardComponent', () => {
     Object.defineProperty(ta, 'scrollWidth', { value: 0, configurable: true });
     Object.defineProperty(ta, 'scrollHeight', { value: 10, configurable: true });
 
-    (fixture.componentInstance as unknown as { fitText(): void }).fitText();
+    (fixture.componentInstance as unknown as { fitCard(): void }).fitCard();
 
     expect(ta.style.fontSize).toBe('32px'); // round(200 * 0.16)
+  });
+
+  it('gives the number most of the card for a short label', async () => {
+    await setup({ ...baseCard, text: 'Past' }); // length 4 ≤ 8 → text 0.30, number 0.70
+    (fixture.componentInstance as unknown as { fitCard(): void }).fitCard();
+    expect((root().querySelector('.pattern-text') as HTMLElement).style.flexGrow).toBe('0.3');
+    expect((root().querySelector('.pattern-order') as HTMLElement).style.flexGrow).toBe('0.7');
+  });
+
+  it('caps the text at 80% of the card for a long label', async () => {
+    await setup({ ...baseCard, text: 'x'.repeat(60) }); // ≥ 40 chars → text 0.80, number 0.20
+    (fixture.componentInstance as unknown as { fitCard(): void }).fitCard();
+    expect((root().querySelector('.pattern-text') as HTMLElement).style.flexGrow).toBe('0.8');
+    expect((root().querySelector('.pattern-order') as HTMLElement).style.flexGrow).toBe('0.2');
+  });
+
+  it('ramps the split linearly between short and long labels', async () => {
+    await setup({ ...baseCard, text: 'x'.repeat(24) }); // midpoint: (24-8)/(40-8)=0.5 → text 0.55
+    (fixture.componentInstance as unknown as { fitCard(): void }).fitCard();
+    expect((root().querySelector('.pattern-text') as HTMLElement).style.flexGrow).toBe('0.55');
+    expect((root().querySelector('.pattern-order') as HTMLElement).style.flexGrow).toBe('0.45');
+  });
+
+  it('shrinks the order number to fit its box', async () => {
+    await setup(); // width 200 → number max round(200*0.55) = 110
+    const order = root().querySelector('.pattern-order') as HTMLElement;
+    Object.defineProperty(order, 'clientHeight', { value: 40, configurable: true });
+    Object.defineProperty(order, 'clientWidth', { value: 200, configurable: true });
+    Object.defineProperty(order, 'scrollWidth', { value: 0, configurable: true });
+    Object.defineProperty(order, 'scrollHeight', {
+      get() {
+        return parseFloat(this.style.fontSize || '0');
+      },
+      configurable: true,
+    });
+
+    (fixture.componentInstance as unknown as { fitCard(): void }).fitCard();
+
+    expect(order.style.fontSize).toBe('40px'); // 110 → shrinks until it fits the 40px box
   });
 
   it('applies the active class when active and the dimmed class when dimmed', async () => {
