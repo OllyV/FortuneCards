@@ -26,5 +26,6 @@ The development by days:
 - Day 13: Table card info and deck place in random order
 - Day 14: Fortune-telling process
 - Day 15: BlobStorage connection
+- Day 16-17: Table behavious fixes, mobile version adaptations
 
 It can: create decks of cards with image and description. Randomly pull out one card.
