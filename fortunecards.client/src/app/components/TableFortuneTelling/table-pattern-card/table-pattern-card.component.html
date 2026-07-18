@@ -15,7 +15,7 @@
   (pointercancel)="onPointerUp()"
 >
   <div class="pattern-face">
-    <span class="pattern-order">{{ card().order }}</span>
+    <span #order class="pattern-order">{{ card().order }}</span>
     <textarea
       #text
       class="pattern-text"

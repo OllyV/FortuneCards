@@ -28,40 +28,68 @@ export class TablePatternCardComponent {
   readonly widthPx = computed(() => (this.widthPercent() / 100) * this.tableWidthPx());
 
   private readonly textRef = viewChild<ElementRef<HTMLTextAreaElement>>('text');
+  private readonly orderRef = viewChild<ElementRef<HTMLElement>>('order');
 
-  /** Smallest font we shrink to before letting the text clip, in px. */
-  private static readonly MIN_FONT_PX = 7;
+  // Length-driven split between the order number and the text. Short labels give
+  // the number most of the card; long labels grow the text up to MAX_TEXT_FRACTION.
+  private static readonly SHORT_LEN = 8;
+  private static readonly LONG_LEN = 40;
+  private static readonly MIN_TEXT_FRACTION = 0.3;
+  private static readonly MAX_TEXT_FRACTION = 0.8;
+  /** Font floors, in px: text shrinks small enough to always wrap; number stays legible. */
+  private static readonly TEXT_FLOOR_PX = 4;
+  private static readonly NUMBER_FLOOR_PX = 8;
 
   constructor() {
-    // Re-fit the font whenever the text or the card size changes.
+    // Re-fit whenever the text (content or length) or the card size changes.
     afterRenderEffect(() => {
       this.card().text;
+      this.card().order;
       this.widthPx();
-      this.fitText();
+      this.fitCard();
     });
   }
 
-  /**
-   * Shrink the pattern text's font until it fits inside the card. Starts at a max
-   * scaled to the card width and steps down 1px at a time while the content
-   * overflows, down to MIN_FONT_PX. Applied imperatively so it doesn't fight a
-   * template binding (and is an inert no-op where the DOM isn't laid out, e.g. tests).
-   */
-  private fitText(): void {
-    const el = this.textRef()?.nativeElement;
-    const width = this.widthPx();
-    if (!el || width <= 0) return;
+  /** Fraction of the card height (0..1) the text area gets, ramped by label length. */
+  private textFraction(length: number): number {
+    const { SHORT_LEN, LONG_LEN, MIN_TEXT_FRACTION, MAX_TEXT_FRACTION } = TablePatternCardComponent;
+    const t = Math.min(1, Math.max(0, (length - SHORT_LEN) / (LONG_LEN - SHORT_LEN)));
+    return this.round2(MIN_TEXT_FRACTION + t * (MAX_TEXT_FRACTION - MIN_TEXT_FRACTION));
+  }
 
-    const max = Math.max(TablePatternCardComponent.MIN_FONT_PX, Math.round(width * 0.16));
-    let size = max;
+  /**
+   * Lay out the card: split the height between the number and the text by label
+   * length, then shrink each element's font until its content fits its own box.
+   * Applied imperatively so it doesn't fight a binding (and is an inert no-op where
+   * the DOM isn't laid out, e.g. tests, where measurements read 0).
+   */
+  private fitCard(): void {
+    const text = this.textRef()?.nativeElement;
+    const order = this.orderRef()?.nativeElement;
+    const width = this.widthPx();
+    if (!text || !order || width <= 0) return;
+
+    const textFraction = this.textFraction(this.card().text.length);
+    text.style.flexGrow = `${textFraction}`;
+    order.style.flexGrow = `${this.round2(1 - textFraction)}`;
+
+    // Measured after the flex ratios apply (reading scrollHeight forces the reflow).
+    this.fitFont(text, Math.round(width * 0.16), TablePatternCardComponent.TEXT_FLOOR_PX);
+    this.fitFont(order, Math.round(width * 0.55), TablePatternCardComponent.NUMBER_FLOOR_PX);
+  }
+
+  /** Shrink `el`'s font 1px at a time from `max` down to `floor` until it fits its box. */
+  private fitFont(el: HTMLElement, max: number, floor: number): void {
+    let size = Math.max(floor, max);
     el.style.fontSize = `${size}px`;
-    while (
-      size > TablePatternCardComponent.MIN_FONT_PX &&
-      (el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)
-    ) {
+    while (size > floor && (el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)) {
       size -= 1;
       el.style.fontSize = `${size}px`;
     }
+  }
+
+  private round2(n: number): number {
+    return Math.round(n * 100) / 100;
   }
 
   private dragging = false;
