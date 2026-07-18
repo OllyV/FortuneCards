@@ -20,6 +20,9 @@ export interface TableDeckCard extends TableItemBase {
   cardId: number;
   /** Deck colour index — used for the gradient fallback back face. */
   colorIndex: number;
+  /** Deck aspect ratio, copied at placement time; drives card shape and table geometry. */
+  aspectWidth: number;
+  aspectHeight: number;
   /** Card image (front face). */
   frontImageUrl: string;
   /** Deck back image; null → render the deck gradient instead. */

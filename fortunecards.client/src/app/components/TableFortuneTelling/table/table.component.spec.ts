@@ -34,7 +34,7 @@ describe('TableComponent', () => {
   function makeDeckCard(overrides: Partial<TableDeckCard> = {}): TableDeckCard {
     return {
       kind: 'deck', id: 'c1', x: 0, y: 0, rotation: 0, flipped: false,
-      deckId: 1, cardId: 1, colorIndex: 0,
+      deckId: 1, cardId: 1, colorIndex: 0, aspectWidth: 2, aspectHeight: 3,
       frontImageUrl: '/images/front.png', backImageUrl: '/images/back.png',
       title: 'The Sun', description: 'A bright card.',
       ...overrides,
@@ -352,6 +352,16 @@ describe('TableComponent', () => {
       colorIndex: 2, cardBackImageUrl: '/images/back.png', aspectWidth: 2, aspectHeight: 3, isPublic: false, isOwner: true, cards,
     };
   }
+
+  it('derives the card-height multiplier from the loaded deck ratio', () => {
+    component.cards.set([]);
+    // Before any deck: 3:5 default → 5/3.
+    expect(component.cardHeightMultiplier()).toBeCloseTo(5 / 3);
+    // Load a 3:6 (=1:2) deck → multiplier 2.
+    component.loadDeck({ ...deck([card(1)]), aspectWidth: 3, aspectHeight: 6 });
+    expect(component.cardHeightMultiplier()).toBe(2);
+    expect(component.deckAspect()).toEqual({ w: 3, h: 6 });
+  });
 
   it('loadDeck replaces deck cards but keeps pattern cards', () => {
     component.addPatternCard();

@@ -10,6 +10,8 @@ export class CardInfoDialogComponent {
   readonly imageUrl = input.required<string>();
   readonly title = input.required<string>();
   readonly description = input.required<string>();
+  readonly aspectWidth = input(3);
+  readonly aspectHeight = input(5);
 
   readonly closed = output<void>();
 }

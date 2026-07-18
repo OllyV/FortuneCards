@@ -16,6 +16,8 @@
         [selected]="selectedCardId() === pattern.id"
         [active]="activePatternId() === pattern.id"
         [dimmed]="fortuneActive() && activePatternId() !== pattern.id"
+        [aspectWidth]="deckAspect().w"
+        [aspectHeight]="deckAspect().h"
         (cardSelect)="selectCard(pattern.id)"
         (cardMove)="movePatternCard(pattern.id, $event)"
         (cardRotate)="rotatePatternCard(pattern.id, $event)"
@@ -111,6 +113,8 @@
     [imageUrl]="info.frontImageUrl"
     [title]="info.title"
     [description]="info.description"
+    [aspectWidth]="info.aspectWidth"
+    [aspectHeight]="info.aspectHeight"
     (closed)="infoCardId.set(null)"
   />
 }

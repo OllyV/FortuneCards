@@ -1,7 +1,8 @@
 <div class="dialog-backdrop" (click)="closed.emit()"></div>
 <div class="dialog-panel" role="dialog" aria-label="Card information">
   <div class="card-info-body">
-    <img class="card-info-img" [src]="imageUrl()" alt="" />
+    <img class="card-info-img" [src]="imageUrl()" alt=""
+         [style.aspect-ratio]="aspectWidth() + ' / ' + aspectHeight()" />
     <div class="card-info-text">
       <h2 class="card-info-title">{{ title() }}</h2>
       <p class="card-info-description">{{ description() }}</p>
