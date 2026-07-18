@@ -26,6 +26,7 @@ export class CardEditComponent implements OnInit {
   deleting = signal(false);
   loading = signal(true);
   error = signal<string | null>(null);
+  aspectRatio = signal('3 / 5');
 
   private readonly destroyRef = inject(DestroyRef);
 
@@ -55,6 +56,7 @@ export class CardEditComponent implements OnInit {
             if (!deck.isOwner) { this.router.navigate(['/decks', deckId, 'cards', cardId]); return; }
             const card = (deck.cards ?? []).find(c => c.id === cardId);
             if (!card) { this.error.set('Card not found.'); this.loading.set(false); return; }
+            this.aspectRatio.set(`${deck.aspectWidth} / ${deck.aspectHeight}`);
             this.form.patchValue({ title: card.title, description: card.description });
             this.currentImageUrl.set(card.imageUrl);
             this.loading.set(false);

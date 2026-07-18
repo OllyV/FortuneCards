@@ -22,6 +22,7 @@ export class CreateCardComponent implements OnInit {
   imagePreview = signal<string | null>(null);
   submitting = signal(false);
   error = signal<string | null>(null);
+  aspectRatio = signal('3 / 5');
 
   private readonly destroyRef = inject(DestroyRef);
 
@@ -39,7 +40,14 @@ export class CreateCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-      this.deckId.set(Number(params['id']));
+      const id = Number(params['id']);
+      this.deckId.set(id);
+      this.deckService.getDeck(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (deck) => this.aspectRatio.set(`${deck.aspectWidth} / ${deck.aspectHeight}`),
+          error: () => { /* keep the 3/5 default on failure */ },
+        });
     });
   }
 

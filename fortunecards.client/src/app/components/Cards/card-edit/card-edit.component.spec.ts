@@ -13,7 +13,7 @@ import { Deck } from '../../../models/deck';
 const deckWithCard: Deck = {
   id: 1, name: 'Adventure', description: null,
   createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0,
-  cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 5, isPublic: true, isOwner: true,
+  cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 7, isPublic: true, isOwner: true,
   cards: [{ id: 5, title: 'The Star', description: 'Hope', imageUrl: '/images/x.png', createdAt: '2026-01-01', deckId: 1 }],
 };
 
@@ -54,6 +54,10 @@ describe('CardEditComponent', () => {
   it('should be invalid when title is cleared', () => {
     component.form.get('title')!.setValue('');
     expect(component.form.invalid).toBe(true);
+  });
+
+  it('exposes the deck aspect ratio', () => {
+    expect(component.aspectRatio()).toBe('3 / 7');
   });
 });
 

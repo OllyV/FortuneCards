@@ -10,7 +10,8 @@
       <!-- Card image -->
       <div class="form-field image-field">
         <label class="form-label">Card Image</label>
-        <div class="image-upload-area" [class.has-image]="imagePreview() || currentImageUrl()">
+        <div class="image-upload-area" [class.has-image]="imagePreview() || currentImageUrl()"
+             [style.aspect-ratio]="aspectRatio()">
           <img *ngIf="imagePreview()" [src]="imagePreview()" class="image-preview" alt="Card preview" />
           <img *ngIf="!imagePreview() && currentImageUrl()" [src]="currentImageUrl()!" class="image-preview" alt="Current card image" />
           <div *ngIf="!imagePreview() && !currentImageUrl()" class="image-placeholder">

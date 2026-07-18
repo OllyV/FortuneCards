@@ -11,7 +11,6 @@
 
 /* Tarot-proportioned upload area */
 .image-upload-area {
-  aspect-ratio: 2/3;
   max-width: 180px;
   margin: 6px auto 0;
   background: white;
