@@ -45,4 +45,19 @@ describe('CreateDeckComponent', () => {
     component.selectColor(2);
     expect(component.form.get('colorIndex')!.value).toBe(2);
   });
+
+  it('defaults aspect ratio to 3 x 5', () => {
+    expect(component.form.get('aspectWidth')!.value).toBe(3);
+    expect(component.form.get('aspectHeight')!.value).toBe(5);
+  });
+
+  it('is invalid when aspectWidth is below 1 or above 100', () => {
+    component.form.get('name')!.setValue('My Deck');
+    component.form.get('aspectWidth')!.setValue(0);
+    expect(component.form.get('aspectWidth')!.invalid).toBe(true);
+    component.form.get('aspectWidth')!.setValue(101);
+    expect(component.form.get('aspectWidth')!.invalid).toBe(true);
+    component.form.get('aspectWidth')!.setValue(3);
+    expect(component.form.get('aspectWidth')!.valid).toBe(true);
+  });
 });

@@ -34,6 +34,8 @@ export class CreateDeckComponent {
     this.form = this.fb.group({
       emoji:       ['🎴', [Validators.required, Validators.maxLength(10)]],
       colorIndex:  [0, Validators.required],
+      aspectWidth:  [3, [Validators.required, Validators.min(1), Validators.max(100)]],
+      aspectHeight: [5, [Validators.required, Validators.min(1), Validators.max(100)]],
       name:        ['', [Validators.required, Validators.maxLength(200)]],
       description: ['', Validators.maxLength(1000)],
       isPublic:    [false],
@@ -77,8 +79,8 @@ export class CreateDeckComponent {
       description: v.description ?? null,
       emoji: v.emoji ?? '🎴',
       colorIndex: v.colorIndex ?? 0,
-      aspectWidth: 3,
-      aspectHeight: 5,
+      aspectWidth: v.aspectWidth ?? 3,
+      aspectHeight: v.aspectHeight ?? 5,
       isPublic: v.isPublic ?? false,
       cardBackImage: this.cardBackFile() ?? undefined,
     }).pipe(takeUntilDestroyed(this.destroyRef))
