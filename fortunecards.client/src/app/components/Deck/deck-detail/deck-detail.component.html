@@ -31,6 +31,7 @@
     <div class="card-grid">
       <div class="card-tile"
            *ngFor="let card of (d.cards ?? []); let i = index"
+           [style.aspect-ratio]="d.aspectWidth + ' / ' + d.aspectHeight"
            [style.border-top-color]="getCardAccent(i)"
            (click)="openCard(card.id)">
         <div class="card-image" [style.background]="getCardAccent(i) + '18'">
@@ -42,7 +43,9 @@
         </div>
       </div>
 
-      <div *ngIf="d.isOwner" class="card-tile card-tile--add" (click)="addCard()">
+      <div *ngIf="d.isOwner" class="card-tile card-tile--add"
+           [style.aspect-ratio]="d.aspectWidth + ' / ' + d.aspectHeight"
+           (click)="addCard()">
         <div class="card-image card-image--add">+</div>
       </div>
     </div>

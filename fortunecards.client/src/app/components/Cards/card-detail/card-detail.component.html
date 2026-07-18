@@ -7,7 +7,8 @@
 
   <main class="page-content">
     <div *ngIf="card() as c; else notFoundOrLoading" class="card-detail">
-      <div class="card-figure">
+      <div class="card-figure"
+           [style.aspect-ratio]="(deck()?.aspectWidth ?? 3) + ' / ' + (deck()?.aspectHeight ?? 5)">
         <img *ngIf="c.imageUrl" [src]="c.imageUrl" [alt]="c.title" />
         <span *ngIf="!c.imageUrl" class="card-figure-placeholder">🃏</span>
       </div>

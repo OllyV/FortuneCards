@@ -10,6 +10,7 @@
 
     <div class="card-scene"
          [class.flipped]="flipped()"
+         [style.aspect-ratio]="(deck()?.aspectWidth ?? 3) + ' / ' + (deck()?.aspectHeight ?? 5)"
          (click)="flipCard()">
       <div class="card-flipper">
         <!-- Back (face-down) -->
