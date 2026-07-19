@@ -8,7 +8,7 @@ describe('TableCardComponent', () => {
 
   const baseCard: TableDeckCard = {
     kind: 'deck', id: 'c1', x: 10, y: 20, rotation: 0, flipped: false,
-    deckId: 1, cardId: 1, colorIndex: 0,
+    deckId: 1, cardId: 1, colorIndex: 0, aspectWidth: 2, aspectHeight: 3,
     frontImageUrl: '/images/front.png', backImageUrl: '/images/back.png',
     title: 'The Sun', description: 'A bright card.',
   };

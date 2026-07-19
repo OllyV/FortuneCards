@@ -14,12 +14,12 @@ import { Deck } from '../../../models/deck';
 const ownedDeck: Deck = {
   id: 1, name: 'Adventure', description: null,
   createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0,
-  cardBackImageUrl: null, cardCount: 3, isPublic: false, isOwner: true
+  cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 5, cardCount: 3, isPublic: false, isOwner: true
 };
 const publicDeck: Deck = {
   id: 2, name: 'Mystic Tarot', description: 'ancient wisdom',
   createdAt: '2026-01-02', emoji: '🔮', colorIndex: 1,
-  cardBackImageUrl: null, cardCount: 5, isPublic: true, isOwner: false
+  cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 5, cardCount: 5, isPublic: true, isOwner: false
 };
 
 function configure(mode: 'mine' | 'search') {

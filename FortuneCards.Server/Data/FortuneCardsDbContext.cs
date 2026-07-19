@@ -37,6 +37,8 @@ namespace FortuneCards.Server.Data
                 e.Property(d => d.Description).HasMaxLength(1000);
                 e.Property(d => d.Emoji).HasMaxLength(10).HasDefaultValue("🎴");
                 e.Property(d => d.ColorIndex).HasDefaultValue(0);
+                e.Property(d => d.AspectWidth).HasDefaultValue(3);
+                e.Property(d => d.AspectHeight).HasDefaultValue(5);
                 e.Property(d => d.CardBackImageUrl).HasMaxLength(500);
                 e.Property(d => d.IsPublic).HasDefaultValue(false);
                 e.HasOne(d => d.User)

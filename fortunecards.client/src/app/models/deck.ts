@@ -8,6 +8,8 @@ export interface Deck {
   emoji: string;
   colorIndex: number;
   cardBackImageUrl: string | null;
+  aspectWidth: number;
+  aspectHeight: number;
   cardCount?: number;
   cards?: Card[];
   isPublic: boolean;
@@ -19,6 +21,8 @@ export interface CreateDeckPayload {
   description: string | null;
   emoji: string;
   colorIndex: number;
+  aspectWidth: number;
+  aspectHeight: number;
   isPublic: boolean;
   cardBackImage?: File;
 }

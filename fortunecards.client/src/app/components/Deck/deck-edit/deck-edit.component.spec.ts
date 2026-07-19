@@ -13,7 +13,7 @@ import { Deck } from '../../../models/deck';
 const ownerDeck: Deck = {
   id: 1, name: 'Adventure', description: 'Bold quests',
   createdAt: '2026-01-01', emoji: '🌈', colorIndex: 3,
-  cardBackImageUrl: null, isPublic: true, isOwner: true,
+  cardBackImageUrl: null, aspectWidth: 4, aspectHeight: 9, isPublic: true, isOwner: true,
 };
 
 const nonOwnerDeck: Deck = { ...ownerDeck, isOwner: false };
@@ -48,6 +48,12 @@ describe('DeckEditComponent', () => {
   it('should be invalid when name is cleared', () => {
     component.form.get('name')!.setValue('');
     expect(component.form.invalid).toBe(true);
+  });
+
+  it('patches the aspect ratio from the loaded deck', () => {
+    // ownerDeck is returned by the mock getDeck used in this suite's owner test
+    expect(component.form.get('aspectWidth')!.value).toBe(4);
+    expect(component.form.get('aspectHeight')!.value).toBe(9);
   });
 });
 

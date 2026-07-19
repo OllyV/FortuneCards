@@ -34,7 +34,7 @@ describe('TableComponent', () => {
   function makeDeckCard(overrides: Partial<TableDeckCard> = {}): TableDeckCard {
     return {
       kind: 'deck', id: 'c1', x: 0, y: 0, rotation: 0, flipped: false,
-      deckId: 1, cardId: 1, colorIndex: 0,
+      deckId: 1, cardId: 1, colorIndex: 0, aspectWidth: 2, aspectHeight: 3,
       frontImageUrl: '/images/front.png', backImageUrl: '/images/back.png',
       title: 'The Sun', description: 'A bright card.',
       ...overrides,
@@ -349,9 +349,19 @@ describe('TableComponent', () => {
   function deck(cards: Card[]): Deck {
     return {
       id: 7, name: 'D', description: null, createdAt: '', emoji: '🔮',
-      colorIndex: 2, cardBackImageUrl: '/images/back.png', isPublic: false, isOwner: true, cards,
+      colorIndex: 2, cardBackImageUrl: '/images/back.png', aspectWidth: 2, aspectHeight: 3, isPublic: false, isOwner: true, cards,
     };
   }
+
+  it('derives the card-height multiplier from the loaded deck ratio', () => {
+    component.cards.set([]);
+    // Before any deck: 3:5 default → 5/3.
+    expect(component.cardHeightMultiplier()).toBeCloseTo(5 / 3);
+    // Load a 3:6 (=1:2) deck → multiplier 2.
+    component.loadDeck({ ...deck([card(1)]), aspectWidth: 3, aspectHeight: 6 });
+    expect(component.cardHeightMultiplier()).toBe(2);
+    expect(component.deckAspect()).toEqual({ w: 3, h: 6 });
+  });
 
   it('loadDeck replaces deck cards but keeps pattern cards', () => {
     component.addPatternCard();
@@ -391,6 +401,20 @@ describe('TableComponent', () => {
     // n=5: indices 5 and 6 land on row 1 at y = 5 + (75 + 5) = 85
     expect(component.cards()[5]).toMatchObject({ x: 5, y: 85 });
     expect(component.cards()[6]).toMatchObject({ x: 15, y: 85 });
+  });
+
+  it("placeCards uses the newly loaded deck's aspect ratio for row layout, not the previously loaded one", () => {
+    // beforeEach seeded a 2:3 card (multiplier 1.5); a stale-signal read would use that.
+    component.cardSizePercent.set(50); // n=5 cards per row
+    component.loadDeck({
+      ...deck([card(1), card(2), card(3), card(4), card(5), card(6)]),
+      aspectWidth: 3,
+      aspectHeight: 6,
+    }); // multiplier 2 → cardHeight 100; 6 cards → 2 rows
+    // baseY defaults to 5 (tableWidthPx unset). Correct: 5 + (50*2 + 5) = 110.
+    // Buggy (stale 1.5 multiplier, cardHeight 75): 5 + (75 + 5) = 85.
+    const maxY = Math.max(...component.cards().map((c) => c.y));
+    expect(maxY).toBe(110);
   });
 
   it('loadDeck pushes existing pattern cards below the deck block without extending a table that still fits', () => {

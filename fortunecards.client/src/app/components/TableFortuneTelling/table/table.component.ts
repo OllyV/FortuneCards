@@ -54,9 +54,20 @@ export class TableComponent implements AfterViewInit {
       : '100vh'
   );
 
+  /** Aspect ratio of the loaded deck (from the first card); 3:5 default before a deck loads. */
+  readonly deckAspect = computed(() => {
+    const c = this.cards()[0];
+    return c ? { w: c.aspectWidth, h: c.aspectHeight } : { w: 3, h: 5 };
+  });
+  /** Card height as a multiple of card width, from the deck ratio. */
+  readonly cardHeightMultiplier = computed(() => {
+    const { w, h } = this.deckAspect();
+    return w > 0 ? h / w : 5 / 3;
+  });
+
   /** Minimum table height: bottom edge of the lowest card + 5% of table width. */
   readonly minHeightPercent = computed(() => {
-    const cardHeight = this.cardSizePercent() * 1.5;
+    const cardHeight = this.cardSizePercent() * this.cardHeightMultiplier();
     const lowestBottom = [...this.cards(), ...this.patternCards()].reduce(
       (max, c) => Math.max(max, c.y + cardHeight),
       0
@@ -108,7 +119,7 @@ export class TableComponent implements AfterViewInit {
   }
 
   moveCard(id: string, pos: { x: number; y: number }): void {
-    const cardHeight = this.cardSizePercent() * 1.5; // aspect ratio 2/3
+    const cardHeight = this.cardSizePercent() * this.cardHeightMultiplier();
     const maxX = Math.max(0, 100 - this.cardSizePercent());
     const maxY = Math.max(0, this.tableHeightPercent() - cardHeight);
     const x = Math.min(maxX, Math.max(0, pos.x));
@@ -168,6 +179,8 @@ export class TableComponent implements AfterViewInit {
       deckId: deck.id,
       cardId: card.id,
       colorIndex: deck.colorIndex,
+      aspectWidth: deck.aspectWidth,
+      aspectHeight: deck.aspectHeight,
       frontImageUrl: card.imageUrl,
       backImageUrl: deck.cardBackImageUrl,
       title: card.title,
@@ -193,7 +206,12 @@ export class TableComponent implements AfterViewInit {
    */
   private placeCards(cards: TableDeckCard[]): void {
     const cardWidth = this.cardSizePercent();
-    const cardHeight = cardWidth * 1.5;
+    // Derive the multiplier from the cards being placed, not the `cardHeightMultiplier()`
+    // signal — this method runs before `this.cards.set(placed)`, so the signal still
+    // reflects the previously loaded deck (or the 3:5 default) rather than these cards.
+    const first = cards[0];
+    const multiplier = first && first.aspectWidth > 0 ? first.aspectHeight / first.aspectWidth : 5 / 3;
+    const cardHeight = cardWidth * multiplier;
 
     // Row capacity: max cards whose gaps stay >= 20% of card width across x = 5..95.
     const usable = 90;
@@ -246,7 +264,7 @@ export class TableComponent implements AfterViewInit {
   }
 
   movePatternCard(id: string, pos: { x: number; y: number }): void {
-    const cardHeight = this.cardSizePercent() * 1.5;
+    const cardHeight = this.cardSizePercent() * this.cardHeightMultiplier();
     const maxX = Math.max(0, 100 - this.cardSizePercent());
     const maxY = Math.max(0, this.tableHeightPercent() - cardHeight);
     const x = Math.min(maxX, Math.max(0, pos.x));

@@ -33,7 +33,8 @@ namespace FortuneCards.Server.Services
                     .Where(d => d.IsPublic)
                     .Select(d => new DeckSummary(
                         d.Id, d.Name, d.Description, d.CreatedAt, d.Cards.Count,
-                        d.Emoji, d.ColorIndex, d.CardBackImageUrl, true, false))
+                        d.Emoji, d.ColorIndex, d.CardBackImageUrl, true, false,
+                        d.AspectWidth, d.AspectHeight))
                     .ToListAsync();
 
                 _cache.Set(AllDecksKey, publicDecks, CacheDuration);
@@ -44,7 +45,8 @@ namespace FortuneCards.Server.Services
                 .Where(d => d.IsPublic || d.UserId == userId)
                 .Select(d => new DeckSummary(
                     d.Id, d.Name, d.Description, d.CreatedAt, d.Cards.Count,
-                    d.Emoji, d.ColorIndex, d.CardBackImageUrl, d.IsPublic, d.UserId == userId))
+                    d.Emoji, d.ColorIndex, d.CardBackImageUrl, d.IsPublic, d.UserId == userId,
+                    d.AspectWidth, d.AspectHeight))
                 .ToListAsync();
         }
 
@@ -58,7 +60,8 @@ namespace FortuneCards.Server.Services
                 .Select(d => new DeckDetail(
                     d.Id, d.Name, d.Description, d.CreatedAt,
                     d.Cards.Select(c => new CardDto(c.Id, c.Title, c.Description, c.ImageUrl, c.CreatedAt)),
-                    d.Emoji, d.ColorIndex, d.CardBackImageUrl, d.IsPublic, d.UserId == userId))
+                    d.Emoji, d.ColorIndex, d.CardBackImageUrl, d.IsPublic, d.UserId == userId,
+                    d.AspectWidth, d.AspectHeight))
                 .FirstOrDefaultAsync();
 
             if (deck is not null && userId == null)
@@ -67,7 +70,7 @@ namespace FortuneCards.Server.Services
             return deck;
         }
 
-        public async Task<DeckSummary> CreateAsync(string name, string? description, string emoji, int colorIndex, bool isPublic, IFormFile? cardBackImage, int userId)
+        public async Task<DeckSummary> CreateAsync(string name, string? description, string emoji, int colorIndex, bool isPublic, IFormFile? cardBackImage, int aspectWidth, int aspectHeight, int userId)
         {
             string? cardBackImageUrl = null;
             if (cardBackImage is { Length: > 0 })
@@ -80,6 +83,8 @@ namespace FortuneCards.Server.Services
                 Emoji = emoji,
                 ColorIndex = colorIndex,
                 CardBackImageUrl = cardBackImageUrl,
+                AspectWidth = Math.Clamp(aspectWidth, 1, 100),
+                AspectHeight = Math.Clamp(aspectHeight, 1, 100),
                 UserId = userId,
                 IsPublic = isPublic
             };
@@ -88,7 +93,8 @@ namespace FortuneCards.Server.Services
             _cache.Remove(AllDecksKey);
 
             return new DeckSummary(deck.Id, deck.Name, deck.Description, deck.CreatedAt, 0,
-                deck.Emoji, deck.ColorIndex, deck.CardBackImageUrl, deck.IsPublic, true);
+                deck.Emoji, deck.ColorIndex, deck.CardBackImageUrl, deck.IsPublic, true,
+                deck.AspectWidth, deck.AspectHeight);
         }
 
         public async Task<bool> DeleteAsync(int id, int userId)
@@ -128,7 +134,7 @@ namespace FortuneCards.Server.Services
             return new CardDto(card.Id, card.Title, card.Description, card.ImageUrl, card.CreatedAt);
         }
 
-        public async Task<DeckDetail?> UpdateAsync(int deckId, string? name, string? description, string? emoji, int? colorIndex, bool? isPublic, IFormFile? cardBackImage, int userId)
+        public async Task<DeckDetail?> UpdateAsync(int deckId, string? name, string? description, string? emoji, int? colorIndex, bool? isPublic, IFormFile? cardBackImage, int? aspectWidth, int? aspectHeight, int userId)
         {
             var deck = await _db.Decks.FindAsync(deckId);
             if (deck is null || deck.UserId != userId) return null;
@@ -137,6 +143,8 @@ namespace FortuneCards.Server.Services
             if (!string.IsNullOrWhiteSpace(emoji)) deck.Emoji = emoji;
             if (colorIndex.HasValue) deck.ColorIndex = colorIndex.Value;
             if (isPublic.HasValue) deck.IsPublic = isPublic.Value;
+            if (aspectWidth.HasValue) deck.AspectWidth = Math.Clamp(aspectWidth.Value, 1, 100);
+            if (aspectHeight.HasValue) deck.AspectHeight = Math.Clamp(aspectHeight.Value, 1, 100);
             // Edit form always submits the full description; empty clears it.
             deck.Description = string.IsNullOrWhiteSpace(description) ? null : description;
 

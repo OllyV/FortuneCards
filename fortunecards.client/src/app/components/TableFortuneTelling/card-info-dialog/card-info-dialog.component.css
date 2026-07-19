@@ -34,7 +34,6 @@
   float: left;
   width: 160px;
   max-width: 45%;
-  aspect-ratio: 2 / 3;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #8a8a8a;

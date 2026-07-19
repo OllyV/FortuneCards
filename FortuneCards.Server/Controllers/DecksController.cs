@@ -33,7 +33,9 @@ namespace FortuneCards.Server.Controllers
                 request.Name, request.Description,
                 request.Emoji ?? "🎴", request.ColorIndex ?? 0,
                 request.IsPublic ?? false,
-                request.CardBackImage, userId);
+                request.CardBackImage,
+                request.AspectWidth ?? 3, request.AspectHeight ?? 5,
+                userId);
             return CreatedAtAction(nameof(GetDeck), new { id = deck.Id }, deck);
         }
 
@@ -62,7 +64,8 @@ namespace FortuneCards.Server.Controllers
             if (CurrentUserId is not int userId) return Unauthorized();
             var deck = await _decks.UpdateAsync(
                 id, request.Name, request.Description, request.Emoji,
-                request.ColorIndex, request.IsPublic, request.CardBackImage, userId);
+                request.ColorIndex, request.IsPublic, request.CardBackImage,
+                request.AspectWidth, request.AspectHeight, userId);
             return deck is null ? NotFound() : Ok(deck);
         }
     }
@@ -75,6 +78,8 @@ namespace FortuneCards.Server.Controllers
         public int? ColorIndex { get; set; }
         public bool? IsPublic { get; set; }
         public IFormFile? CardBackImage { get; set; }
+        public int? AspectWidth { get; set; }
+        public int? AspectHeight { get; set; }
     }
 
     public class AddCardRequest
@@ -92,5 +97,7 @@ namespace FortuneCards.Server.Controllers
         public int? ColorIndex { get; set; }
         public bool? IsPublic { get; set; }
         public IFormFile? CardBackImage { get; set; }
+        public int? AspectWidth { get; set; }
+        public int? AspectHeight { get; set; }
     }
 }
