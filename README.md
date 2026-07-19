@@ -27,5 +27,6 @@ The development by days:
 - Day 14: Fortune-telling process
 - Day 15: BlobStorage connection
 - Day 16-17: Table behavious fixes, mobile version adaptations
+- Day 18: Individual aspect-ratios for decks.
 
 It can: create decks of cards with image and description. Randomly pull out one card.
