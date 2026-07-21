@@ -19,6 +19,7 @@ describe('DeckSelectorComponent', () => {
     deck({ id: 1, name: 'Mine', isOwner: true, isPublic: false }),
     deck({ id: 2, name: 'Public', isOwner: false, isPublic: true }),
     deck({ id: 3, name: 'Other', isOwner: false, isPublic: false }),
+    deck({ id: 4, name: 'Fav', isOwner: false, isPublic: true, isFavorite: true }),
   ];
   const getDeck = vi.fn((id: number) => of(deck({ id, name: 'Full', isOwner: true })));
 
@@ -35,15 +36,15 @@ describe('DeckSelectorComponent', () => {
     fixture.detectChanges();
   }
 
-  it('shows only owned decks when authorized', () => {
+  it('shows owned and favourited decks when authorized', () => {
     setup(true);
-    expect(fixture.componentInstance.visibleDecks().map((d) => d.id)).toEqual([1]);
+    expect(fixture.componentInstance.visibleDecks().map((d) => d.id).sort()).toEqual([1, 4]);
     expect(fixture.nativeElement.querySelector('.deck-search')).toBeNull();
   });
 
   it('shows public decks with a search box when not authorized', () => {
     setup(false);
-    expect(fixture.componentInstance.visibleDecks().map((d) => d.id)).toEqual([2]);
+    expect(fixture.componentInstance.visibleDecks().map((d) => d.id).sort()).toEqual([2, 4]);
     expect(fixture.nativeElement.querySelector('.deck-search')).not.toBeNull();
     fixture.componentInstance.searchTerm.set('nomatch');
     expect(fixture.componentInstance.visibleDecks()).toEqual([]);
