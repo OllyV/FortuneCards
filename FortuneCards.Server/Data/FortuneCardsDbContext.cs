@@ -10,6 +10,7 @@ namespace FortuneCards.Server.Data
         public DbSet<Deck> Decks => Set<Deck>();
         public DbSet<Card> Cards => Set<Card>();
         public DbSet<User> Users => Set<User>();
+        public DbSet<FavoriteDeck> FavoriteDecks => Set<FavoriteDeck>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,6 +56,19 @@ namespace FortuneCards.Server.Data
                 e.HasOne(c => c.Deck)
                  .WithMany(d => d.Cards)
                  .HasForeignKey(c => c.DeckId)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<FavoriteDeck>(e =>
+            {
+                e.HasKey(f => new { f.UserId, f.DeckId });
+                e.HasOne(f => f.User)
+                 .WithMany(u => u.FavoriteDecks)
+                 .HasForeignKey(f => f.UserId)
+                 .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(f => f.Deck)
+                 .WithMany(d => d.FavoritedBy)
+                 .HasForeignKey(f => f.DeckId)
                  .OnDelete(DeleteBehavior.Cascade);
             });
         }

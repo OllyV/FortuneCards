@@ -15,5 +15,6 @@ namespace FortuneCards.Server.Models
         public int? UserId { get; set; }
         public bool IsPublic { get; set; } = false;
         public User? User { get; set; }
+        public ICollection<FavoriteDeck> FavoritedBy { get; set; } = new List<FavoriteDeck>();
     }
 }
