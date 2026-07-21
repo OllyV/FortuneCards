@@ -26,6 +26,8 @@ function configure(mode: 'mine' | 'search') {
   const mockDeckService = {
     getDecks: () => of([ownedDeck, publicDeck]),
     deleteDeck: () => of(void 0),
+    addFavorite: vi.fn(() => of(void 0)),
+    removeFavorite: vi.fn(() => of(void 0)),
   };
   return TestBed.configureTestingModule({
     imports: [DeckListComponent, CommonModule, RouterModule.forRoot([]), NavigationBar],
@@ -100,6 +102,42 @@ describe('DeckListComponent', () => {
       expect(component.visibleDecks().length).toBe(0);
       component.searchTerm.set('mystic');
       expect(component.visibleDecks().length).toBe(1);
+    });
+  });
+
+  describe('favourites', () => {
+    it('shows a star on non-owned decks in search mode when logged in', async () => {
+      await configure('search');
+      fixture = TestBed.createComponent(DeckListComponent);
+      component = fixture.componentInstance;
+      component.loading.set(false);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.deck-fav')).not.toBeNull();
+    });
+
+    it('toggleFavorite flips isFavorite and calls the service', async () => {
+      await configure('search');
+      fixture = TestBed.createComponent(DeckListComponent);
+      component = fixture.componentInstance;
+      component.loading.set(false);
+      fixture.detectChanges();
+      const svc = TestBed.inject(DeckService) as unknown as { addFavorite: ReturnType<typeof vi.fn> };
+      const target = component.decks().find((d) => d.id === 2)!;
+      component.toggleFavorite(target, new MouseEvent('click'));
+      expect(component.decks().find((d) => d.id === 2)!.isFavorite).toBe(true);
+      expect(svc.addFavorite).toHaveBeenCalledWith(2);
+    });
+
+    it('mine mode includes favourited non-owned decks', async () => {
+      await configure('mine');
+      fixture = TestBed.createComponent(DeckListComponent);
+      component = fixture.componentInstance;
+      component.decks.set([
+        { ...ownedDeck },
+        { ...publicDeck, isFavorite: true },
+      ]);
+      component.loading.set(false);
+      expect(component.visibleDecks().map((d) => d.id).sort()).toEqual([1, 2]);
     });
   });
 });
