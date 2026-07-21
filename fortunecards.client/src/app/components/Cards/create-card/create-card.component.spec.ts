@@ -12,7 +12,7 @@ import { Deck } from '../../../models/deck';
 const deckForCard: Deck = {
   id: 1, name: 'Adventure', description: null,
   createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0,
-  cardBackImageUrl: null, aspectWidth: 2, aspectHeight: 5, isPublic: true, isOwner: true,
+  cardBackImageUrl: null, aspectWidth: 2, aspectHeight: 5, isPublic: true, isOwner: true, isFavorite: false,
   cards: [],
 };
 

@@ -12,7 +12,7 @@ import { Deck } from '../../../models/deck';
 const mockDeck: Deck = {
   id: 1, name: 'Adventure', description: 'Bold quests',
   createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0,
-  cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 5, cards: [], isPublic: false, isOwner: false
+  cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 5, cards: [], isPublic: false, isOwner: false, isFavorite: false
 };
 
 describe('DeckDetailComponent', () => {

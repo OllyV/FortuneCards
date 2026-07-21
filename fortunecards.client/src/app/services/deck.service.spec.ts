@@ -40,4 +40,18 @@ describe('DeckService', () => {
     expect(body.get('aspectHeight')).toBe('7');
     req.flush({});
   });
+
+  it('should PUT /api/decks/:id/favorite for addFavorite', () => {
+    service.addFavorite(5).subscribe();
+    const req = httpMock.expectOne('/api/decks/5/favorite');
+    expect(req.request.method).toBe('PUT');
+    req.flush(null);
+  });
+
+  it('should DELETE /api/decks/:id/favorite for removeFavorite', () => {
+    service.removeFavorite(5).subscribe();
+    const req = httpMock.expectOne('/api/decks/5/favorite');
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
 });
