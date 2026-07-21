@@ -19,6 +19,13 @@
       </div>
     </div>
     <div class="hero-actions">
+      <button *ngIf="auth.isLoggedIn() && !d.isOwner"
+              class="hero-btn hero-fav"
+              [class.is-fav]="d.isFavorite"
+              [attr.aria-pressed]="d.isFavorite"
+              [attr.aria-label]="d.isFavorite ? 'Remove from favourites' : 'Add to favourites'"
+              [style.background]="getDeckGradient()"
+              (click)="toggleFavorite()">{{ d.isFavorite ? '★ Favourited' : '☆ Favourite' }}</button>
       <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="editDeck()">✏️ Edit deck</button>
       <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="addCard()">+ Add Card</button>
       <button class="hero-btn" [style.background]="getDeckGradient()" (click)="drawCard()">🎴 Draw a Card</button>

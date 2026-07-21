@@ -1,13 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { DeckDetailComponent } from './deck-detail.component';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { Deck } from '../../../models/deck';
+import { AuthService } from '../../../services/auth.service';
+import { DeckService } from '../../../services/deck.service';
 
 const mockDeck: Deck = {
   id: 1, name: 'Adventure', description: 'Bold quests',
@@ -26,11 +28,18 @@ describe('DeckDetailComponent', () => {
         provideZonelessChangeDetection(),
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: ActivatedRoute, useValue: { params: of({ id: '1' }) } }
+        { provide: ActivatedRoute, useValue: { params: of({ id: '1' }) } },
+        { provide: AuthService, useValue: { isLoggedIn: () => true, currentUser: signal({ id: 1, displayName: 'Test User', email: 'test@example.com', avatarUrl: null }) } },
+        { provide: DeckService, useValue: { getDeck: () => of(mockDeck), addFavorite: vi.fn(() => of(void 0)), removeFavorite: vi.fn(() => of(void 0)) } },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(DeckDetailComponent);
     component = fixture.componentInstance;
+    // Trigger ngOnInit (and its synchronous mock getDeck() resolution) now, so that
+    // individual tests can safely override component.deck afterwards without the
+    // completed route/getDeck subscription clobbering their override on the next
+    // detectChanges() call.
+    fixture.detectChanges();
   });
 
   it('should render the deck hero banner with emoji and name', () => {
@@ -74,5 +83,27 @@ describe('DeckDetailComponent', () => {
     const navSpy = vi.spyOn(component['router'], 'navigate').mockResolvedValue(true);
     component.goBack();
     expect(navSpy).toHaveBeenCalledWith(['/decks/search']);
+  });
+
+  it('shows the hero favourite star for a non-owned deck when logged in', () => {
+    component.deck.set({ ...mockDeck, isOwner: false });
+    component.loading.set(false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.hero-fav')).not.toBeNull();
+  });
+
+  it('hides the hero favourite star when the user owns the deck', () => {
+    component.deck.set({ ...mockDeck, isOwner: true });
+    component.loading.set(false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.hero-fav')).toBeNull();
+  });
+
+  it('toggleFavorite flips isFavorite and calls the service', () => {
+    component.deck.set({ ...mockDeck, isOwner: false, isFavorite: false });
+    const svc = TestBed.inject(DeckService) as unknown as { addFavorite: ReturnType<typeof vi.fn> };
+    component.toggleFavorite();
+    expect(component.deck()!.isFavorite).toBe(true);
+    expect(svc.addFavorite).toHaveBeenCalledWith(1);
   });
 });
