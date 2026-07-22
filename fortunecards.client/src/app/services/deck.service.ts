@@ -10,10 +10,6 @@ export class DeckService {
 
   constructor(private http: HttpClient) {}
 
-  getDecks(): Observable<Deck[]> {
-    return this.http.get<Deck[]>(this.base);
-  }
-
   getDeck(id: number): Observable<Deck> {
     return this.http.get<Deck>(`${this.base}/${id}`);
   }

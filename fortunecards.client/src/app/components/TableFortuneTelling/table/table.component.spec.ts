@@ -22,7 +22,6 @@ describe('TableComponent', () => {
         {
           provide: DeckService,
           useValue: {
-            getDecks: () => of([]),
             getDeck: () => of(null),
             getMyDecks: () => of([]),
             getPublicDecks: () => of({ items: [], totalCount: 0, page: 1, pageSize: 12 }),
