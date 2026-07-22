@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { DeckService } from './deck.service';
-import { CreateDeckPayload } from '../models/deck';
+import { CreateDeckPayload, Deck, PagedResult } from '../models/deck';
 
 describe('DeckService', () => {
   let service: DeckService;
@@ -53,5 +53,31 @@ describe('DeckService', () => {
     const req = httpMock.expectOne('/api/decks/5/favorite');
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
+  });
+
+  it('should GET /api/decks/public with page params (no search) for getPublicDecks', () => {
+    const paged: PagedResult<Deck> = { items: [], totalCount: 0, page: 1, pageSize: 20 };
+    service.getPublicDecks('', 1, 20).subscribe((r) => expect(r).toEqual(paged));
+    const req = httpMock.expectOne((r) => r.url === '/api/decks/public');
+    expect(req.request.method).toBe('GET');
+    expect(req.request.params.get('page')).toBe('1');
+    expect(req.request.params.get('pageSize')).toBe('20');
+    expect(req.request.params.has('search')).toBe(false);
+    req.flush(paged);
+  });
+
+  it('should include search param when provided', () => {
+    service.getPublicDecks('tarot', 2, 20).subscribe();
+    const req = httpMock.expectOne((r) => r.url === '/api/decks/public');
+    expect(req.request.params.get('search')).toBe('tarot');
+    expect(req.request.params.get('page')).toBe('2');
+    req.flush({ items: [], totalCount: 0, page: 2, pageSize: 20 });
+  });
+
+  it('should GET /api/decks/mine for getMyDecks', () => {
+    service.getMyDecks().subscribe();
+    const req = httpMock.expectOne('/api/decks/mine');
+    expect(req.request.method).toBe('GET');
+    req.flush([]);
   });
 });

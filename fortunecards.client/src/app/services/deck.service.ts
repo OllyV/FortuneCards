@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Card } from '../models/card';
-import { CreateDeckPayload, Deck } from '../models/deck';
+import { CreateDeckPayload, Deck, PagedResult } from '../models/deck';
 
 @Injectable({ providedIn: 'root' })
 export class DeckService {
@@ -16,6 +16,18 @@ export class DeckService {
 
   getDeck(id: number): Observable<Deck> {
     return this.http.get<Deck>(`${this.base}/${id}`);
+  }
+
+  getPublicDecks(search: string, page: number, pageSize: number): Observable<PagedResult<Deck>> {
+    let params = new HttpParams().set('page', page).set('pageSize', pageSize);
+    if (search) {
+      params = params.set('search', search);
+    }
+    return this.http.get<PagedResult<Deck>>(`${this.base}/public`, { params });
+  }
+
+  getMyDecks(): Observable<Deck[]> {
+    return this.http.get<Deck[]>(`${this.base}/mine`);
   }
 
   createDeck(payload: CreateDeckPayload): Observable<Deck> {
