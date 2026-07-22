@@ -16,11 +16,11 @@ My Decks. The two lists have fundamentally different shapes (one paginated and
 user-agnostic, one small and per-user), so a single combined endpoint fights that.
 Splitting the endpoint is a prerequisite for pagination.
 
-Caching was the original motivation for this investigation but is **explicitly out of
-scope**: once the public list is server-searched and paginated, a cache key fragments
-across every `(search, page, pageSize)` combination, so the hit rate collapses. My
-Decks is per-user and cheap. We revisit caching only if profiling later shows the
-public query is a hotspot.
+Caching was the original motivation for this investigation. Because the split makes the
+public list **user-agnostic**, a cache entry is shared across all users (no per-user
+invalidation trap). We cache the **empty-search browse pages** — the hot path many
+users hit — with a 5-minute TTL, and skip the cache when a search term is present (to
+bound key cardinality). My Decks stays per-user and uncached. See the Caching section.
 
 ## Goals
 
@@ -32,10 +32,13 @@ public query is a hotspot.
   deck-selector modal.
 - Keep the public list user-agnostic; overlay per-user favourite/owner state on the
   client.
+- Cache the empty-search public browse pages (5-minute TTL, version-token invalidation)
+  since they are user-agnostic and frequently accessed.
 
 ## Non-goals
 
-- Caching the public list (dropped — see above).
+- Caching arbitrary search queries or the per-user "mine" list (only empty-search
+  public browse pages are cached — see the Caching section).
 - Cursor/infinite-scroll pagination (chose offset for numbered pages + total count).
 - Changing the authorized deck-selector's behaviour (it still shows owned+favourites).
 - Backend unit tests (no backend test project exists in this repo).
@@ -90,12 +93,31 @@ Replace `GetAllAsync(int? userId)` with:
   - Projects `IsOwner = d.UserId == userId`,
     `IsFavorite = d.FavoritedBy.Any(f => f.UserId == userId)`.
 
-### Caching cleanup
+### Caching (public browse pages)
 
-- Remove the unused `AllDecksKey` constant and the `_cache.Remove(AllDecksKey)` calls in
-  `CreateAsync`, `DeleteAsync`, `AddCardAsync`, `UpdateAsync`.
+Cache only the **empty-search** public pages (the shared browse view); skip the cache
+entirely when `search` is non-empty (bounds key cardinality — arbitrary search strings
+query directly).
+
+- Replace the old `AllDecksKey` machinery with a version-token scheme:
+  - A `decks:public:version` integer counter held in `IMemoryCache` (default 0 when
+    absent).
+  - Cache key per page: `decks:public:v{version}:p{page}:s{pageSize}`.
+  - Cache the whole `PagedResult<DeckSummary>` (items + `TotalCount`) with a 5-minute
+    TTL (`CacheDuration` reused or a dedicated `PublicCacheDuration`).
+- **Invalidation:** bump `decks:public:version` (increment the counter) on any write that
+  changes the public set — `CreateAsync`, `UpdateAsync`, `DeleteAsync`, `AddCardAsync`.
+  Bumping orphans all old page keys at once; they expire naturally by TTL. This replaces
+  the previous `_cache.Remove(AllDecksKey)` calls at those same sites.
+  - Note: a deck's public visibility can toggle in `UpdateAsync` (`IsPublic`), and card
+    counts change in `AddCardAsync` — both are covered by bumping on all four writes.
+- `GetMineAsync` is **not** cached.
 - Leave the per-id `GetByIdAsync` cache (`DeckKey(id)`) and its `_cache.Remove(DeckKey(id))`
   invalidations untouched — separate concern, still valid.
+
+Concurrency note: the version counter uses read-modify-write on `IMemoryCache`; a rare
+lost increment under concurrent writes only risks serving a stale page for up to the
+5-minute TTL, which is acceptable. No locking required.
 
 ### Controller (`DecksController`)
 
@@ -175,9 +197,11 @@ Replace `GetAllAsync(int? userId)` with:
   - `profile.spec` — owned-only filter over `getMyDecks()`.
   - New `pagination.spec` for `app-pagination`.
   - Run `ng test --watch=false` for a single verifying run.
-- **Backend:** no test project — verify with `dotnet build`. The search/pagination
-  logic is not unit-tested server-side (existing repo constraint); note this as a known
-  gap.
+- **Backend:** no test project — verify with `dotnet build`. The search/pagination and
+  cache-versioning logic are not unit-tested server-side (existing repo constraint);
+  note this as a known gap. Manual sanity check: create/edit a public deck and confirm
+  it appears on the first browse page immediately (version bump), and that repeated
+  empty-search page loads are served from cache within the 5-minute window.
 
 ## Rollout / migration notes
 
