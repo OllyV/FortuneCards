@@ -27,9 +27,10 @@ namespace FortuneCards.Server.Services
             page = Math.Max(1, page);
             pageSize = Math.Clamp(pageSize, 1, 100);
             var hasSearch = !string.IsNullOrWhiteSpace(search);
+            var version = PublicDeckCache.Version(_cache);
 
             if (!hasSearch &&
-                _cache.TryGetValue(PublicDeckCache.PageKey(PublicDeckCache.Version(_cache), page, pageSize), out PagedResult<DeckSummary>? cached) &&
+                _cache.TryGetValue(PublicDeckCache.PageKey(version, page, pageSize), out PagedResult<DeckSummary>? cached) &&
                 cached is not null)
                 return cached;
 
@@ -52,7 +53,7 @@ namespace FortuneCards.Server.Services
 
             var result = new PagedResult<DeckSummary>(items, total, page, pageSize);
             if (!hasSearch)
-                _cache.Set(PublicDeckCache.PageKey(PublicDeckCache.Version(_cache), page, pageSize), result, PublicCacheDuration);
+                _cache.Set(PublicDeckCache.PageKey(version, page, pageSize), result, PublicCacheDuration);
             return result;
         }
 
