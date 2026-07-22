@@ -19,7 +19,15 @@ describe('TableComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
-        { provide: DeckService, useValue: { getDecks: () => of([]), getDeck: () => of(null) } },
+        {
+          provide: DeckService,
+          useValue: {
+            getDecks: () => of([]),
+            getDeck: () => of(null),
+            getMyDecks: () => of([]),
+            getPublicDecks: () => of({ items: [], totalCount: 0, page: 1, pageSize: 12 }),
+          },
+        },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(TableComponent);
