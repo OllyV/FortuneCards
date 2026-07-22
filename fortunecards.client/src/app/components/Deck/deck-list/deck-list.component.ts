@@ -1,10 +1,10 @@
 import { Component, signal, inject, DestroyRef, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { Subject, debounceTime } from 'rxjs';
+import { Subject, debounceTime, switchMap, map, catchError, of } from 'rxjs';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { PaginationComponent } from '../../shared/pagination/pagination.component';
-import { Deck } from '../../../models/deck';
+import { Deck, PagedResult } from '../../../models/deck';
 import { DeckService } from '../../../services/deck.service';
 import { AuthService } from '../../../services/auth.service';
 import { getDeckGradientStyle, getDeckShadowStyle } from '../../../utils/deck-colors';
@@ -36,6 +36,7 @@ export class DeckListComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly searchInput = new Subject<string>();
+  private readonly pageLoad = new Subject<void>();
 
   private ownedIds = new Set<number>();
   private favoriteIds = new Set<number>();
@@ -52,6 +53,27 @@ export class DeckListComponent {
         this.searchTerm.set(term);
         this.page.set(1);
         this.loadDecks();
+      });
+
+    this.pageLoad
+      .pipe(
+        switchMap(() =>
+          this.deckService.getPublicDecks(this.searchTerm(), this.page(), this.pageSize).pipe(
+            map((result): { result: PagedResult<Deck> | null; failed: boolean } => ({ result, failed: false })),
+            catchError(() => of({ result: null, failed: true })),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(({ result, failed }) => {
+        if (failed || !result) {
+          this.error.set('Failed to load decks.');
+          this.loading.set(false);
+          return;
+        }
+        this.decks.set(result.items.map((d) => this.overlay(d)));
+        this.totalCount.set(result.totalCount);
+        this.loading.set(false);
       });
 
     effect(() => {
@@ -95,16 +117,9 @@ export class DeckListComponent {
   }
 
   private loadPublicPage(): void {
-    this.deckService.getPublicDecks(this.searchTerm(), this.page(), this.pageSize)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (result) => {
-          this.decks.set(result.items.map((d) => this.overlay(d)));
-          this.totalCount.set(result.totalCount);
-          this.loading.set(false);
-        },
-        error: () => { this.error.set('Failed to load decks.'); this.loading.set(false); },
-      });
+    this.loading.set(true);
+    this.error.set(null);
+    this.pageLoad.next();
   }
 
   private overlay(deck: Deck): Deck {

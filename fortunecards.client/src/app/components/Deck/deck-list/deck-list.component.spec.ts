@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { DeckListComponent } from './deck-list.component';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { DeckService } from '../../../services/deck.service';
@@ -92,6 +92,26 @@ describe('DeckListComponent', () => {
       component.onPageChange(3);
       expect(component.page()).toBe(3);
       expect(svc.getPublicDecks).toHaveBeenCalledWith('', 3, 20);
+    });
+
+    it('ignores a stale in-flight page response when a newer page is requested', () => {
+      const svc = configure('search');
+      fixture = TestBed.createComponent(DeckListComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges(); // initial page load resolves
+
+      const stale = new Subject<PagedResult<Deck>>();
+      svc.getPublicDecks.mockReturnValueOnce(stale); // page 2 request hangs
+      component.onPageChange(2);
+
+      svc.getPublicDecks.mockReturnValueOnce(of(paged([{ ...publicDeck, id: 99, name: 'Fresh' }]))); // page 3 resolves
+      component.onPageChange(3);
+      expect(component.decks().map((d) => d.id)).toEqual([99]);
+
+      // stale page-2 response arrives late — switchMap should have unsubscribed it
+      stale.next(paged([{ ...publicDeck, id: 2, name: 'Stale' }]));
+      stale.complete();
+      expect(component.decks().map((d) => d.id)).toEqual([99]);
     });
   });
 
