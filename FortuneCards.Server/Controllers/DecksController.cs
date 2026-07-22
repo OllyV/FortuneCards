@@ -14,11 +14,18 @@ namespace FortuneCards.Server.Controllers
         private int? CurrentUserId =>
             HttpContext.Items["UserId"] is int id ? id : null;
 
-        [HttpGet]
-        public async Task<IActionResult> GetDecks() =>
-            Ok(await _decks.GetAllAsync(CurrentUserId));
+        [HttpGet("public")]
+        public async Task<IActionResult> GetPublic([FromQuery] string? search, [FromQuery] int page = 1, [FromQuery] int pageSize = 20) =>
+            Ok(await _decks.GetPublicAsync(search, page, pageSize));
 
-        [HttpGet("{id}")]
+        [HttpGet("mine")]
+        public async Task<IActionResult> GetMine()
+        {
+            if (CurrentUserId is not int userId) return Unauthorized();
+            return Ok(await _decks.GetMineAsync(userId));
+        }
+
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetDeck(int id)
         {
             var deck = await _decks.GetByIdAsync(id, CurrentUserId);
