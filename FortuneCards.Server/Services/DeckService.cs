@@ -7,14 +7,9 @@ namespace FortuneCards.Server.Services
 {
     public class DeckService : IDeckService
     {
-        private const string PublicVersionKey = "decks:public:version";
         private static string DeckKey(int id) => $"decks:{id}";
-        private static string PublicPageKey(int version, int page, int pageSize) => $"decks:public:v{version}:p{page}:s{pageSize}";
         private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(15);
         private static readonly TimeSpan PublicCacheDuration = TimeSpan.FromMinutes(5);
-
-        private int PublicVersion => _cache.TryGetValue(PublicVersionKey, out int v) ? v : 0;
-        private void BumpPublicVersion() => _cache.Set(PublicVersionKey, PublicVersion + 1);
 
         private readonly FortuneCardsDbContext _db;
         private readonly IMemoryCache _cache;
@@ -34,7 +29,7 @@ namespace FortuneCards.Server.Services
             var hasSearch = !string.IsNullOrWhiteSpace(search);
 
             if (!hasSearch &&
-                _cache.TryGetValue(PublicPageKey(PublicVersion, page, pageSize), out PagedResult<DeckSummary>? cached) &&
+                _cache.TryGetValue(PublicDeckCache.PageKey(PublicDeckCache.Version(_cache), page, pageSize), out PagedResult<DeckSummary>? cached) &&
                 cached is not null)
                 return cached;
 
@@ -57,7 +52,7 @@ namespace FortuneCards.Server.Services
 
             var result = new PagedResult<DeckSummary>(items, total, page, pageSize);
             if (!hasSearch)
-                _cache.Set(PublicPageKey(PublicVersion, page, pageSize), result, PublicCacheDuration);
+                _cache.Set(PublicDeckCache.PageKey(PublicDeckCache.Version(_cache), page, pageSize), result, PublicCacheDuration);
             return result;
         }
 
@@ -113,7 +108,7 @@ namespace FortuneCards.Server.Services
             };
             _db.Decks.Add(deck);
             await _db.SaveChangesAsync();
-            BumpPublicVersion();
+            PublicDeckCache.Bump(_cache);
 
             return new DeckSummary(deck.Id, deck.Name, deck.Description, deck.CreatedAt, 0,
                 deck.Emoji, deck.ColorIndex, deck.CardBackImageUrl, deck.IsPublic, true,
@@ -130,7 +125,7 @@ namespace FortuneCards.Server.Services
 
             _db.Decks.Remove(deck);
             await _db.SaveChangesAsync();
-            BumpPublicVersion();
+            PublicDeckCache.Bump(_cache);
             _cache.Remove(DeckKey(id));
             return true;
         }
@@ -151,7 +146,7 @@ namespace FortuneCards.Server.Services
             };
             _db.Cards.Add(card);
             await _db.SaveChangesAsync();
-            BumpPublicVersion();
+            PublicDeckCache.Bump(_cache);
             _cache.Remove(DeckKey(deckId));
 
             return new CardDto(card.Id, card.Title, card.Description, card.ImageUrl, card.CreatedAt);
@@ -178,7 +173,7 @@ namespace FortuneCards.Server.Services
             }
 
             await _db.SaveChangesAsync();
-            BumpPublicVersion();
+            PublicDeckCache.Bump(_cache);
             _cache.Remove(DeckKey(deckId));
 
             return await GetByIdAsync(deckId, userId);
