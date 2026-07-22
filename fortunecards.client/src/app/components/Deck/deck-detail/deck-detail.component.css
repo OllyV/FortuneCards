@@ -92,3 +92,5 @@
 
 .card-tile--add { border-top-color: var(--color-border-light) !important; border-top-style: dashed; box-shadow: none; }
 .card-image--add { background: var(--color-cream); font-size: 24px; color: var(--color-border-light); font-weight: 400; }
+
+.hero-fav.is-fav { color: #ffd54a; }

@@ -26,7 +26,7 @@ export class DeckListComponent {
   readonly visibleDecks = computed<Deck[]>(() => {
     const all = this.decks();
     if (this.mode() === 'mine') {
-      return all.filter((d) => d.isOwner);
+      return all.filter((d) => d.isOwner || d.isFavorite);
     }
     const publicDecks = all.filter((d) => d.isPublic);
     const term = this.searchTerm().trim().toLowerCase();
@@ -77,5 +77,23 @@ export class DeckListComponent {
 
   onSearchInput(event: Event): void {
     this.searchTerm.set((event.target as HTMLInputElement).value);
+  }
+
+  toggleFavorite(deck: Deck, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    const next = !deck.isFavorite;
+    this.setFavorite(deck.id, next);
+    const request = next
+      ? this.deckService.addFavorite(deck.id)
+      : this.deckService.removeFavorite(deck.id);
+    request
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ error: () => this.setFavorite(deck.id, !next) });
+  }
+
+  private setFavorite(id: number, value: boolean): void {
+    this.decks.update((all) =>
+      all.map((d) => (d.id === id ? { ...d, isFavorite: value } : d)));
   }
 }

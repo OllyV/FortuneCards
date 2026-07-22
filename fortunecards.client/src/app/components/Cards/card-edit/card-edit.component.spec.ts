@@ -13,14 +13,14 @@ import { Deck } from '../../../models/deck';
 const deckWithCard: Deck = {
   id: 1, name: 'Adventure', description: null,
   createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0,
-  cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 7, isPublic: true, isOwner: true,
+  cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 7, isPublic: true, isOwner: true, isFavorite: false,
   cards: [{ id: 5, title: 'The Star', description: 'Hope', imageUrl: '/images/x.png', createdAt: '2026-01-01', deckId: 1 }],
 };
 
 const nonOwnerDeckWithCard: Deck = {
   id: 1, name: 'Adventure', description: null,
   createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0,
-  cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 5, isPublic: true, isOwner: false,
+  cardBackImageUrl: null, aspectWidth: 3, aspectHeight: 5, isPublic: true, isOwner: false, isFavorite: false,
   cards: [{ id: 5, title: 'The Star', description: 'Hope', imageUrl: '/images/x.png', createdAt: '2026-01-01', deckId: 1 }],
 };
 

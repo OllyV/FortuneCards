@@ -30,6 +30,14 @@ export class DeckService {
     return this.http.delete<void>(`${this.base}/${id}`);
   }
 
+  addFavorite(id: number): Observable<void> {
+    return this.http.put<void>(`${this.base}/${id}/favorite`, {});
+  }
+
+  removeFavorite(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${id}/favorite`);
+  }
+
   addCard(deckId: number, title: string, description: string, image: File): Observable<Card> {
     const form = new FormData();
     form.append('title', title);

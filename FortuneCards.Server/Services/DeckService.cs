@@ -34,7 +34,7 @@ namespace FortuneCards.Server.Services
                     .Select(d => new DeckSummary(
                         d.Id, d.Name, d.Description, d.CreatedAt, d.Cards.Count,
                         d.Emoji, d.ColorIndex, d.CardBackImageUrl, true, false,
-                        d.AspectWidth, d.AspectHeight))
+                        d.AspectWidth, d.AspectHeight, false))
                     .ToListAsync();
 
                 _cache.Set(AllDecksKey, publicDecks, CacheDuration);
@@ -46,7 +46,7 @@ namespace FortuneCards.Server.Services
                 .Select(d => new DeckSummary(
                     d.Id, d.Name, d.Description, d.CreatedAt, d.Cards.Count,
                     d.Emoji, d.ColorIndex, d.CardBackImageUrl, d.IsPublic, d.UserId == userId,
-                    d.AspectWidth, d.AspectHeight))
+                    d.AspectWidth, d.AspectHeight, d.FavoritedBy.Any(f => f.UserId == userId)))
                 .ToListAsync();
         }
 
@@ -61,7 +61,7 @@ namespace FortuneCards.Server.Services
                     d.Id, d.Name, d.Description, d.CreatedAt,
                     d.Cards.Select(c => new CardDto(c.Id, c.Title, c.Description, c.ImageUrl, c.CreatedAt)),
                     d.Emoji, d.ColorIndex, d.CardBackImageUrl, d.IsPublic, d.UserId == userId,
-                    d.AspectWidth, d.AspectHeight))
+                    d.AspectWidth, d.AspectHeight, d.FavoritedBy.Any(f => f.UserId == userId)))
                 .FirstOrDefaultAsync();
 
             if (deck is not null && userId == null)
@@ -94,7 +94,7 @@ namespace FortuneCards.Server.Services
 
             return new DeckSummary(deck.Id, deck.Name, deck.Description, deck.CreatedAt, 0,
                 deck.Emoji, deck.ColorIndex, deck.CardBackImageUrl, deck.IsPublic, true,
-                deck.AspectWidth, deck.AspectHeight);
+                deck.AspectWidth, deck.AspectHeight, false);
         }
 
         public async Task<bool> DeleteAsync(int id, int userId)
@@ -159,6 +159,32 @@ namespace FortuneCards.Server.Services
             _cache.Remove(DeckKey(deckId));
 
             return await GetByIdAsync(deckId, userId);
+        }
+
+        public async Task<bool> AddFavoriteAsync(int deckId, int userId)
+        {
+            var deck = await _db.Decks.FindAsync(deckId);
+            if (deck is null || !deck.IsPublic || deck.UserId == userId) return false;
+
+            var exists = await _db.FavoriteDecks
+                .AnyAsync(f => f.UserId == userId && f.DeckId == deckId);
+            if (!exists)
+            {
+                _db.FavoriteDecks.Add(new FavoriteDeck { UserId = userId, DeckId = deckId });
+                await _db.SaveChangesAsync();
+            }
+            return true;
+        }
+
+        public async Task<bool> RemoveFavoriteAsync(int deckId, int userId)
+        {
+            var favorite = await _db.FavoriteDecks
+                .FirstOrDefaultAsync(f => f.UserId == userId && f.DeckId == deckId);
+            if (favorite is null) return false;
+
+            _db.FavoriteDecks.Remove(favorite);
+            await _db.SaveChangesAsync();
+            return true;
         }
     }
 }

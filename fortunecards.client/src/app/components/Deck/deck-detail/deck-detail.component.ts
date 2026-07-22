@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { Deck } from '../../../models/deck';
 import { DeckService } from '../../../services/deck.service';
+import { AuthService } from '../../../services/auth.service';
 import { getDeckGradientStyle, getDeckShadowStyle, getCardAccentColor } from '../../../utils/deck-colors';
 
 @Component({
@@ -20,6 +21,7 @@ export class DeckDetailComponent implements OnInit {
   error = signal<string | null>(null);
 
   private readonly destroyRef = inject(DestroyRef);
+  protected readonly auth = inject(AuthService);
 
   constructor(
     private route: ActivatedRoute,
@@ -75,5 +77,21 @@ export class DeckDetailComponent implements OnInit {
   openCard(cardId: number): void {
     const d = this.deck();
     if (d) this.router.navigate(['/decks', d.id, 'cards', cardId]);
+  }
+
+  toggleFavorite(): void {
+    const d = this.deck();
+    if (!d) return;
+    const next = !d.isFavorite;
+    this.deck.set({ ...d, isFavorite: next });
+    const request = next
+      ? this.deckService.addFavorite(d.id)
+      : this.deckService.removeFavorite(d.id);
+    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      error: () => {
+        const current = this.deck();
+        if (current) this.deck.set({ ...current, isFavorite: !next });
+      },
+    });
   }
 }

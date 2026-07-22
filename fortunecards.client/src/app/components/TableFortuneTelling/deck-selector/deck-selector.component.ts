@@ -28,7 +28,7 @@ export class DeckSelectorComponent {
 
   readonly visibleDecks = computed<Deck[]>(() => {
     const all = this.decks();
-    if (this.isAuthorized()) return all.filter((d) => d.isOwner);
+    if (this.isAuthorized()) return all.filter((d) => d.isOwner || d.isFavorite);
     const publicDecks = all.filter((d) => d.isPublic);
     const term = this.searchTerm().trim().toLowerCase();
     if (!term) return publicDecks;

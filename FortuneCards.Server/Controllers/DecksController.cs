@@ -68,6 +68,22 @@ namespace FortuneCards.Server.Controllers
                 request.AspectWidth, request.AspectHeight, userId);
             return deck is null ? NotFound() : Ok(deck);
         }
+
+        [HttpPut("{id}/favorite")]
+        public async Task<IActionResult> AddFavorite(int id)
+        {
+            if (CurrentUserId is not int userId) return Unauthorized();
+            var ok = await _decks.AddFavoriteAsync(id, userId);
+            return ok ? NoContent() : NotFound();
+        }
+
+        [HttpDelete("{id}/favorite")]
+        public async Task<IActionResult> RemoveFavorite(int id)
+        {
+            if (CurrentUserId is not int userId) return Unauthorized();
+            var ok = await _decks.RemoveFavoriteAsync(id, userId);
+            return ok ? NoContent() : NotFound();
+        }
     }
 
     public class CreateDeckRequest

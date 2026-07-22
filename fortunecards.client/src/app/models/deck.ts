@@ -14,6 +14,7 @@ export interface Deck {
   cards?: Card[];
   isPublic: boolean;
   isOwner: boolean;
+  isFavorite: boolean;
 }
 
 export interface CreateDeckPayload {

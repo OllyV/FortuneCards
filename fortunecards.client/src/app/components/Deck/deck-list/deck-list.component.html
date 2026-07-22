@@ -40,6 +40,18 @@
           <span class="deck-name">{{ deck.name }}</span>
           <span class="deck-count">{{ deck.cardCount }} card{{ deck.cardCount === 1 ? '' : 's' }}</span>
 
+          @if (auth.isLoggedIn() && !deck.isOwner) {
+          <button
+            type="button"
+            class="deck-fav"
+            [class.is-fav]="deck.isFavorite"
+            [attr.aria-pressed]="deck.isFavorite"
+            [attr.aria-label]="deck.isFavorite ? 'Remove from favourites' : 'Add to favourites'"
+            (click)="toggleFavorite(deck, $event)">
+            {{ deck.isFavorite ? '★' : '☆' }}
+          </button>
+          }
+
           @if (deck.isOwner) {
           @if (deck.isPublic) {
           <span class="deck-badge public">🌐 Public</span>

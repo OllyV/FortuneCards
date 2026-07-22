@@ -13,7 +13,7 @@ import { Deck } from '../../../models/deck';
 const ownerDeck: Deck = {
   id: 1, name: 'Adventure', description: 'Bold quests',
   createdAt: '2026-01-01', emoji: '🌈', colorIndex: 3,
-  cardBackImageUrl: null, aspectWidth: 4, aspectHeight: 9, isPublic: true, isOwner: true,
+  cardBackImageUrl: null, aspectWidth: 4, aspectHeight: 9, isPublic: true, isOwner: true, isFavorite: false,
 };
 
 const nonOwnerDeck: Deck = { ...ownerDeck, isOwner: false };
