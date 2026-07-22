@@ -28,5 +28,6 @@ The development by days:
 - Day 15: BlobStorage connection
 - Day 16-17: Table behavious fixes, mobile version adaptations
 - Day 18: Individual aspect-ratios for decks.
+- Day 19: Add favourite decks
 
 It can: create decks of cards with image and description. Randomly pull out one card.
