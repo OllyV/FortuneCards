@@ -13,9 +13,12 @@ namespace FortuneCards.Server.Services
         string Emoji, int ColorIndex, string? CardBackImageUrl,
         bool IsPublic, bool IsOwner, int AspectWidth, int AspectHeight, bool IsFavorite);
 
+    public record PagedResult<T>(IEnumerable<T> Items, int TotalCount, int Page, int PageSize);
+
     public interface IDeckService
     {
-        Task<IEnumerable<DeckSummary>> GetAllAsync(int? userId = null);
+        Task<PagedResult<DeckSummary>> GetPublicAsync(string? search, int page, int pageSize);
+        Task<IEnumerable<DeckSummary>> GetMineAsync(int userId);
         Task<DeckDetail?> GetByIdAsync(int id, int? userId = null);
         Task<DeckSummary> CreateAsync(string name, string? description, string emoji, int colorIndex, bool isPublic, IFormFile? cardBackImage, int aspectWidth, int aspectHeight, int userId);
         Task<bool> DeleteAsync(int id, int userId);

@@ -26,7 +26,7 @@ export class ProfileComponent {
   error = signal<string | null>(null);
 
   constructor() {
-    this.deckService.getDecks()
+    this.deckService.getMyDecks()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (all) => {

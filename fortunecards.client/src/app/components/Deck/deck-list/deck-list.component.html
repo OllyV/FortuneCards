@@ -8,7 +8,7 @@
       <h1 class="list-title">{{ title() }}</h1>
       @if (!loading()) {
         <p class="list-subtitle">
-          {{ visibleDecks().length }} deck{{ visibleDecks().length === 1 ? '' : 's' }}
+          {{ decks().length }} deck{{ decks().length === 1 ? '' : 's' }}
         </p>
       }
     </div>
@@ -31,7 +31,7 @@
 
     @if (!loading() && !error()) {
       <div class="deck-grid">
-        @for (deck of visibleDecks(); track deck.id) {
+        @for (deck of decks(); track deck.id) {
         <div class="deck-tile"
              [style.background]="getDeckGradient(deck.colorIndex)"
              [style.box-shadow]="getDeckShadow(deck.colorIndex)"
@@ -72,7 +72,15 @@
 
       </div>
 
-      @if (visibleDecks().length === 0) {
+      @if (mode() === 'search' && totalCount() > 0) {
+        <app-pagination
+          [page]="page()"
+          [pageSize]="pageSize"
+          [totalCount]="totalCount()"
+          (pageChange)="onPageChange($event)" />
+      }
+
+      @if (decks().length === 0) {
         @if (mode() === 'mine') {
           <p class="state-empty">You have no decks yet — create one.</p>
         } @else {

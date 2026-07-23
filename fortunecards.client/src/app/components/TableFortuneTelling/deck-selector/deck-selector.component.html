@@ -24,15 +24,22 @@
       <div class="state state-error">{{ selectError() }}</div>
     }
     <div class="deck-grid">
-      @for (deck of visibleDecks(); track deck.id) {
+      @for (deck of decks(); track deck.id) {
         <button type="button" class="deck-tile" [style.background]="gradient(deck.colorIndex)" (click)="selectDeck(deck)">
           <span class="deck-emoji">{{ deck.emoji }}</span>
           <span class="deck-name">{{ deck.name }}</span>
         </button>
       }
     </div>
-    @if (visibleDecks().length === 0) {
+    @if (decks().length === 0) {
       <p class="state">{{ isAuthorized() ? 'You have no decks yet.' : 'No public decks found.' }}</p>
+    }
+    @if (!isAuthorized() && totalCount() > 0) {
+      <app-pagination
+        [page]="page()"
+        [pageSize]="pageSize"
+        [totalCount]="totalCount()"
+        (pageChange)="onPageChange($event)" />
     }
   }
 

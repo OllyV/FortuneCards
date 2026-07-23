@@ -7,7 +7,6 @@ namespace FortuneCards.Server.Services
     public class CardService : ICardService
     {
         private static string DeckKey(int id) => $"decks:{id}";
-        private const string AllDecksKey = "decks:all";
 
         private readonly FortuneCardsDbContext _db;
         private readonly IMemoryCache _cache;
@@ -34,7 +33,7 @@ namespace FortuneCards.Server.Services
             _db.Cards.Remove(card);
             await _db.SaveChangesAsync();
 
-            _cache.Remove(AllDecksKey);
+            PublicDeckCache.Bump(_cache);
             _cache.Remove(DeckKey(deckId));
 
             return true;
@@ -58,7 +57,7 @@ namespace FortuneCards.Server.Services
             }
 
             await _db.SaveChangesAsync();
-            _cache.Remove(AllDecksKey);
+            PublicDeckCache.Bump(_cache);
             _cache.Remove(DeckKey(card.DeckId));
 
             return new CardDto(card.Id, card.Title, card.Description, card.ImageUrl, card.CreatedAt);
