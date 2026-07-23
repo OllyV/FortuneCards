@@ -4,7 +4,7 @@ Available at: https://fortunecards-b2gmfjgkg4dteag4.westeurope-01.azurewebsites.
 May load 2-3 minutes because of free AzureDb tier.
 
 Asp.Net core + Angular + AzureDB SqlServer solution for creating fortune card decks.
-Created together with Claude Code by principle "not a single line human-written".
+Created together with Claude Code.
 
 Used claude plugins:
 - superpowers
@@ -29,5 +29,6 @@ The development by days:
 - Day 16-17: Table behavious fixes, mobile version adaptations
 - Day 18: Individual aspect-ratios for decks.
 - Day 19: Add favourite decks
+- Day 20: Split get decks endpoints, add pagination
 
-It can: create decks of cards with image and description. Randomly pull out one card.
+It can: create decks of cards with image and description. Randomly pull out one card. Place cards on table and imitate fortune-telling process.
