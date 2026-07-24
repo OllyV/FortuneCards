@@ -8,18 +8,20 @@ namespace FortuneCards.Server.Services
     public class DeckService : IDeckService
     {
         private static string DeckKey(int id) => $"decks:{id}";
-        private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(15);
-        private static readonly TimeSpan PublicCacheDuration = TimeSpan.FromMinutes(5);
 
         private readonly FortuneCardsDbContext _db;
         private readonly IMemoryCache _cache;
         private readonly IImageStorage _imageStorage;
+        private readonly TimeSpan DeckCacheDuration;
+        private readonly TimeSpan PublicDeckCacheDuration;
 
-        public DeckService(FortuneCardsDbContext db, IMemoryCache cache, IImageStorage imageStorage)
+        public DeckService(FortuneCardsDbContext db, IMemoryCache cache, IImageStorage imageStorage, IConfiguration config)
         {
             _db = db;
             _cache = cache;
             _imageStorage = imageStorage;
+            DeckCacheDuration = TimeSpan.FromMinutes(config.GetValue("DeckCache:DeckDurationMinutes", 15));
+            PublicDeckCacheDuration = TimeSpan.FromMinutes(config.GetValue("DeckCache:PublicDurationMinutes", 5));
         }
 
         public async Task<PagedResult<DeckSummary>> GetPublicAsync(string? search, int page, int pageSize)
@@ -53,7 +55,7 @@ namespace FortuneCards.Server.Services
 
             var result = new PagedResult<DeckSummary>(items, total, page, pageSize);
             if (!hasSearch)
-                _cache.Set(PublicDeckCache.PageKey(version, page, pageSize), result, PublicCacheDuration);
+                _cache.Set(PublicDeckCache.PageKey(version, page, pageSize), result, PublicDeckCacheDuration);
             return result;
         }
 
@@ -84,7 +86,7 @@ namespace FortuneCards.Server.Services
                 .FirstOrDefaultAsync();
 
             if (deck is not null && userId == null)
-                _cache.Set(DeckKey(id), deck, CacheDuration);
+                _cache.Set(DeckKey(id), deck, DeckCacheDuration);
 
             return deck;
         }
