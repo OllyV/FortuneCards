@@ -28,10 +28,13 @@
 - Modify: `FortuneCards.Server/FortuneCards.Server.csproj:22`
 - Modify: `FortuneCards.Server/Program.cs:11-14`
 - Modify: `FortuneCards.Server/Data/DesignTimeDbContextFactory.cs:17`
+- Delete: all files under `FortuneCards.Server/Migrations/` (5 SQL Server migrations + `FortuneCardsDbContextModelSnapshot.cs`)
 
 **Interfaces:**
 - Consumes: nothing (first task).
-- Produces: a server project that compiles against the Npgsql provider; `UseNpgsql(...)` is now the configured provider for both runtime and design-time.
+- Produces: a server project that compiles against the Npgsql provider with NO migrations present; `UseNpgsql(...)` is now the configured provider for both runtime and design-time. (Task 2 generates the fresh Postgres migration.)
+
+**Why delete the migrations here:** the existing migrations call SQL-Server-only fluent-API extension methods (`SqlServerModelBuilderExtensions`, `SqlServerPropertyBuilderExtensions`, e.g. `.UseIdentityColumn()`). Removing the SqlServer package makes them fail to compile, so they must be removed in the same task/commit that removes the package. The project compiles fine with zero migration files (migrations are only needed at `database update` time).
 
 - [ ] **Step 1: Replace the SqlServer package with Npgsql in the csproj**
 
@@ -85,38 +88,9 @@ with:
             optionsBuilder.UseNpgsql(config.GetConnectionString("DefaultConnection"));
 ```
 
-- [ ] **Step 4: Restore and build**
+- [ ] **Step 4: Delete the old SQL Server migrations**
 
-Run:
-
-```bash
-dotnet build FortuneCards.Server/FortuneCards.Server.csproj
-```
-
-Expected: build succeeds. (The existing SQL-Server-flavored migration files still compile — their `SqlServer:*` annotations are plain strings — but they will be deleted in Task 2 before any `database update`.)
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add FortuneCards.Server/FortuneCards.Server.csproj FortuneCards.Server/Program.cs FortuneCards.Server/Data/DesignTimeDbContextFactory.cs
-git commit -m "feat(server): switch EF Core provider from SqlServer to Npgsql"
-```
-
----
-
-### Task 2: Regenerate the EF migration for PostgreSQL
-
-**Files:**
-- Delete: `FortuneCards.Server/Migrations/*.cs` (all 5 migrations + `FortuneCardsDbContextModelSnapshot.cs`)
-- Create: `FortuneCards.Server/Migrations/<timestamp>_InitialCreate.cs` (generated)
-- Create: `FortuneCards.Server/Migrations/<timestamp>_InitialCreate.Designer.cs` (generated)
-- Create: `FortuneCards.Server/Migrations/FortuneCardsDbContextModelSnapshot.cs` (generated)
-
-**Interfaces:**
-- Consumes: the Npgsql provider from Task 1.
-- Produces: a single PostgreSQL `InitialCreate` migration that builds the whole schema (`Users`, `Decks`, `Cards`, `FavoriteDecks`) and seeds system user `Id = 1`.
-
-- [ ] **Step 1: Delete the old SQL Server migrations**
+The existing migrations cannot compile without the SqlServer package (they use SqlServer-only extension methods). Remove all of them:
 
 ```bash
 git rm FortuneCards.Server/Migrations/20260603222540_InitialCreate.cs \
@@ -131,6 +105,46 @@ git rm FortuneCards.Server/Migrations/20260603222540_InitialCreate.cs \
        FortuneCards.Server/Migrations/20260721100559_AddFavoriteDecks.Designer.cs \
        FortuneCards.Server/Migrations/FortuneCardsDbContextModelSnapshot.cs
 ```
+
+- [ ] **Step 5: Build**
+
+Run:
+
+```bash
+dotnet build FortuneCards.Server/FortuneCards.Server.csproj
+```
+
+Expected: build succeeds with 0 errors (no migration files remain, and the app code compiles against Npgsql).
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add FortuneCards.Server/FortuneCards.Server.csproj FortuneCards.Server/Program.cs FortuneCards.Server/Data/DesignTimeDbContextFactory.cs FortuneCards.Server/Migrations
+git commit -m "feat(server): switch EF Core provider from SqlServer to Npgsql"
+```
+
+---
+
+### Task 2: Regenerate the EF migration for PostgreSQL
+
+**Files:**
+- Create: `FortuneCards.Server/Migrations/<timestamp>_InitialCreate.cs` (generated)
+- Create: `FortuneCards.Server/Migrations/<timestamp>_InitialCreate.Designer.cs` (generated)
+- Create: `FortuneCards.Server/Migrations/FortuneCardsDbContextModelSnapshot.cs` (generated)
+
+**Interfaces:**
+- Consumes: the Npgsql provider from Task 1, with the old SQL Server migrations already deleted in Task 1 (the `Migrations/` folder is empty).
+- Produces: a single PostgreSQL `InitialCreate` migration that builds the whole schema (`Users`, `Decks`, `Cards`, `FavoriteDecks`) and seeds system user `Id = 1`.
+
+- [ ] **Step 1: Confirm the Migrations folder is empty**
+
+The old SQL Server migrations were deleted in Task 1. Confirm none remain (PowerShell):
+
+```powershell
+Get-ChildItem FortuneCards.Server/Migrations -ErrorAction SilentlyContinue
+```
+
+Expected: no files listed (or the folder does not exist). If old migrations are still present, delete them before continuing.
 
 - [ ] **Step 2: Generate a fresh InitialCreate migration for Postgres**
 
