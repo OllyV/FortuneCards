@@ -30,5 +30,6 @@ The development by days:
 - Day 18: Individual aspect-ratios for decks.
 - Day 19: Add favourite decks
 - Day 20: Split get decks endpoints, add pagination
+- Day 21: Add caching for mine decks
 
 It can: create decks of cards with image and description. Randomly pull out one card. Place cards on table and imitate fortune-telling process.
