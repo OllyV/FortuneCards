@@ -8,18 +8,21 @@ namespace FortuneCards.Server.Services
     public class DeckService : IDeckService
     {
         private static string DeckKey(int id) => $"decks:{id}";
-        private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(15);
-        private static readonly TimeSpan PublicCacheDuration = TimeSpan.FromMinutes(5);
+        private static string MineKey(int userId) => $"decks:mine:{userId}";
 
         private readonly FortuneCardsDbContext _db;
         private readonly IMemoryCache _cache;
         private readonly IImageStorage _imageStorage;
+        private readonly TimeSpan DeckCacheDuration;
+        private readonly TimeSpan PublicDeckCacheDuration;
 
-        public DeckService(FortuneCardsDbContext db, IMemoryCache cache, IImageStorage imageStorage)
+        public DeckService(FortuneCardsDbContext db, IMemoryCache cache, IImageStorage imageStorage, IConfiguration config)
         {
             _db = db;
             _cache = cache;
             _imageStorage = imageStorage;
+            DeckCacheDuration = TimeSpan.FromMinutes(config.GetValue("DeckCache:DeckDurationMinutes", 15));
+            PublicDeckCacheDuration = TimeSpan.FromMinutes(config.GetValue("DeckCache:PublicDurationMinutes", 5));
         }
 
         public async Task<PagedResult<DeckSummary>> GetPublicAsync(string? search, int page, int pageSize)
@@ -53,13 +56,16 @@ namespace FortuneCards.Server.Services
 
             var result = new PagedResult<DeckSummary>(items, total, page, pageSize);
             if (!hasSearch)
-                _cache.Set(PublicDeckCache.PageKey(version, page, pageSize), result, PublicCacheDuration);
+                _cache.Set(PublicDeckCache.PageKey(version, page, pageSize), result, PublicDeckCacheDuration);
             return result;
         }
 
         public async Task<IEnumerable<DeckSummary>> GetMineAsync(int userId)
         {
-            return await _db.Decks
+            if (_cache.TryGetValue(MineKey(userId), out IEnumerable<DeckSummary>? cached) && cached is not null)
+                return cached;
+
+            var decks = await _db.Decks
                 .Where(d => d.UserId == userId || d.FavoritedBy.Any(f => f.UserId == userId))
                 .OrderByDescending(d => d.CreatedAt).ThenByDescending(d => d.Id)
                 .Select(d => new DeckSummary(
@@ -67,6 +73,12 @@ namespace FortuneCards.Server.Services
                     d.Emoji, d.ColorIndex, d.CardBackImageUrl, d.IsPublic, d.UserId == userId,
                     d.AspectWidth, d.AspectHeight, d.FavoritedBy.Any(f => f.UserId == userId)))
                 .ToListAsync();
+
+            // Per-user cache: only the current user's own writes evict it (below).
+            // Staleness from another user editing a favourited deck is accepted — the
+            // stale DeckSummary fields are cosmetic and self-heal at the TTL.
+            _cache.Set(MineKey(userId), decks, DeckCacheDuration);
+            return decks;
         }
 
         public async Task<DeckDetail?> GetByIdAsync(int id, int? userId = null)
@@ -84,7 +96,7 @@ namespace FortuneCards.Server.Services
                 .FirstOrDefaultAsync();
 
             if (deck is not null && userId == null)
-                _cache.Set(DeckKey(id), deck, CacheDuration);
+                _cache.Set(DeckKey(id), deck, DeckCacheDuration);
 
             return deck;
         }
@@ -110,6 +122,7 @@ namespace FortuneCards.Server.Services
             _db.Decks.Add(deck);
             await _db.SaveChangesAsync();
             PublicDeckCache.Bump(_cache);
+            _cache.Remove(MineKey(userId));
 
             return new DeckSummary(deck.Id, deck.Name, deck.Description, deck.CreatedAt, 0,
                 deck.Emoji, deck.ColorIndex, deck.CardBackImageUrl, deck.IsPublic, true,
@@ -128,6 +141,7 @@ namespace FortuneCards.Server.Services
             await _db.SaveChangesAsync();
             PublicDeckCache.Bump(_cache);
             _cache.Remove(DeckKey(id));
+            _cache.Remove(MineKey(userId));
             return true;
         }
 
@@ -149,6 +163,7 @@ namespace FortuneCards.Server.Services
             await _db.SaveChangesAsync();
             PublicDeckCache.Bump(_cache);
             _cache.Remove(DeckKey(deckId));
+            _cache.Remove(MineKey(userId));
 
             return new CardDto(card.Id, card.Title, card.Description, card.ImageUrl, card.CreatedAt);
         }
@@ -176,6 +191,7 @@ namespace FortuneCards.Server.Services
             await _db.SaveChangesAsync();
             PublicDeckCache.Bump(_cache);
             _cache.Remove(DeckKey(deckId));
+            _cache.Remove(MineKey(userId));
 
             return await GetByIdAsync(deckId, userId);
         }
@@ -191,6 +207,7 @@ namespace FortuneCards.Server.Services
             {
                 _db.FavoriteDecks.Add(new FavoriteDeck { UserId = userId, DeckId = deckId });
                 await _db.SaveChangesAsync();
+                _cache.Remove(MineKey(userId));
             }
             return true;
         }
@@ -203,6 +220,7 @@ namespace FortuneCards.Server.Services
 
             _db.FavoriteDecks.Remove(favorite);
             await _db.SaveChangesAsync();
+            _cache.Remove(MineKey(userId));
             return true;
         }
     }
