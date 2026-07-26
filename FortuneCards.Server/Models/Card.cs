@@ -5,7 +5,7 @@ namespace FortuneCards.Server.Models
         public int Id { get; set; }
         public required string Title { get; set; }
         public required string Description { get; set; }
-        public required string ImageUrl { get; set; }
+        public required string ImageKey { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public int DeckId { get; set; }

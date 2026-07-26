@@ -3,6 +3,7 @@ using System;
 using FortuneCards.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FortuneCards.Server.Migrations
 {
     [DbContext(typeof(FortuneCardsDbContext))]
-    partial class FortuneCardsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260726204602_RenameImageUrlToImageKey")]
+    partial class RenameImageUrlToImageKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
