@@ -31,5 +31,6 @@ The development by days:
 - Day 19: Add favourite decks
 - Day 20: Split get decks endpoints, add pagination
 - Day 21: Add caching for mine decks
+- Day 22: Migrate DB to aiven: no more issues with paused state.
 
 It can: create decks of cards with image and description. Randomly pull out one card. Place cards on table and imitate fortune-telling process.
