@@ -11,6 +11,7 @@ var source = Environment.GetEnvironmentVariable("SOURCE_CONNECTION")
 var target = Environment.GetEnvironmentVariable("TARGET_CONNECTION")
     ?? throw new InvalidOperationException("Set TARGET_CONNECTION (Aiven Postgres) env var.");
 
+// Source rows are written by the app as DateTime.UtcNow (already UTC); SpecifyKind relabels Kind for Npgsql's timestamptz binding without shifting the value.
 static DateTime Utc(DateTime dt) => DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 static NpgsqlParameter P(string name, NpgsqlDbType type, object? value)
     => new(name, type) { Value = value ?? DBNull.Value };
@@ -19,6 +20,7 @@ await using var src = new SqlConnection(source);
 await using var dst = new NpgsqlConnection(target);
 await src.OpenAsync();
 await dst.OpenAsync();
+await using var tx = await dst.BeginTransactionAsync();
 
 // ---- Users (skip system user Id = 1) ----
 int users = 0;
@@ -30,7 +32,7 @@ await using (var r = await read.ExecuteReaderAsync())
     {
         await using var ins = new NpgsqlCommand(
             "INSERT INTO \"Users\" (\"Id\",\"GoogleId\",\"Email\",\"DisplayName\",\"AvatarUrl\",\"CreatedAt\") " +
-            "VALUES (@id,@g,@e,@d,@a,@c)", dst);
+            "VALUES (@id,@g,@e,@d,@a,@c)", dst, tx);
         ins.Parameters.Add(P("id", NpgsqlDbType.Integer, r.GetInt32(0)));
         ins.Parameters.Add(P("g", NpgsqlDbType.Text, r.GetString(1)));
         ins.Parameters.Add(P("e", NpgsqlDbType.Text, r.GetString(2)));
@@ -55,7 +57,7 @@ await using (var r = await read.ExecuteReaderAsync())
         await using var ins = new NpgsqlCommand(
             "INSERT INTO \"Decks\" (\"Id\",\"Name\",\"Description\",\"Emoji\",\"ColorIndex\"," +
             "\"AspectWidth\",\"AspectHeight\",\"CardBackImageUrl\",\"CreatedAt\",\"UserId\",\"IsPublic\") " +
-            "VALUES (@id,@n,@desc,@em,@ci,@aw,@ah,@cb,@c,@uid,@pub)", dst);
+            "VALUES (@id,@n,@desc,@em,@ci,@aw,@ah,@cb,@c,@uid,@pub)", dst, tx);
         ins.Parameters.Add(P("id", NpgsqlDbType.Integer, r.GetInt32(0)));
         ins.Parameters.Add(P("n", NpgsqlDbType.Text, r.GetString(1)));
         ins.Parameters.Add(P("desc", NpgsqlDbType.Text, r.IsDBNull(2) ? null : r.GetString(2)));
@@ -83,7 +85,7 @@ await using (var r = await read.ExecuteReaderAsync())
     {
         await using var ins = new NpgsqlCommand(
             "INSERT INTO \"Cards\" (\"Id\",\"Title\",\"Description\",\"ImageUrl\",\"CreatedAt\",\"DeckId\") " +
-            "VALUES (@id,@t,@desc,@img,@c,@did)", dst);
+            "VALUES (@id,@t,@desc,@img,@c,@did)", dst, tx);
         ins.Parameters.Add(P("id", NpgsqlDbType.Integer, r.GetInt32(0)));
         ins.Parameters.Add(P("t", NpgsqlDbType.Text, r.GetString(1)));
         ins.Parameters.Add(P("desc", NpgsqlDbType.Text, r.GetString(2)));
@@ -105,7 +107,7 @@ await using (var r = await read.ExecuteReaderAsync())
     while (await r.ReadAsync())
     {
         await using var ins = new NpgsqlCommand(
-            "INSERT INTO \"FavoriteDecks\" (\"UserId\",\"DeckId\",\"CreatedAt\") VALUES (@u,@d,@c)", dst);
+            "INSERT INTO \"FavoriteDecks\" (\"UserId\",\"DeckId\",\"CreatedAt\") VALUES (@u,@d,@c)", dst, tx);
         ins.Parameters.Add(P("u", NpgsqlDbType.Integer, r.GetInt32(0)));
         ins.Parameters.Add(P("d", NpgsqlDbType.Integer, r.GetInt32(1)));
         ins.Parameters.Add(P("c", NpgsqlDbType.TimestampTz, Utc(r.GetDateTime(2))));
@@ -114,6 +116,8 @@ await using (var r = await read.ExecuteReaderAsync())
     }
 }
 Console.WriteLine($"FavoriteDecks copied: {favs}");
+
+await tx.CommitAsync();
 
 // ---- Reset identity sequences so future inserts don't collide with copied IDs ----
 await using (var reset = new NpgsqlCommand(
