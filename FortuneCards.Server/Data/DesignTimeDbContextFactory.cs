@@ -14,7 +14,7 @@ namespace FortuneCards.Server.Data
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<FortuneCardsDbContext>();
-            optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseNpgsql(config.GetConnectionString("DefaultConnection"));
 
             return new FortuneCardsDbContext(optionsBuilder.Options);
         }

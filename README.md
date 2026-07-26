@@ -3,7 +3,7 @@
 Available at: https://fortunecards-b2gmfjgkg4dteag4.westeurope-01.azurewebsites.net/decks
 May load 2-3 minutes because of free AzureDb tier.
 
-Asp.Net core + Angular + AzureDB SqlServer solution for creating fortune card decks.
+Asp.Net core + Angular + PostgreSQL (Aiven) solution for creating fortune card decks.
 Created together with Claude Code.
 
 Used claude plugins:
