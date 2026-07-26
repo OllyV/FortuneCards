@@ -19,7 +19,7 @@
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy">
       <Version>10.*-*</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.*" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.*">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
