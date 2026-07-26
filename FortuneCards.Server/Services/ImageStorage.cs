@@ -1,48 +1,17 @@
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-
 namespace FortuneCards.Server.Services
 {
     public interface IImageStorage
     {
+        // Base public URL for stored objects, e.g. https://pub-xxxx.r2.dev (no trailing slash).
+        string PublicBaseUrl { get; }
+
+        // Uploads the file and returns its object KEY (e.g. "{guid}.png"), not a URL.
         Task<string> SaveAsync(IFormFile file);
-        Task DeleteAsync(string imageUrl);
-    }
 
-    public class BlobImageStorage : IImageStorage
-    {
-        private readonly BlobContainerClient _container;
+        // Deletes by key (tolerates a bare key or a legacy absolute URL). No-op if absent.
+        Task DeleteAsync(string key);
 
-        public BlobImageStorage(BlobContainerClient container) => _container = container;
-
-        public async Task<string> SaveAsync(IFormFile file)
-        {
-            var ext = Path.GetExtension(file.FileName);
-            var blobName = $"{Guid.NewGuid()}{ext}";
-            var blob = _container.GetBlobClient(blobName);
-            await using var stream = file.OpenReadStream();
-            await blob.UploadAsync(stream, new BlobUploadOptions
-            {
-                HttpHeaders = new BlobHttpHeaders { ContentType = file.ContentType }
-            });
-            return blob.Uri.ToString();
-        }
-
-        public async Task DeleteAsync(string imageUrl)
-        {
-            var blobName = GetBlobName(imageUrl);
-            if (blobName is null) return;
-            await _container.DeleteBlobIfExistsAsync(blobName);
-        }
-
-        // Last path segment of an absolute blob URL, or of a legacy "/images/{name}" path.
-        public static string? GetBlobName(string imageUrl)
-        {
-            if (string.IsNullOrWhiteSpace(imageUrl)) return null;
-            var name = Uri.TryCreate(imageUrl, UriKind.Absolute, out var uri)
-                ? Path.GetFileName(uri.AbsolutePath)
-                : Path.GetFileName(imageUrl);
-            return string.IsNullOrWhiteSpace(name) ? null : name;
-        }
+        // Builds the absolute public URL for a key; null/empty key -> null.
+        string? PublicUrl(string? key);
     }
 }

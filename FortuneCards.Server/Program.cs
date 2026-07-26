@@ -1,5 +1,3 @@
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
 using FortuneCards.Server.Data;
 using FortuneCards.Server.Middleware;
 using FortuneCards.Server.Services;
@@ -19,18 +17,23 @@ builder.Services.AddScoped<IDeckService, DeckService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-var blobConnection = builder.Configuration["BlobStorage:ConnectionString"]
-    ?? throw new InvalidOperationException("BlobStorage:ConnectionString is not configured.");
-var blobContainerName = builder.Configuration["BlobStorage:Container"] ?? "images";
+var r2 = builder.Configuration.GetSection("R2").Get<R2Options>()
+    ?? throw new InvalidOperationException("R2 configuration section is missing.");
+if (string.IsNullOrWhiteSpace(r2.AccountId) || string.IsNullOrWhiteSpace(r2.AccessKey)
+    || string.IsNullOrWhiteSpace(r2.SecretKey) || string.IsNullOrWhiteSpace(r2.Bucket)
+    || string.IsNullOrWhiteSpace(r2.PublicBaseUrl))
+    throw new InvalidOperationException(
+        "R2 configuration is incomplete (need AccountId, AccessKey, SecretKey, Bucket, PublicBaseUrl).");
 
-builder.Services.AddSingleton(_ =>
-{
-    var service = new BlobServiceClient(blobConnection);
-    var container = service.GetBlobContainerClient(blobContainerName);
-    container.CreateIfNotExists(PublicAccessType.Blob);
-    return container;
-});
-builder.Services.AddSingleton<IImageStorage, BlobImageStorage>();
+builder.Services.AddSingleton(r2);
+builder.Services.AddSingleton<Amazon.S3.IAmazonS3>(_ =>
+    new Amazon.S3.AmazonS3Client(r2.AccessKey, r2.SecretKey, new Amazon.S3.AmazonS3Config
+    {
+        ServiceURL = r2.ServiceUrl,
+        ForcePathStyle = true,
+        AuthenticationRegion = "auto"
+    }));
+builder.Services.AddSingleton<IImageStorage, R2ImageStorage>();
 
 builder.Services.AddHttpClient("google");
 
@@ -44,11 +47,6 @@ builder.Services.AddControllers()
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
-
-// Resolve the blob container eagerly so an invalid/unreachable storage account or a
-// container that cannot be created with public access fails fast at startup, not on
-// the first image request.
-app.Services.GetRequiredService<Azure.Storage.Blobs.BlobContainerClient>();
 
 if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("EnableApiDocs"))
 {
