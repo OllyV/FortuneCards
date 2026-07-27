@@ -1,7 +1,6 @@
 # FortuneCards
 
 Available at: https://fortunecards-b2gmfjgkg4dteag4.westeurope-01.azurewebsites.net/decks
-May load 2-3 minutes because of free AzureDb tier.
 
 Asp.Net core + Angular + PostgreSQL (Aiven) solution for creating fortune card decks.
 Created together with Claude Code.
@@ -31,6 +30,7 @@ The development by days:
 - Day 19: Add favourite decks
 - Day 20: Split get decks endpoints, add pagination
 - Day 21: Add caching for mine decks
-- Day 22: Migrate DB to aiven: no more issues with paused state.
+- Day 22: Migrate DB to aiven: no more issues with paused state. (Before migration app may load 2-3 minutes because of free AzureDb tier.)
+- Day 23: Migrate image storage from blob to R2
 
 It can: create decks of cards with image and description. Randomly pull out one card. Place cards on table and imitate fortune-telling process.
