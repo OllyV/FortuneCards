@@ -54,7 +54,7 @@ No backend test project exists; verify the backend with `dotnet build`.
 
 - **ASP.NET Core 10** minimal API style: no `Startup.cs`, all configuration in `Program.cs`
 - Controllers live in `Controllers/`; follow `DecksController.cs` / `CardsController.cs` as patterns. Business logic lives in `Services/` (`IDeckService`, `ICardService`, `IAuthService`)
-- Domain: a `Deck` (owned by a `User`) has many `Card`s, persisted with EF Core (`FortuneCardsDbContext`, PostgreSQL on Aiven via the Npgsql provider). Runtime-uploaded images are stored in Azure Blob Storage via `Services/ImageStorage.cs` (`IImageStorage`); absolute blob URLs are persisted on `Card.ImageUrl`/`Deck.CardBackImageUrl` and served directly to the browser from a public-read container.
+- Domain: a `Deck` (owned by a `User`) has many `Card`s, persisted with EF Core (`FortuneCardsDbContext`, PostgreSQL on Aiven via the Npgsql provider). Runtime-uploaded images are stored in Cloudflare R2 (S3-compatible) via `Services/R2ImageStorage.cs` (`IImageStorage`); object **keys** are persisted on `Card.ImageKey`/`Deck.CardBackImageKey`, and the server builds absolute public URLs (`{R2:PublicBaseUrl}/{key}`) when returning DTOs, which the browser reads directly.
 - Auth: Google OAuth → JWT in an HttpOnly cookie; `JwtMiddleware` populates `HttpContext.Items["UserId"]`. Ownership is enforced by comparing `deck.UserId` to the current user, and both not-found and not-owner return `404` (no existence leak)
 - In production, `app.UseDefaultFiles()` + `MapStaticAssets()` + `MapFallbackToFile("/index.html")` serve the compiled Angular app from the same origin
 

@@ -27,7 +27,7 @@ namespace FortuneCards.Server.Services
 
             if (card is null || card.Deck?.UserId != userId) return false;
 
-            await _imageStorage.DeleteAsync(card.ImageUrl);
+            await _imageStorage.DeleteAsync(card.ImageKey);
 
             var deckId = card.DeckId;
             _db.Cards.Remove(card);
@@ -52,15 +52,16 @@ namespace FortuneCards.Server.Services
 
             if (image is { Length: > 0 })
             {
-                await _imageStorage.DeleteAsync(card.ImageUrl);
-                card.ImageUrl = await _imageStorage.SaveAsync(image);
+                await _imageStorage.DeleteAsync(card.ImageKey);
+                card.ImageKey = await _imageStorage.SaveAsync(image);
             }
 
             await _db.SaveChangesAsync();
             PublicDeckCache.Bump(_cache);
             _cache.Remove(DeckKey(card.DeckId));
 
-            return new CardDto(card.Id, card.Title, card.Description, card.ImageUrl, card.CreatedAt);
+            return new CardDto(card.Id, card.Title, card.Description,
+                _imageStorage.PublicUrl(card.ImageKey)!, card.CreatedAt);
         }
     }
 }

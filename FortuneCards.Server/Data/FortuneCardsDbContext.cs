@@ -40,7 +40,7 @@ namespace FortuneCards.Server.Data
                 e.Property(d => d.ColorIndex).HasDefaultValue(0);
                 e.Property(d => d.AspectWidth).HasDefaultValue(3);
                 e.Property(d => d.AspectHeight).HasDefaultValue(5);
-                e.Property(d => d.CardBackImageUrl).HasMaxLength(500);
+                e.Property(d => d.CardBackImageKey).HasMaxLength(500);
                 e.Property(d => d.IsPublic).HasDefaultValue(false);
                 e.HasOne(d => d.User)
                  .WithMany(u => u.Decks)
@@ -52,7 +52,7 @@ namespace FortuneCards.Server.Data
             {
                 e.Property(c => c.Title).HasMaxLength(200).IsRequired();
                 e.Property(c => c.Description).HasMaxLength(2000).IsRequired();
-                e.Property(c => c.ImageUrl).HasMaxLength(500).IsRequired();
+                e.Property(c => c.ImageKey).HasMaxLength(500).IsRequired();
                 e.HasOne(c => c.Deck)
                  .WithMany(d => d.Cards)
                  .HasForeignKey(c => c.DeckId)
