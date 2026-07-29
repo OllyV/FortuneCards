@@ -125,4 +125,26 @@ describe('DeckDetailComponent', () => {
       expect(img.getAttribute('decoding')).toBe('async');
     });
   });
+
+  it('renders the add-card tile as the first grid cell for an owner', () => {
+    component.deck.set({
+      ...mockDeck,
+      isOwner: true,
+      cards: [
+        { id: 10, title: 'Sun', description: '', imageUrl: 'https://img/sun.png', createdAt: '2026-01-01', deckId: 1 },
+      ],
+    });
+    component.loading.set(false);
+    fixture.detectChanges();
+    const grid = fixture.nativeElement.querySelector('.card-grid');
+    const firstTile = grid.children[0];
+    expect(firstTile.classList.contains('card-tile--add')).toBe(true);
+  });
+
+  it('does not render the add-card tile when the deck is not owned', () => {
+    component.deck.set({ ...mockDeck, isOwner: false, cards: [] });
+    component.loading.set(false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.card-tile--add')).toBeNull();
+  });
 });
