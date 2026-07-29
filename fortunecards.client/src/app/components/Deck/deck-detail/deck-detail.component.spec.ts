@@ -106,4 +106,23 @@ describe('DeckDetailComponent', () => {
     expect(component.deck()!.isFavorite).toBe(true);
     expect(svc.addFavorite).toHaveBeenCalledWith(1);
   });
+
+  it('renders card images with native lazy loading', () => {
+    component.deck.set({
+      ...mockDeck,
+      isOwner: true,
+      cards: [
+        { id: 10, title: 'Sun', description: '', imageUrl: 'https://img/sun.png', createdAt: '2026-01-01', deckId: 1 },
+        { id: 11, title: 'Moon', description: '', imageUrl: 'https://img/moon.png', createdAt: '2026-01-01', deckId: 1 },
+      ],
+    });
+    component.loading.set(false);
+    fixture.detectChanges();
+    const imgs = fixture.nativeElement.querySelectorAll('.card-image img') as NodeListOf<HTMLImageElement>;
+    expect(imgs.length).toBe(2);
+    imgs.forEach((img) => {
+      expect(img.getAttribute('loading')).toBe('lazy');
+      expect(img.getAttribute('decoding')).toBe('async');
+    });
+  });
 });

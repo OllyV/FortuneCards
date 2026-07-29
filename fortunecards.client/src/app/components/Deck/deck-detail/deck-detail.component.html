@@ -42,7 +42,7 @@
            [style.border-top-color]="getCardAccent(i)"
            (click)="openCard(card.id)">
         <div class="card-image" [style.background]="getCardAccent(i) + '18'">
-          <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.title" />
+          <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.title" loading="lazy" decoding="async" />
           <span *ngIf="!card.imageUrl" class="card-placeholder">🃏</span>
         </div>
         <div class="card-body">
