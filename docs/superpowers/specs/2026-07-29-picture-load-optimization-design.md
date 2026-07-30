@@ -54,6 +54,31 @@ all screens while staying visually distinct from real card tiles. Exact palette 
 (darker `--color-border`, `+` in `--color-charcoal`) are chosen against the existing
 palette during implementation.
 
+### 4. Cache images across navigations (added scope)
+
+Testing on the branch surfaced a related issue: navigating from the deck to a
+card detail and back re-fetches every card image. Root cause — R2 objects are
+served with `ETag`/`Last-Modified` but **no `Cache-Control`**, so the browser
+revalidates each image (304 round-trips) whenever Angular re-creates the `<img>`
+elements; with `loading="lazy"` this shows as visible reloading on scroll.
+
+Fix, in two parts:
+
+- **New uploads:** `R2ImageStorage.SaveAsync` sets
+  `Cache-Control: public, max-age=31536000, immutable` on the `PutObjectRequest`.
+  Image keys are content-addressed GUIDs (a replaced image gets a new key and the
+  old object is deleted), so each URL is genuinely immutable and safe to cache
+  forever without revalidation.
+- **Existing objects:** a standalone one-off tool `tools/CacheControlBackfill`
+  re-uploads every object in the R2 bucket in place with the same header,
+  skipping objects that already carry it (idempotent). Modeled on
+  `tools/ImageMigrator`; run operationally with the same `R2_*` env vars.
+
+This part is a backend + tooling change (outside the original frontend-only
+scope) and has no automated tests — the repo has no backend test project;
+verified with `dotnet build`. The runtime effect is verified manually via
+response headers / DevTools.
+
 ## Testing
 
 Update `deck-detail.component.spec.ts`:
