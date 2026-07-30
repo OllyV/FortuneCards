@@ -32,6 +32,6 @@ The development by days:
 - Day 21: Add caching for mine decks
 - Day 22: Migrate DB to aiven: no more issues with paused state. (Before migration app may load 2-3 minutes because of free AzureDb tier.)
 - Day 23: Migrate image storage from blob to R2
-- Day 24: Images caching optimization. Cache-Control R2 headers added. Small fixes on frontend.
+- Day 24: Images loading and caching optimization. Cache-Control R2 headers added. Small fixes on frontend.
 
 It can: create decks of cards with image and description. Randomly pull out one card. Place cards on table and imitate fortune-telling process.
