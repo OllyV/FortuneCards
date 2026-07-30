@@ -20,7 +20,9 @@
       }
     </div>
     <div class="face front">
-      <img class="face-img" [src]="card().frontImageUrl" alt="" draggable="false" />
+      @if (revealed()) {
+        <img class="face-img" [src]="card().frontImageUrl" alt="" draggable="false" decoding="async" />
+      }
     </div>
   </div>
   @if (selected()) {

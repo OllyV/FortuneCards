@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { TableDeckCard } from '../../../models/table';
 import { getDeckGradientStyle } from '../../../utils/deck-colors';
 
@@ -31,6 +31,17 @@ export class TableCardComponent {
   readonly backStyle = computed(() =>
     this.card().backImageUrl ? '' : getDeckGradientStyle(this.card().colorIndex)
   );
+
+  // Defer loading the (per-card, unique) front image until the card is first flipped
+  // face-up. Latches true and stays true, so re-flipping never re-inserts the <img>;
+  // the browser serves it from cache. A face-down card the user never flips loads nothing.
+  readonly revealed = signal(false);
+
+  constructor() {
+    effect(() => {
+      if (this.card().flipped) this.revealed.set(true);
+    });
+  }
 
   private dragging = false;
   private rotating = false;
