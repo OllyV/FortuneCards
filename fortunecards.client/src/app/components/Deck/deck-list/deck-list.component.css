@@ -34,11 +34,11 @@
 
 .deck-tile--add {
   background: var(--color-cream) !important;
-  border: 2px dashed var(--color-border-light);
+  border: 3px dashed var(--color-muted);
   box-shadow: none !important;
 }
 
-.deck-add-icon  { font-size: 28px; color: var(--color-border-light); }
+.deck-add-icon  { font-size: 32px; color: var(--color-label); font-weight: 700; }
 .deck-add-label { font-size: 12px; font-weight: 700; color: var(--color-muted); }
 
 .deck-badge {
