@@ -36,24 +36,24 @@
     <h2 class="section-title">Cards in this deck</h2>
 
     <div class="card-grid">
+      <div *ngIf="d.isOwner" class="card-tile card-tile--add"
+           [style.aspect-ratio]="d.aspectWidth + ' / ' + d.aspectHeight"
+           (click)="addCard()">
+        <div class="card-image card-image--add">+</div>
+      </div>
+
       <div class="card-tile"
            *ngFor="let card of (d.cards ?? []); let i = index"
            [style.aspect-ratio]="d.aspectWidth + ' / ' + d.aspectHeight"
            [style.border-top-color]="getCardAccent(i)"
            (click)="openCard(card.id)">
         <div class="card-image" [style.background]="getCardAccent(i) + '18'">
-          <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.title" />
+          <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.title" loading="lazy" decoding="async" />
           <span *ngIf="!card.imageUrl" class="card-placeholder">🃏</span>
         </div>
         <div class="card-body">
           <p class="card-title">{{ card.title }}</p>
         </div>
-      </div>
-
-      <div *ngIf="d.isOwner" class="card-tile card-tile--add"
-           [style.aspect-ratio]="d.aspectWidth + ' / ' + d.aspectHeight"
-           (click)="addCard()">
-        <div class="card-image card-image--add">+</div>
       </div>
     </div>
   </main>

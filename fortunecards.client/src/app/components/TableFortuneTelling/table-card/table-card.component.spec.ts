@@ -30,10 +30,27 @@ describe('TableCardComponent', () => {
     return fixture.nativeElement.querySelector('.table-card');
   }
 
-  it('shows the card image on the front face', () => {
+  it('does not load the front image while the card is face-down', () => {
+    // baseCard is flipped:false and has never been flipped → front image must not
+    // be in the DOM, so a face-down card on the table triggers no image download.
+    expect(root().querySelector('.face.front img')).toBeNull();
+  });
+
+  it('loads the front image once the card is flipped face-up', () => {
+    fixture.componentRef.setInput('card', { ...baseCard, flipped: true });
+    fixture.detectChanges();
     const img = root().querySelector('.face.front img') as HTMLImageElement;
     expect(img).not.toBeNull();
     expect(img.getAttribute('src')).toBe('/images/front.png');
+  });
+
+  it('keeps the front image mounted after flipping back (loads once, then cached)', () => {
+    fixture.componentRef.setInput('card', { ...baseCard, flipped: true });
+    fixture.detectChanges();
+    fixture.componentRef.setInput('card', { ...baseCard, flipped: false });
+    fixture.detectChanges();
+    // Once revealed, the img stays in the DOM so re-flipping never re-inserts it.
+    expect(root().querySelector('.face.front img')).not.toBeNull();
   });
 
   it('shows the deck back image on the back face when present', () => {

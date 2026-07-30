@@ -5,6 +5,13 @@ namespace FortuneCards.Server.Services
 {
     public class R2ImageStorage : IImageStorage
     {
+        // Object keys are content-addressed GUIDs: a replaced image gets a new key and the
+        // old object is deleted, so every URL is immutable. That lets the browser cache each
+        // image forever and never revalidate, which stops decks re-fetching every card image
+        // on each re-navigation. Keep this in sync with tools/CacheControlBackfill (which
+        // stamps the same header onto objects uploaded before this was added).
+        public const string ImageCacheControl = "public, max-age=31536000, immutable";
+
         private readonly IAmazonS3 _s3;
         private readonly string _bucket;
 
@@ -28,6 +35,7 @@ namespace FortuneCards.Server.Services
                 Key = key,
                 InputStream = stream,
                 ContentType = file.ContentType,
+                Headers = { CacheControl = ImageCacheControl },
                 DisablePayloadSigning = true // R2 streaming-upload compatibility
             });
             return key;
