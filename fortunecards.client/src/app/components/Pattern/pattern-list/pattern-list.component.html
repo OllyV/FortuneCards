@@ -1,21 +1,21 @@
-<div class="list-page">
+<div class="page">
   <navigation-bar>
     <span class="nav-title-centered">{{ title() }}</span>
   </navigation-bar>
 
-  <main class="list-content">
+  <main class="page-content">
     @if (mode() === 'search') {
-      <input class="form-input search-input" type="search" placeholder="Search patterns…" (input)="onSearchInput($event)" />
+      <input class="form-input" type="search" placeholder="Search patterns…" (input)="onSearchInput($event)" />
     } @else {
       <button type="button" class="btn-primary" (click)="goToNew()">＋ New pattern</button>
     }
 
     @if (loading()) {
-      <p class="state-muted">Loading…</p>
+      <p class="state-loading">Loading…</p>
     } @else if (error()) {
       <p class="state-error">{{ error() }}</p>
     } @else if (patterns().length === 0) {
-      <p class="state-muted">No patterns yet.</p>
+      <p class="state-empty">No patterns yet.</p>
     } @else {
       <div class="pattern-grid">
         @for (p of patterns(); track p.id) {
