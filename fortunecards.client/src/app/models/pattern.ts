@@ -33,8 +33,8 @@ export interface Pattern {
   isPublic: boolean;
   isOwner: boolean;
   isFavorite: boolean;
-  cardSizePercent: number;
-  tableHeightPercent: number;
+  cardSizePercent?: number;
+  tableHeightPercent?: number;
 }
 
 export interface CreatePatternPayload {
