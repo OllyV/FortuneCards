@@ -1,0 +1,45 @@
+<div class="dialog-backdrop" (click)="closed.emit()"></div>
+<div class="dialog-panel" role="dialog" aria-label="Load a pattern">
+  <h2>Load a pattern</h2>
+
+  @if (!isAuthorized()) {
+    <input
+      class="deck-search"
+      type="search"
+      placeholder="Search public patterns…"
+      [value]="searchTerm()"
+      (input)="onSearchInput($event)"
+    />
+  }
+
+  @if (loading()) {
+    <div class="state">Loading patterns…</div>
+  } @else if (error()) {
+    <div class="state state-error">{{ error() }}</div>
+  } @else {
+    @if (selectError()) {
+      <div class="state state-error">{{ selectError() }}</div>
+    }
+    <div class="deck-grid">
+      @for (p of patterns(); track p.id) {
+        <button type="button" class="deck-tile" [style.background]="gradient(p.colorIndex)" (click)="selectPattern(p)">
+          <span class="deck-emoji">{{ p.emoji }}</span>
+          <span class="deck-name">{{ p.name }}</span>
+          <span class="tile-count">{{ p.cardCount ?? 0 }} questions</span>
+        </button>
+      }
+    </div>
+    @if (patterns().length === 0) {
+      <p class="state">{{ isAuthorized() ? 'You have no patterns yet.' : 'No public patterns found.' }}</p>
+    }
+    @if (!isAuthorized() && totalCount() > 0) {
+      <app-pagination
+        [page]="page()"
+        [pageSize]="pageSize"
+        [totalCount]="totalCount()"
+        (pageChange)="onPageChange($event)" />
+    }
+  }
+
+  <button class="dialog-close" type="button" (click)="closed.emit()">Close</button>
+</div>
