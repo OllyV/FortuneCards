@@ -1,0 +1,30 @@
+<div class="add-pattern-table-wrap">
+  <div class="table-controls-bar">
+    <label class="size-control">
+      Card size
+      <input type="range" min="5" max="50" step="1"
+             [value]="cardSizePercent()" (input)="onCardSizeInput($event)" />
+    </label>
+    <div class="height-controls">
+      <span>Table length</span>
+      <button type="button" class="height-decrease" (click)="decreaseHeight()" aria-label="Shorten table">−</button>
+      <button type="button" class="height-increase" (click)="increaseHeight()" aria-label="Lengthen table">+</button>
+    </div>
+  </div>
+
+  <div #table class="edit-table" [style.height]="heightStyle()">
+    @for (card of cards(); track card.id) {
+      <pattern-position-card
+        [card]="card"
+        [widthPercent]="cardSizePercent()"
+        [tableWidthPx]="tableWidthPx()"
+        [selected]="card.id === selectedId()"
+        [aspectWidth]="aspectWidth"
+        [aspectHeight]="aspectHeight"
+        (cardSelect)="cardSelect.emit(card.id)"
+        (cardMove)="cardMove.emit({ id: card.id, x: $event.x, y: $event.y })"
+        (cardRotate)="cardRotate.emit({ id: card.id, rotation: $event })"
+      ></pattern-position-card>
+    }
+  </div>
+</div>

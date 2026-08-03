@@ -1,0 +1,28 @@
+.add-pattern-table-wrap { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.table-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.size-control { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+.size-control input[type='range'] { width: 160px; }
+
+.height-controls { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+.height-controls button {
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid #c9bfe4;
+  background: #f3eefc; font-size: 1.2rem; cursor: pointer;
+}
+
+.edit-table {
+  position: relative;
+  width: 100%;
+  border: 2px solid #e3dcf5;
+  border-radius: 16px;
+  background: repeating-linear-gradient(45deg, #faf8ff, #faf8ff 12px, #f3eefc 12px, #f3eefc 24px);
+  overflow: hidden;
+  touch-action: none;
+}
