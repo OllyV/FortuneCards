@@ -53,7 +53,7 @@
         {{ submitting() ? 'Saving…' : '💾 Save' }}
       </button>
 
-      <button type="button" class="btn-ghost btn-full danger" [disabled]="deleting()" (click)="deletePattern()">
+      <button type="button" class="btn-danger btn-full" [disabled]="deleting()" (click)="deletePattern()">
         {{ deleting() ? 'Deleting…' : '🗑 Delete pattern' }}
       </button>
     </form>
