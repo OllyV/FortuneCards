@@ -1,0 +1,41 @@
+.pattern-position-card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed rgba(90, 70, 140, 0.55);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.55);
+  box-sizing: border-box;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.pattern-position-card.selected {
+  border-style: solid;
+  border-color: #7b4397;
+  box-shadow: 0 6px 18px rgba(123, 67, 151, 0.35);
+}
+
+.position-order {
+  font-weight: 800;
+  font-size: 2rem;
+  color: #5a468c;
+}
+
+.rotate-handle {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #7b4397;
+  color: #fff;
+  cursor: grab;
+  font-size: 1rem;
+}
