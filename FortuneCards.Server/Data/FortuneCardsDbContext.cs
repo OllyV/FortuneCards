@@ -11,6 +11,9 @@ namespace FortuneCards.Server.Data
         public DbSet<Card> Cards => Set<Card>();
         public DbSet<User> Users => Set<User>();
         public DbSet<FavoriteDeck> FavoriteDecks => Set<FavoriteDeck>();
+        public DbSet<Pattern> Patterns => Set<Pattern>();
+        public DbSet<PatternCard> PatternCards => Set<PatternCard>();
+        public DbSet<FavoritePattern> FavoritePatterns => Set<FavoritePattern>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -69,6 +72,43 @@ namespace FortuneCards.Server.Data
                 e.HasOne(f => f.Deck)
                  .WithMany(d => d.FavoritedBy)
                  .HasForeignKey(f => f.DeckId)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Pattern>(e =>
+            {
+                e.Property(p => p.Name).HasMaxLength(200).IsRequired();
+                e.Property(p => p.Description).HasMaxLength(1000);
+                e.Property(p => p.Emoji).HasMaxLength(10).HasDefaultValue("🔮");
+                e.Property(p => p.ColorIndex).HasDefaultValue(0);
+                e.Property(p => p.IsPublic).HasDefaultValue(false);
+                e.Property(p => p.CardSizePercent).HasDefaultValue(15);
+                e.Property(p => p.TableHeightPercent).HasDefaultValue(60);
+                e.HasOne(p => p.User)
+                 .WithMany(u => u.Patterns)
+                 .HasForeignKey(p => p.UserId)
+                 .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<PatternCard>(e =>
+            {
+                e.Property(c => c.Text).HasMaxLength(1000).IsRequired();
+                e.HasOne(c => c.Pattern)
+                 .WithMany(p => p.Cards)
+                 .HasForeignKey(c => c.PatternId)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<FavoritePattern>(e =>
+            {
+                e.HasKey(f => new { f.UserId, f.PatternId });
+                e.HasOne(f => f.User)
+                 .WithMany(u => u.FavoritePatterns)
+                 .HasForeignKey(f => f.UserId)
+                 .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(f => f.Pattern)
+                 .WithMany(p => p.FavoritedBy)
+                 .HasForeignKey(f => f.PatternId)
                  .OnDelete(DeleteBehavior.Cascade);
             });
         }

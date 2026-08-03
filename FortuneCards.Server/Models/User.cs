@@ -10,5 +10,7 @@ namespace FortuneCards.Server.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public ICollection<Deck> Decks { get; set; } = [];
         public ICollection<FavoriteDeck> FavoriteDecks { get; set; } = [];
+        public ICollection<Pattern> Patterns { get; set; } = [];
+        public ICollection<FavoritePattern> FavoritePatterns { get; set; } = [];
     }
 }
