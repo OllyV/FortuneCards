@@ -8,6 +8,10 @@
         <button class="menu-item" type="button" (click)="go('/decks/mine')">My decks</button>
       }
       <button class="menu-item" type="button" (click)="go('/decks/search')">Search decks</button>
+      @if (auth.isLoggedIn()) {
+        <button class="menu-item" type="button" (click)="go('/patterns/mine')">My patterns</button>
+      }
+      <button class="menu-item" type="button" (click)="go('/patterns/search')">Browse patterns</button>
       <button class="menu-item" type="button" (click)="go('/table')">Table</button>
       @if (auth.isLoggedIn()) {
         <button class="menu-item" type="button" (click)="go('/profile')">My profile</button>

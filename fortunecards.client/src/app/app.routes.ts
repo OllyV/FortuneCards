@@ -37,6 +37,32 @@ export const routes: Routes = [
   { path: 'decks/:id', component: DeckDetailComponent },
   { path: 'decks', pathMatch: 'full', canActivate: [landingRedirectGuard], children: [] },
   {
+    path: 'patterns/new',
+    loadComponent: () => import('./components/Pattern/create-pattern/create-pattern.component').then((c) => c.CreatePatternComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'patterns/mine',
+    loadComponent: () => import('./components/Pattern/pattern-list/pattern-list.component').then((c) => c.PatternListComponent),
+    data: { mode: 'mine' },
+    canActivate: [authGuard]
+  },
+  {
+    path: 'patterns/search',
+    loadComponent: () => import('./components/Pattern/pattern-list/pattern-list.component').then((c) => c.PatternListComponent),
+    data: { mode: 'search' }
+  },
+  {
+    path: 'patterns/:id/edit',
+    loadComponent: () => import('./components/Pattern/update-pattern/update-pattern.component').then((c) => c.UpdatePatternComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'patterns/:id/cards',
+    loadComponent: () => import('./components/Pattern/add-pattern-cards/add-pattern-cards.component').then((c) => c.AddPatternCardsComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'table',
     loadComponent: () => import('./components/TableFortuneTelling/table/table.component').then((c) => c.TableComponent)
   },
