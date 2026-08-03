@@ -1,0 +1,22 @@
+.add-cards-page { min-height: 100vh; }
+.add-cards-content { max-width: 900px; margin: 0 auto; padding: 1rem; display: flex; flex-direction: column; gap: 1.25rem; }
+
+.questions-panel { display: flex; flex-direction: column; gap: 0.5rem; }
+.questions-header { display: flex; align-items: center; justify-content: space-between; }
+
+.question-row {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem; border: 1px solid #e3dcf5; border-radius: 10px; background: #fff; cursor: pointer;
+}
+.question-row--selected { border-color: #7b4397; box-shadow: 0 2px 10px rgba(123, 67, 151, 0.2); }
+.question-number { font-weight: 800; color: #5a468c; min-width: 1.5rem; text-align: center; }
+.question-text { flex: 1; }
+.question-actions { display: flex; gap: 0.25rem; }
+.question-actions button {
+  width: 30px; height: 30px; border-radius: 8px; border: 1px solid #c9bfe4;
+  background: #f3eefc; cursor: pointer;
+}
+.question-actions button:disabled { opacity: 0.4; cursor: default; }
+.question-actions .remove { color: #b00; }
+
+.state-muted { color: #888; }
