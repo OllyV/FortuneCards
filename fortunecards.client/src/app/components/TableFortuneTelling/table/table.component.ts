@@ -4,16 +4,18 @@ import { TableCardComponent } from '../table-card/table-card.component';
 import { TablePatternCardComponent } from '../table-pattern-card/table-pattern-card.component';
 import { TableSettingsDialogComponent } from '../table-settings-dialog/table-settings-dialog.component';
 import { DeckSelectorComponent } from '../deck-selector/deck-selector.component';
+import { PatternSelectorComponent } from '../pattern-selector/pattern-selector.component';
 import { CardInfoDialogComponent } from '../card-info-dialog/card-info-dialog.component';
 import { TableDeckCard, TablePatternCard, TableColor } from '../../../models/table';
 import { Deck } from '../../../models/deck';
+import { Pattern } from '../../../models/pattern';
 
 @Component({
   selector: 'app-table',
   standalone: true,
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
-  imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent, CardInfoDialogComponent],
+  imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent, PatternSelectorComponent, CardInfoDialogComponent],
 })
 export class TableComponent implements AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
@@ -28,6 +30,7 @@ export class TableComponent implements AfterViewInit {
   readonly cardSizePercent = signal(15);
   readonly settingsOpen = signal(false);
   readonly deckSelectorOpen = signal(false);
+  readonly patternSelectorOpen = signal(false);
   readonly deckMenuOpen = signal(false);
   readonly patternMenuOpen = signal(false);
   /** Table height, in % of table width; 0 = not yet measured. */
@@ -321,6 +324,38 @@ export class TableComponent implements AfterViewInit {
   openDeckSelector(): void {
     this.closeMenus();
     this.deckSelectorOpen.set(true);
+  }
+
+  openPatternSelector(): void {
+    this.closeMenus();
+    this.patternSelectorOpen.set(true);
+  }
+
+  onPatternSelected(pattern: Pattern): void {
+    this.loadPattern(pattern);
+    this.patternSelectorOpen.set(false);
+  }
+
+  /** Replace the current pattern cards with the saved pattern's layout and settings. */
+  loadPattern(pattern: Pattern): void {
+    this.cardSizePercent.set(pattern.cardSizePercent ?? 15);
+    if ((pattern.tableHeightPercent ?? 0) > 0) {
+      this.tableHeightPercent.set(pattern.tableHeightPercent!);
+    }
+    const loaded: TablePatternCard[] = (pattern.cards ?? []).map((c) => ({
+      kind: 'pattern' as const,
+      id: `pattern-${this.nextPatternId++}`,
+      x: c.x,
+      y: c.y,
+      rotation: c.rotation,
+      text: c.text,
+      order: c.order,
+      locked: false,
+      z: this.nextZ++,
+    }));
+    this.patternsLocked.set(false);
+    this.patternCards.set(loaded);
+    this.tableHeightPercent.update((h) => Math.max(h, this.minHeightPercent()));
   }
 
   reloadDeck(): void {

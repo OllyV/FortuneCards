@@ -15,6 +15,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddScoped<IDeckService, DeckService>();
 builder.Services.AddScoped<ICardService, CardService>();
+builder.Services.AddScoped<IPatternService, PatternService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 var r2 = builder.Configuration.GetSection("R2").Get<R2Options>()

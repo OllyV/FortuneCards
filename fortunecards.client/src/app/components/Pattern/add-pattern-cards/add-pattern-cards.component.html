@@ -1,0 +1,58 @@
+<div class="add-cards-page">
+  <navigation-bar>
+    <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
+    <span class="nav-title-centered">Pattern Questions</span>
+  </navigation-bar>
+
+  <main class="add-cards-content">
+    @if (loading()) {
+      <p class="state-muted">Loading…</p>
+    } @else {
+      <section class="questions-panel">
+        <div class="questions-header">
+          <h2>Questions</h2>
+          <button type="button" class="btn-secondary" (click)="addQuestion()">＋ Add question</button>
+        </div>
+
+        @for (card of cards(); track card.id; let i = $index) {
+          <div class="question-row" [class.question-row--selected]="card.id === selectedId()"
+               (click)="selectCard(card.id)">
+            <span class="question-number">{{ card.order }}</span>
+            <input class="form-input question-text"
+                   [value]="card.text"
+                   (input)="setText(card.id, $any($event.target).value)"
+                   maxlength="1000"
+                   placeholder="Question text" />
+            <div class="question-actions">
+              <button type="button" (click)="moveUp(i); $event.stopPropagation()" [disabled]="i === 0" aria-label="Move up">▲</button>
+              <button type="button" (click)="moveDown(i); $event.stopPropagation()" [disabled]="i === cards().length - 1" aria-label="Move down">▼</button>
+              <button type="button" class="remove" (click)="removeQuestion(card.id); $event.stopPropagation()" aria-label="Remove">✕</button>
+            </div>
+          </div>
+        } @empty {
+          <p class="state-muted">No questions yet. Add one to begin.</p>
+        }
+      </section>
+
+      <section class="table-panel">
+        <add-pattern-table
+          [cards]="cards()"
+          [cardSizePercent]="cardSizePercent()"
+          [tableHeightPercent]="tableHeightPercent()"
+          [selectedId]="selectedId()"
+          (cardSelect)="selectCard($event)"
+          (cardMove)="movePatternCard($event)"
+          (cardRotate)="rotatePatternCard($event)"
+          (cardSizeChange)="onCardSizeChange($event)"
+          (tableHeightChange)="onTableHeightChange($event)"
+        ></add-pattern-table>
+      </section>
+
+      @if (error()) { <div class="state-error">{{ error() }}</div> }
+
+      <button type="button" class="btn-primary btn-full" [disabled]="saving()" (click)="save()">
+        {{ saving() ? 'Saving…' : '💾 Save pattern' }}
+      </button>
+    }
+  </main>
+</div>

@@ -1,0 +1,42 @@
+<div class="page">
+  <navigation-bar>
+    <span class="nav-title-centered">{{ title() }}</span>
+  </navigation-bar>
+
+  <main class="page-content">
+    @if (mode() === 'search') {
+      <input class="form-input" type="search" placeholder="Search patterns…" (input)="onSearchInput($event)" />
+    } @else {
+      <button type="button" class="btn-primary" (click)="goToNew()">＋ New pattern</button>
+    }
+
+    @if (loading()) {
+      <p class="state-loading">Loading…</p>
+    } @else if (error()) {
+      <p class="state-error">{{ error() }}</p>
+    } @else if (patterns().length === 0) {
+      <p class="state-empty">No patterns yet.</p>
+    } @else {
+      <div class="pattern-grid">
+        @for (p of patterns(); track p.id) {
+          <a class="pattern-card" [routerLink]="p.isOwner ? ['/patterns', p.id, 'edit'] : null"
+             [style.background]="getGradient(p.colorIndex)" [style.boxShadow]="getShadow(p.colorIndex)">
+            <span class="pattern-emoji">{{ p.emoji }}</span>
+            <span class="pattern-name">{{ p.name }}</span>
+            <span class="pattern-count">{{ p.cardCount ?? 0 }} questions</span>
+            @if (auth.isLoggedIn() && !p.isOwner) {
+              <button type="button" class="fav-btn" [class.fav-btn--on]="p.isFavorite"
+                      (click)="toggleFavorite(p, $event)" aria-label="Toggle favorite">
+                {{ p.isFavorite ? '⭐' : '☆' }}
+              </button>
+            }
+          </a>
+        }
+      </div>
+
+      @if (mode() === 'search') {
+        <app-pagination [page]="page()" [pageSize]="pageSize" [totalCount]="totalCount()" (pageChange)="onPageChange($event)"></app-pagination>
+      }
+    }
+  </main>
+</div>

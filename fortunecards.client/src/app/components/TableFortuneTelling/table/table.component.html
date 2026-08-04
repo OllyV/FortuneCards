@@ -79,6 +79,7 @@
       @if (patternMenuOpen()) {
         <div class="dropdown-panel" (keydown.escape)="closeMenus()">
           <button class="dropdown-item add-pattern-item" type="button" (click)="closeMenus(); addPatternCard()">Add pattern card</button>
+          <button class="dropdown-item load-pattern-item" type="button" (click)="openPatternSelector()">Load pattern</button>
           <button class="dropdown-item lock-pattern-item" type="button" (click)="closeMenus(); toggleLockPattern()">
             {{ patternsLocked() ? 'Unlock pattern' : 'Lock pattern' }}
           </button>
@@ -105,6 +106,13 @@
   <deck-selector
     (deckSelected)="onDeckSelected($event)"
     (closed)="deckSelectorOpen.set(false)"
+  />
+}
+
+@if (patternSelectorOpen()) {
+  <pattern-selector
+    (patternSelected)="onPatternSelected($event)"
+    (closed)="patternSelectorOpen.set(false)"
   />
 }
 

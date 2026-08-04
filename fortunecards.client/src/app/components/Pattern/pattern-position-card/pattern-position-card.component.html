@@ -1,0 +1,19 @@
+<div
+  class="pattern-position-card"
+  [class.selected]="selected()"
+  [style.left.px]="leftPx()"
+  [style.top.px]="topPx()"
+  [style.width.px]="widthPx()"
+  [style.aspect-ratio]="aspectWidth() + ' / ' + aspectHeight()"
+  [style.zIndex]="selected() ? 1000 : 1"
+  [style.transform]="'rotate(' + card().rotation + 'deg)'"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerUp()"
+  (pointercancel)="onPointerUp()"
+>
+  <span class="position-order">{{ card().order }}</span>
+  @if (selected()) {
+    <div class="rotate-handle" title="Drag to rotate" (pointerdown)="onRotateStart($event)">⤾</div>
+  }
+</div>
