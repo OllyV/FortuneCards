@@ -128,8 +128,10 @@ namespace FortuneCards.Server.Services
             if (isPublic.HasValue) pattern.IsPublic = isPublic.Value;
             if (cardSizePercent.HasValue) pattern.CardSizePercent = Math.Clamp(cardSizePercent.Value, 5, 50);
             if (tableHeightPercent.HasValue) pattern.TableHeightPercent = Math.Max(0, tableHeightPercent.Value);
-            // Edit form always submits the full description; empty clears it.
-            pattern.Description = string.IsNullOrWhiteSpace(description) ? null : description;
+            // Omitted (null) leaves the description unchanged; the edit form submits the
+            // full value (empty string clears it). The add-cards Save omits it entirely.
+            if (description != null)
+                pattern.Description = string.IsNullOrWhiteSpace(description) ? null : description;
 
             await _db.SaveChangesAsync();
             PublicPatternCache.Bump(_cache);
