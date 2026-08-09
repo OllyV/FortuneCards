@@ -63,6 +63,10 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'patterns/:id',
+    loadComponent: () => import('./components/Pattern/pattern-detail/pattern-detail.component').then((c) => c.PatternDetailComponent),
+  },
+  {
     path: 'table',
     loadComponent: () => import('./components/TableFortuneTelling/table/table.component').then((c) => c.TableComponent)
   },
