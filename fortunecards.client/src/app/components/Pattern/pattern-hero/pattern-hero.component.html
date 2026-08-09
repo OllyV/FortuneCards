@@ -1,0 +1,26 @@
+<div class="pattern-hero" [style.background]="gradient()">
+  <div class="hero-left">
+    <span class="hero-emoji">{{ emoji() }}</span>
+    <div class="hero-info">
+      <h1 class="hero-name">{{ name() }}</h1>
+      <p class="hero-meta">
+        @if (description()) { <span>{{ description() }} · </span> }
+        {{ cardCount() }} question{{ cardCount() === 1 ? '' : 's' }}
+      </p>
+    </div>
+  </div>
+  <div class="hero-actions">
+    <button class="hero-btn hero-use" [style.background]="gradient()" (click)="usePattern.emit()">🔮 Use pattern</button>
+    @if (isOwner()) {
+      <button class="hero-btn hero-edit-pattern" [style.background]="gradient()" (click)="editPattern.emit()">✏️ Edit pattern</button>
+      <button class="hero-btn hero-edit-questions" [style.background]="gradient()" (click)="editQuestions.emit()">📝 Edit questions</button>
+    } @else if (isLoggedIn()) {
+      <button class="hero-btn hero-fav"
+              [class.is-fav]="isFavorite()"
+              [attr.aria-pressed]="isFavorite()"
+              [attr.aria-label]="isFavorite() ? 'Remove from favourites' : 'Add to favourites'"
+              [style.background]="gradient()"
+              (click)="toggleFavorite.emit()">{{ isFavorite() ? '★ Favourited' : '☆ Favourite' }}</button>
+    }
+  </div>
+</div>
