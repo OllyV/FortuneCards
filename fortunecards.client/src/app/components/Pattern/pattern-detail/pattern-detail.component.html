@@ -1,0 +1,51 @@
+<div class="page" *ngIf="pattern() as p; else loadingOrError">
+  <navigation-bar>
+    <div class="nav-actions">
+      <button class="nav-back" (click)="goBack()">← Back</button>
+      <span class="nav-sep">/</span>
+      <span class="nav-crumb">{{ p.name }}</span>
+    </div>
+  </navigation-bar>
+
+  <app-pattern-hero
+    [name]="p.name"
+    [emoji]="p.emoji"
+    [description]="p.description"
+    [cardCount]="(p.cards ?? []).length"
+    [colorIndex]="p.colorIndex"
+    [isOwner]="p.isOwner"
+    [isFavorite]="p.isFavorite"
+    [isLoggedIn]="auth.isLoggedIn()"
+    (usePattern)="usePattern()"
+    (editPattern)="editPattern()"
+    (editQuestions)="editQuestions()"
+    (toggleFavorite)="toggleFavorite()"
+  ></app-pattern-hero>
+
+  <main class="page-content">
+    <h2 class="section-title">Questions</h2>
+    <ol class="question-list" *ngIf="(p.cards ?? []).length > 0; else noQuestions">
+      <li class="question-view-row" *ngFor="let c of (p.cards ?? [])">
+        <span class="question-number">{{ c.order }}</span>
+        <span class="question-view-text">{{ c.text }}</span>
+      </li>
+    </ol>
+    <ng-template #noQuestions><p class="state-empty">No questions yet.</p></ng-template>
+
+    <h2 class="section-title">Layout</h2>
+    <app-pattern-table-view
+      [cards]="tableCards()"
+      [cardSizePercent]="p.cardSizePercent ?? 15"
+      [tableHeightPercent]="p.tableHeightPercent ?? 60"
+    ></app-pattern-table-view>
+
+    <button *ngIf="p.isOwner" class="btn-primary btn-full edit-cta" (click)="editQuestions()">
+      📝 Edit questions &amp; layout
+    </button>
+  </main>
+</div>
+
+<ng-template #loadingOrError>
+  <div *ngIf="loading()" class="state-loading">Loading pattern…</div>
+  <div *ngIf="error()" class="state-error">{{ error() }}</div>
+</ng-template>
