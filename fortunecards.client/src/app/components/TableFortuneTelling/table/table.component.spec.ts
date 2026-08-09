@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { RouterModule, ActivatedRoute, convertToParamMap } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { TableComponent } from './table.component';
 import { AuthService } from '../../../services/auth.service';
 import { DeckService } from '../../../services/deck.service';
@@ -779,5 +779,22 @@ describe('TableComponent pattern query-param auto-load', () => {
   it('loads nothing when no pattern query param is present', async () => {
     const component = await setup(null);
     expect(component.patternCards().length).toBe(0);
+  });
+
+  it('silently ignores a failed pattern auto-load', async () => {
+    const patternService = { getPattern: vi.fn(() => throwError(() => new Error('boom'))) };
+    await TestBed.configureTestingModule({
+      imports: [TableComponent, RouterModule.forRoot([])],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
+        { provide: DeckService, useValue: { getDeck: () => of(null), getMyDecks: () => of([]), getPublicDecks: () => of({ items: [], totalCount: 0, page: 1, pageSize: 12 }) } },
+        { provide: PatternService, useValue: patternService },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({ pattern: '7' }) } } },
+      ],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(TableComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.patternCards().length).toBe(0);
   });
 });
