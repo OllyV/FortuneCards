@@ -1,5 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
-import { getDeckGradientStyle, getDeckShadowStyle } from '../../../utils/deck-colors';
+import { getDeckGradientStyle } from '../../../utils/deck-colors';
 
 @Component({
   selector: 'app-pattern-hero',
@@ -23,5 +23,4 @@ export class PatternHeroComponent {
   readonly toggleFavorite = output<void>();
 
   readonly gradient = computed(() => getDeckGradientStyle(this.colorIndex()));
-  readonly shadow = computed(() => getDeckShadowStyle(this.colorIndex()));
 }
