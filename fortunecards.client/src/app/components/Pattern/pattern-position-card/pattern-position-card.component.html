@@ -1,6 +1,7 @@
 <div
   class="pattern-position-card"
   [class.selected]="selected()"
+  [class.readonly]="readonly()"
   [style.left.px]="leftPx()"
   [style.top.px]="topPx()"
   [style.width.px]="widthPx()"
@@ -13,7 +14,7 @@
   (pointercancel)="onPointerUp()"
 >
   <span class="position-order">{{ card().order }}</span>
-  @if (selected()) {
+  @if (selected() && !readonly()) {
     <div class="rotate-handle" title="Drag to rotate" (pointerdown)="onRotateStart($event)">⤾</div>
   }
 </div>

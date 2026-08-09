@@ -13,6 +13,7 @@ export class PatternPositionCardComponent {
   readonly widthPercent = input.required<number>();
   readonly tableWidthPx = input.required<number>();
   readonly selected = input(false);
+  readonly = input(false);
   readonly aspectWidth = input(3);
   readonly aspectHeight = input(5);
 
@@ -38,6 +39,7 @@ export class PatternPositionCardComponent {
   private startRotation = 0;
 
   onPointerDown(event: PointerEvent): void {
+    if (this.readonly()) return;
     this.cardSelect.emit();
     this.dragging = true;
     this.startPointerX = event.clientX;
@@ -48,6 +50,7 @@ export class PatternPositionCardComponent {
   }
 
   onPointerMove(event: PointerEvent): void {
+    if (this.readonly()) return;
     if (this.rotating) {
       this.cardRotate.emit(this.startRotation + (this.pointerAngle(event) - this.startAngle));
       return;
@@ -66,6 +69,7 @@ export class PatternPositionCardComponent {
   }
 
   onRotateStart(event: PointerEvent): void {
+    if (this.readonly()) return;
     event.stopPropagation();
     this.rotating = true;
     this.dragging = false;
