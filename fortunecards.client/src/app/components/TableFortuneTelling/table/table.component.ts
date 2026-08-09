@@ -1,4 +1,7 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, OnInit, computed, inject, signal, viewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PatternService } from '../../../services/pattern.service';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { TableCardComponent } from '../table-card/table-card.component';
 import { TablePatternCardComponent } from '../table-pattern-card/table-pattern-card.component';
@@ -17,8 +20,10 @@ import { Pattern } from '../../../models/pattern';
   styleUrl: './table.component.css',
   imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent, PatternSelectorComponent, CardInfoDialogComponent],
 })
-export class TableComponent implements AfterViewInit {
+export class TableComponent implements OnInit, AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly patternService = inject(PatternService);
   private readonly tableRef = viewChild.required<ElementRef<HTMLDivElement>>('table');
   private readonly controlsRef = viewChild.required<ElementRef<HTMLDivElement>>('controls');
   private nextPatternId = 1;
@@ -77,6 +82,15 @@ export class TableComponent implements AfterViewInit {
     );
     return lowestBottom + 5;
   });
+
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.queryParamMap.get('pattern'));
+    if (id > 0) {
+      this.patternService.getPattern(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({ next: (pattern) => this.loadPattern(pattern), error: () => {} });
+    }
+  }
 
   ngAfterViewInit(): void {
     const el = this.tableRef().nativeElement;

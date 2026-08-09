@@ -18,6 +18,8 @@
   box-shadow: 0 6px 18px rgba(123, 67, 151, 0.35);
 }
 
+.pattern-position-card.readonly { cursor: default; }
+
 .position-order {
   font-weight: 800;
   font-size: 2rem;

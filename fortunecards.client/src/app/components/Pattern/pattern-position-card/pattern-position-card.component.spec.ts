@@ -8,7 +8,7 @@ describe('PatternPositionCardComponent', () => {
 
   const baseCard: EditablePatternCard = { id: 'p1', x: 10, y: 20, rotation: 0, text: 'Past', order: 1 };
 
-  async function setup(card: EditablePatternCard = baseCard, selected = false): Promise<void> {
+  async function setup(card: EditablePatternCard = baseCard, selected = false, readonly = false): Promise<void> {
     await TestBed.configureTestingModule({
       imports: [PatternPositionCardComponent],
       providers: [provideZonelessChangeDetection()],
@@ -18,6 +18,7 @@ describe('PatternPositionCardComponent', () => {
     fixture.componentRef.setInput('widthPercent', 20);
     fixture.componentRef.setInput('tableWidthPx', 1000);
     fixture.componentRef.setInput('selected', selected);
+    fixture.componentRef.setInput('readonly', readonly);
     fixture.detectChanges();
   }
 
@@ -62,6 +63,23 @@ describe('PatternPositionCardComponent', () => {
 
   it('shows no rotate handle when not selected', async () => {
     await setup(baseCard, false);
+    expect(root().querySelector('.rotate-handle')).toBeNull();
+  });
+
+  it('readonly: does not emit cardSelect or cardMove on pointer interaction', async () => {
+    await setup(baseCard, false, true);
+    const selected = vi.fn();
+    const moved = vi.fn();
+    fixture.componentInstance.cardSelect.subscribe(selected);
+    fixture.componentInstance.cardMove.subscribe(moved);
+    root().dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 500, clientY: 300 }));
+    root().dispatchEvent(new MouseEvent('pointermove', { bubbles: true, clientX: 600, clientY: 350 }));
+    expect(selected).not.toHaveBeenCalled();
+    expect(moved).not.toHaveBeenCalled();
+  });
+
+  it('readonly: renders no rotate handle even when selected', async () => {
+    await setup(baseCard, true, true);
     expect(root().querySelector('.rotate-handle')).toBeNull();
   });
 });

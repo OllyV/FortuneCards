@@ -1,10 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { of } from 'rxjs';
+import { RouterModule, ActivatedRoute, convertToParamMap } from '@angular/router';
+import { of, throwError } from 'rxjs';
 import { TableComponent } from './table.component';
 import { AuthService } from '../../../services/auth.service';
 import { DeckService } from '../../../services/deck.service';
+import { PatternService } from '../../../services/pattern.service';
+import { Pattern } from '../../../models/pattern';
 import { TableDeckCard } from '../../../models/table';
 import { Deck } from '../../../models/deck';
 import { Card } from '../../../models/card';
@@ -27,6 +29,8 @@ describe('TableComponent', () => {
             getPublicDecks: () => of({ items: [], totalCount: 0, page: 1, pageSize: 12 }),
           },
         },
+        { provide: PatternService, useValue: { getPattern: vi.fn(() => of(null)) } },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(TableComponent);
@@ -735,5 +739,62 @@ describe('TableComponent', () => {
     const dimmedCount = Array.from(patternEls).filter((el: Element) => el.classList.contains('dimmed')).length;
     expect(activeCount).toBe(1);
     expect(dimmedCount).toBe(1);
+  });
+});
+
+describe('TableComponent pattern query-param auto-load', () => {
+  const mockPattern: Pattern = {
+    id: 7, name: 'Spread', description: null, createdAt: '', emoji: '🔮', colorIndex: 0,
+    isPublic: true, isOwner: true, isFavorite: false, cardSizePercent: 20, tableHeightPercent: 70,
+    cards: [
+      { id: 1, text: 'Q1', order: 1, x: 10, y: 10, rotation: 0 },
+      { id: 2, text: 'Q2', order: 2, x: 40, y: 20, rotation: 0 },
+    ],
+  };
+
+  async function setup(queryPattern: string | null): Promise<TableComponent> {
+    const query = queryPattern === null ? {} : { pattern: queryPattern };
+    const patternService = { getPattern: vi.fn(() => of(mockPattern)) };
+    await TestBed.configureTestingModule({
+      imports: [TableComponent, RouterModule.forRoot([])],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
+        { provide: DeckService, useValue: { getDeck: () => of(null), getMyDecks: () => of([]), getPublicDecks: () => of({ items: [], totalCount: 0, page: 1, pageSize: 12 }) } },
+        { provide: PatternService, useValue: patternService },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap(query) } } },
+      ],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(TableComponent);
+    fixture.detectChanges();
+    return fixture.componentInstance;
+  }
+
+  it('loads the pattern named by ?pattern=<id> onto the table', async () => {
+    const component = await setup('7');
+    expect(component.patternCards().length).toBe(2);
+    expect(component.cardSizePercent()).toBe(20);
+  });
+
+  it('loads nothing when no pattern query param is present', async () => {
+    const component = await setup(null);
+    expect(component.patternCards().length).toBe(0);
+  });
+
+  it('silently ignores a failed pattern auto-load', async () => {
+    const patternService = { getPattern: vi.fn(() => throwError(() => new Error('boom'))) };
+    await TestBed.configureTestingModule({
+      imports: [TableComponent, RouterModule.forRoot([])],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
+        { provide: DeckService, useValue: { getDeck: () => of(null), getMyDecks: () => of([]), getPublicDecks: () => of({ items: [], totalCount: 0, page: 1, pageSize: 12 }) } },
+        { provide: PatternService, useValue: patternService },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({ pattern: '7' }) } } },
+      ],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(TableComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.patternCards().length).toBe(0);
   });
 });

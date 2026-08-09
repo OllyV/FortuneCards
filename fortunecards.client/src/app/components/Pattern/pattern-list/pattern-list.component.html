@@ -19,7 +19,7 @@
     } @else {
       <div class="pattern-grid">
         @for (p of patterns(); track p.id) {
-          <a class="pattern-card" [routerLink]="p.isOwner ? ['/patterns', p.id, 'edit'] : null"
+          <a class="pattern-card" [routerLink]="['/patterns', p.id]"
              [style.background]="getGradient(p.colorIndex)" [style.boxShadow]="getShadow(p.colorIndex)">
             <span class="pattern-emoji">{{ p.emoji }}</span>
             <span class="pattern-name">{{ p.name }}</span>

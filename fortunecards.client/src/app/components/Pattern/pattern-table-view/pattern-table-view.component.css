@@ -1,0 +1,8 @@
+.view-table {
+  position: relative;
+  width: 100%;
+  border: 2px solid #e3dcf5;
+  border-radius: 16px;
+  background: repeating-linear-gradient(45deg, #faf8ff, #faf8ff 12px, #f3eefc 12px, #f3eefc 24px);
+  overflow: hidden;
+}

@@ -1,0 +1,13 @@
+<div #table class="view-table" [style.height]="heightStyle()">
+  @for (card of cards(); track card.id) {
+    <pattern-position-card
+      [card]="card"
+      [widthPercent]="cardSizePercent()"
+      [tableWidthPx]="tableWidthPx()"
+      [readonly]="true"
+      [selected]="false"
+      [aspectWidth]="aspectWidth"
+      [aspectHeight]="aspectHeight"
+    ></pattern-position-card>
+  }
+</div>
