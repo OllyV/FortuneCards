@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
+import { SkeletonDetailComponent } from '../../shared/skeleton/skeleton-detail.component';
+import { ErrorStateComponent } from '../../shared/error-state/error-state.component';
 import { Deck } from '../../../models/deck';
 import { DeckService } from '../../../services/deck.service';
 import { AuthService } from '../../../services/auth.service';
@@ -13,7 +15,7 @@ import { getDeckGradientStyle, getDeckShadowStyle, getCardAccentColor } from '..
   templateUrl: './deck-detail.component.html',
   styleUrls: ['./deck-detail.component.css'],
   standalone: true,
-  imports: [CommonModule, NavigationBar]
+  imports: [CommonModule, NavigationBar, SkeletonDetailComponent, ErrorStateComponent]
 })
 export class DeckDetailComponent implements OnInit {
   deck = signal<Deck | null>(null);
@@ -22,6 +24,7 @@ export class DeckDetailComponent implements OnInit {
 
   private readonly destroyRef = inject(DestroyRef);
   protected readonly auth = inject(AuthService);
+  private currentId = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -30,14 +33,25 @@ export class DeckDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
-      this.deckService.getDeck(Number(params['id']))
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (deck) => { this.deck.set(deck); this.loading.set(false); },
-          error: () => { this.error.set('Failed to load deck.'); this.loading.set(false); }
-        });
+    this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      this.load(Number(params['id']));
     });
+  }
+
+  load(id: number): void {
+    this.currentId = id;
+    this.loading.set(true);
+    this.error.set(null);
+    this.deckService.getDeck(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (deck) => { this.deck.set(deck); this.loading.set(false); },
+        error: () => { this.error.set('Failed to load deck.'); this.loading.set(false); },
+      });
+  }
+
+  retry(): void {
+    this.load(this.currentId);
   }
 
   getDeckGradient(): string {

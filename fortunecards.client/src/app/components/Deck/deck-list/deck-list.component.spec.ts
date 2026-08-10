@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { DeckListComponent } from './deck-list.component';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { DeckService } from '../../../services/deck.service';
@@ -126,6 +126,35 @@ describe('DeckListComponent', () => {
       component.toggleFavorite(target, new MouseEvent('click'));
       expect(component.decks().find((d) => d.id === 2)!.isFavorite).toBe(!wasFav);
       expect(wasFav ? svc.removeFavorite : svc.addFavorite).toHaveBeenCalledWith(2);
+    });
+  });
+
+  describe('loading + error UI', () => {
+    it('shows the skeleton grid while loading', () => {
+      const svc = configure('mine');
+      const gate = new Subject<Deck[]>();
+      svc.getMyDecks.mockReturnValue(gate);
+      fixture = TestBed.createComponent(DeckListComponent);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('app-skeleton-card-grid')).not.toBeNull();
+      gate.next([ownedDeck]);
+      gate.complete();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('app-skeleton-card-grid')).toBeNull();
+    });
+
+    it('shows the error state and retries when "Try again" is clicked', () => {
+      const svc = configure('mine');
+      svc.getMyDecks.mockReturnValueOnce(throwError(() => new Error('cold')));
+      fixture = TestBed.createComponent(DeckListComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('app-error-state')).not.toBeNull();
+      svc.getMyDecks.mockReturnValue(of([ownedDeck]));
+      (fixture.nativeElement.querySelector('app-error-state button') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('app-error-state')).toBeNull();
+      expect(component.decks().map((d) => d.id)).toEqual([1]);
     });
   });
 });

@@ -58,4 +58,16 @@ describe('PatternListComponent (mine)', () => {
     const anchor = fixture.nativeElement.querySelector('.pattern-card') as HTMLAnchorElement;
     expect(anchor.getAttribute('href')).toBe('/patterns/1');
   });
+
+  it('shows the error state and retries when "Try again" is clicked', async () => {
+    const { service } = await setup();
+    service.getMyPatterns.mockReturnValueOnce(of([])); // ensure a clean reload result
+    // Force an error state, then verify retry re-invokes the loader.
+    fixture.componentInstance.error.set('Failed to load patterns.');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-error-state')).not.toBeNull();
+    const spy = vi.spyOn(fixture.componentInstance, 'load');
+    (fixture.nativeElement.querySelector('app-error-state button') as HTMLButtonElement).click();
+    expect(spy).toHaveBeenCalled();
+  });
 });
