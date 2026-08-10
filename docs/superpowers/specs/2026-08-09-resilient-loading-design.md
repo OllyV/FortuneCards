@@ -48,8 +48,11 @@ Behavior:
 - Cancelled requests (e.g. a `switchMap` superseding an in-flight search) tear the stream
   down without an error notification, so they are never retried.
 
-This alone fixes the cold-start failures everywhere — list pages, detail pages, and the
-startup `GET /api/config` + auth GETs — with no per-component change required for retry.
+This alone fixes the cold-start failures everywhere requests go through `HttpClient` —
+list pages, detail pages, and the startup auth GET (`AuthService.loadCurrentUser`). Note:
+the Application Insights connection-string fetch (`MonitoringService`, `GET /api/config`)
+uses the raw `fetch()` API, not `HttpClient`, so it is **not** covered by this interceptor;
+that call is best-effort and already swallows failures, so it is intentionally left as-is.
 
 ## Part 2 — Skeleton loading UI
 
