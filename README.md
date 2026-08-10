@@ -35,5 +35,6 @@ The development by days:
 - Day 24: Images loading and caching optimization. Cache-Control R2 headers added. Small fixes on frontend.
 - Day 25: Add logic and components for pattern creating, saving, uploading on table.
 - Day 26: Add pattern detail component.
+- Day 27: Update app loading behavior and appearance.
 
 It can: create decks of cards with image and description. Randomly pull out one card. Place cards on table and imitate fortune-telling process.
