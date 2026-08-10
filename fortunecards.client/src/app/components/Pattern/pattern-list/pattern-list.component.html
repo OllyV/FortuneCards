@@ -11,9 +11,9 @@
     }
 
     @if (loading()) {
-      <p class="state-loading">Loading…</p>
+      <app-skeleton-card-grid />
     } @else if (error()) {
-      <p class="state-error">{{ error() }}</p>
+      <app-error-state [message]="error()!" (retry)="load()" />
     } @else if (patterns().length === 0) {
       <p class="state-empty">No patterns yet.</p>
     } @else {

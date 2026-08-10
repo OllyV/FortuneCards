@@ -4,6 +4,8 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, debounceTime, switchMap, map, catchError, of } from 'rxjs';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { PaginationComponent } from '../../shared/pagination/pagination.component';
+import { SkeletonCardGridComponent } from '../../shared/skeleton/skeleton-card-grid.component';
+import { ErrorStateComponent } from '../../shared/error-state/error-state.component';
 import { Pattern, PagedResult } from '../../../models/pattern';
 import { PatternService } from '../../../services/pattern.service';
 import { AuthService } from '../../../services/auth.service';
@@ -18,7 +20,7 @@ const PAGE_SIZE = 20;
   templateUrl: './pattern-list.component.html',
   styleUrls: ['./pattern-list.component.css'],
   standalone: true,
-  imports: [RouterLink, NavigationBar, PaginationComponent],
+  imports: [RouterLink, NavigationBar, PaginationComponent, SkeletonCardGridComponent, ErrorStateComponent],
 })
 export class PatternListComponent {
   patterns = signal<Pattern[]>([]);

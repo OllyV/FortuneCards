@@ -23,10 +23,10 @@
     }
 
     @if (loading() && decks().length === 0) {
-      <div class="state-loading">Loading decks…</div>
+      <app-skeleton-card-grid />
     }
     @if (error()) {
-      <div class="state-error">{{ error() }}</div>
+      <app-error-state [message]="error()!" (retry)="loadDecks()" />
     }
 
     @if (!loading() && !error()) {
