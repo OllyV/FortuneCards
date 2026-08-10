@@ -5,7 +5,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 
 import { App } from './app/app';
@@ -13,6 +13,7 @@ import { routes } from './app/app.routes';
 import { AuthService } from './app/services/auth.service';
 import { MonitoringService } from './app/services/monitoring.service';
 import { MonitoringErrorHandler } from './app/monitoring-error-handler';
+import { retryInterceptor } from './app/services/http/retry.interceptor';
 
 function initAuth(auth: AuthService): () => Promise<void> {
   return () => auth.loadCurrentUser();
@@ -26,7 +27,7 @@ bootstrapApplication(App, {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([retryInterceptor])),
     provideRouter(routes),
     { provide: APP_INITIALIZER, useFactory: initAuth, deps: [AuthService], multi: true },
     { provide: APP_INITIALIZER, useFactory: initMonitoring, deps: [MonitoringService], multi: true },
