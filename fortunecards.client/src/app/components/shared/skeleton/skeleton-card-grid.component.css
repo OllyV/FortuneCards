@@ -1,0 +1,11 @@
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 768px) {
+  .skeleton-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.skeleton-grid app-skeleton { aspect-ratio: 1; }
