@@ -5,6 +5,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { PatternHeroComponent } from '../pattern-hero/pattern-hero.component';
 import { PatternTableViewComponent } from '../pattern-table-view/pattern-table-view.component';
+import { SkeletonDetailComponent } from '../../shared/skeleton/skeleton-detail.component';
+import { ErrorStateComponent } from '../../shared/error-state/error-state.component';
 import { Pattern, EditablePatternCard } from '../../../models/pattern';
 import { PatternService } from '../../../services/pattern.service';
 import { AuthService } from '../../../services/auth.service';
@@ -14,7 +16,7 @@ import { AuthService } from '../../../services/auth.service';
   standalone: true,
   templateUrl: './pattern-detail.component.html',
   styleUrls: ['./pattern-detail.component.css'],
-  imports: [CommonModule, NavigationBar, PatternHeroComponent, PatternTableViewComponent],
+  imports: [CommonModule, NavigationBar, PatternHeroComponent, PatternTableViewComponent, SkeletonDetailComponent, ErrorStateComponent],
 })
 export class PatternDetailComponent implements OnInit {
   readonly pattern = signal<Pattern | null>(null);
@@ -32,16 +34,28 @@ export class PatternDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly patternService = inject(PatternService);
+  private currentId = 0;
 
   ngOnInit(): void {
     this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-      this.patternService.getPattern(Number(params['id']))
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (pattern) => { this.pattern.set(pattern); this.loading.set(false); },
-          error: () => { this.error.set('Failed to load pattern.'); this.loading.set(false); },
-        });
+      this.load(Number(params['id']));
     });
+  }
+
+  load(id: number): void {
+    this.currentId = id;
+    this.loading.set(true);
+    this.error.set(null);
+    this.patternService.getPattern(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (pattern) => { this.pattern.set(pattern); this.loading.set(false); },
+        error: () => { this.error.set('Failed to load pattern.'); this.loading.set(false); },
+      });
+  }
+
+  retry(): void {
+    this.load(this.currentId);
   }
 
   goBack(): void {

@@ -46,6 +46,6 @@
 </div>
 
 <ng-template #loadingOrError>
-  <div *ngIf="loading()" class="state-loading">Loading pattern…</div>
-  <div *ngIf="error()" class="state-error">{{ error() }}</div>
+  <app-skeleton-detail *ngIf="loading()" />
+  <app-error-state *ngIf="error()" [message]="error()!" (retry)="retry()" />
 </ng-template>

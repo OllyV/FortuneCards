@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { PatternDetailComponent } from './pattern-detail.component';
 import { Pattern } from '../../../models/pattern';
@@ -121,6 +121,56 @@ describe('PatternDetailComponent', () => {
   it('shows an error state when the pattern fails to load', async () => {
     await setup(throwError(() => new Error('boom')));
     expect(component.error()).toBe('Failed to load pattern.');
-    expect(fixture.nativeElement.querySelector('.state-error')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('app-error-state')).not.toBeNull();
+  });
+
+  it('shows the skeleton-detail while loading', async () => {
+    await setup();
+    component.pattern.set(null);
+    component.loading.set(true);
+    component.error.set(null);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-skeleton-detail')).not.toBeNull();
+  });
+
+  it('error state retry() reloads via the service', async () => {
+    await setup();
+    component.pattern.set(null);
+    component.loading.set(false);
+    component.error.set('Failed to load pattern.');
+    fixture.detectChanges();
+    const spy = vi.spyOn(component, 'load');
+    (fixture.nativeElement.querySelector('app-error-state button') as HTMLButtonElement).click();
+    expect(spy).toHaveBeenCalledWith(1);
+  });
+
+  it('resets loading and clears a stale error when the route id changes in place', async () => {
+    const params = new Subject<{ id: string }>();
+    service = { getPattern: vi.fn(() => of(mockPattern)), addFavorite: vi.fn(() => of(void 0)), removeFavorite: vi.fn(() => of(void 0)) };
+    await TestBed.configureTestingModule({
+      imports: [PatternDetailComponent, CommonModule, RouterModule.forRoot([])],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: ActivatedRoute, useValue: { params } },
+        { provide: AuthService, useValue: { isLoggedIn: () => true, currentUser: signal({ id: 2, displayName: 'U', email: 'u@e.com', avatarUrl: null }) } },
+        { provide: PatternService, useValue: service },
+      ],
+    }).compileComponents();
+    fixture = TestBed.createComponent(PatternDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    params.next({ id: '1' });
+    component.error.set('stale');
+    component.loading.set(false);
+
+    const gate = new Subject<Pattern>();
+    service.getPattern.mockReturnValue(gate);
+    params.next({ id: '2' });
+
+    expect(component.loading()).toBe(true);
+    expect(component.error()).toBeNull();
   });
 });

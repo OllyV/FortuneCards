@@ -147,4 +147,23 @@ describe('DeckDetailComponent', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.card-tile--add')).toBeNull();
   });
+
+  it('shows the skeleton-detail while loading', () => {
+    component.deck.set(null);
+    component.loading.set(true);
+    component.error.set(null);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-skeleton-detail')).not.toBeNull();
+  });
+
+  it('shows app-error-state on error and retry() reloads', () => {
+    component.deck.set(null);
+    component.loading.set(false);
+    component.error.set('Failed to load deck.');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('app-error-state')).not.toBeNull();
+    const spy = vi.spyOn(component, 'load');
+    (fixture.nativeElement.querySelector('app-error-state button') as HTMLButtonElement).click();
+    expect(spy).toHaveBeenCalledWith(1);
+  });
 });
