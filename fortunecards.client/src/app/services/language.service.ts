@@ -22,7 +22,13 @@ export class LanguageService {
 
   async init(): Promise<void> {
     const lang = this.resolveInitialLang();
-    await firstValueFrom(this.transloco.load(lang));
+    try {
+      await firstValueFrom(this.transloco.load(lang));
+    } catch {
+      // Translation preload failed (offline/transient at cold start).
+      // Proceed anyway: Transloco falls back to 'en' and re-fetches lazily
+      // on first render — a failed fetch must never block app bootstrap.
+    }
     this.apply(lang);
   }
 

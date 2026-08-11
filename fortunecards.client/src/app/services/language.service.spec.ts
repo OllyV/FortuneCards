@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TranslocoService, provideTransloco } from '@jsverse/transloco';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { LanguageService, LANGUAGES, STORAGE_KEY } from './language.service';
 
 class StubLoader {
@@ -10,7 +10,13 @@ class StubLoader {
   }
 }
 
-function configure(): LanguageService {
+class FailingLoader {
+  getTranslation() {
+    return throwError(() => new Error('offline'));
+  }
+}
+
+function configure(loader: typeof StubLoader | typeof FailingLoader = StubLoader): LanguageService {
   TestBed.configureTestingModule({
     providers: [
       provideZonelessChangeDetection(),
@@ -20,7 +26,7 @@ function configure(): LanguageService {
           defaultLang: 'en',
           fallbackLang: 'en',
         },
-        loader: StubLoader,
+        loader,
       }),
     ],
   });
@@ -65,5 +71,13 @@ describe('LanguageService', () => {
     expect(localStorage.getItem(STORAGE_KEY)).toBe('es');
     expect(document.documentElement.lang).toBe('es');
     expect(TestBed.inject(TranslocoService).getActiveLang()).toBe('es');
+  });
+
+  it('init() resolves and still applies the language when the loader fails', async () => {
+    localStorage.setItem(STORAGE_KEY, 'de');
+    const svc = configure(FailingLoader);
+    await expect(svc.init()).resolves.toBeUndefined();
+    expect(svc.current()).toBe('de');
+    expect(document.documentElement.lang).toBe('de');
   });
 });
