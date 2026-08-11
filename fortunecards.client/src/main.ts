@@ -16,6 +16,7 @@ import { MonitoringService } from './app/services/monitoring.service';
 import { MonitoringErrorHandler } from './app/monitoring-error-handler';
 import { retryInterceptor } from './app/services/http/retry.interceptor';
 import { TranslocoHttpLoader } from './app/services/transloco-loader';
+import { LanguageService } from './app/services/language.service';
 
 function initAuth(auth: AuthService): () => Promise<void> {
   return () => auth.loadCurrentUser();
@@ -23,6 +24,10 @@ function initAuth(auth: AuthService): () => Promise<void> {
 
 function initMonitoring(monitoring: MonitoringService): () => Promise<void> {
   return () => monitoring.initFromConfig();
+}
+
+function initLanguage(language: LanguageService): () => Promise<void> {
+  return () => language.init();
 }
 
 bootstrapApplication(App, {
@@ -44,6 +49,7 @@ bootstrapApplication(App, {
     }),
     { provide: APP_INITIALIZER, useFactory: initAuth, deps: [AuthService], multi: true },
     { provide: APP_INITIALIZER, useFactory: initMonitoring, deps: [MonitoringService], multi: true },
+    { provide: APP_INITIALIZER, useFactory: initLanguage, deps: [LanguageService], multi: true },
     { provide: ErrorHandler, useClass: MonitoringErrorHandler },
   ],
 }).catch((err) => console.error(err));
