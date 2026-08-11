@@ -12,5 +12,16 @@
   },
   "language": {
     "label": "Idioma"
+  },
+  "nav": {
+    "myDecks": "Meus baralhos",
+    "searchDecks": "Pesquisar baralhos",
+    "myPatterns": "Meus padrões",
+    "browsePatterns": "Explorar padrões",
+    "table": "Mesa",
+    "myProfile": "Meu perfil",
+    "logout": "Sair",
+    "signInGoogle": "Entrar com o Google",
+    "menu": "Menu"
   }
 }

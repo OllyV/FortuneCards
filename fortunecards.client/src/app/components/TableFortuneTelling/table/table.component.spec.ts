@@ -10,6 +10,7 @@ import { Pattern } from '../../../models/pattern';
 import { TableDeckCard } from '../../../models/table';
 import { Deck } from '../../../models/deck';
 import { Card } from '../../../models/card';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('TableComponent', () => {
   let component: TableComponent;
@@ -17,7 +18,7 @@ describe('TableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TableComponent, RouterModule.forRoot([])],
+      imports: [TableComponent, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
@@ -756,7 +757,7 @@ describe('TableComponent pattern query-param auto-load', () => {
     const query = queryPattern === null ? {} : { pattern: queryPattern };
     const patternService = { getPattern: vi.fn(() => of(mockPattern)) };
     await TestBed.configureTestingModule({
-      imports: [TableComponent, RouterModule.forRoot([])],
+      imports: [TableComponent, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
@@ -784,7 +785,7 @@ describe('TableComponent pattern query-param auto-load', () => {
   it('silently ignores a failed pattern auto-load', async () => {
     const patternService = { getPattern: vi.fn(() => throwError(() => new Error('boom'))) };
     await TestBed.configureTestingModule({
-      imports: [TableComponent, RouterModule.forRoot([])],
+      imports: [TableComponent, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },

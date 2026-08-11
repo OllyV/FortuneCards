@@ -7,6 +7,7 @@ import { PatternListComponent } from './pattern-list.component';
 import { PatternService } from '../../../services/pattern.service';
 import { AuthService } from '../../../services/auth.service';
 import { Pattern } from '../../../models/pattern';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 function pattern(id: number, over: Partial<Pattern> = {}): Pattern {
   return {
@@ -26,7 +27,7 @@ describe('PatternListComponent (mine)', () => {
       removeFavorite: vi.fn().mockReturnValue(of(void 0)),
     };
     await TestBed.configureTestingModule({
-      imports: [PatternListComponent],
+      imports: [PatternListComponent, getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideRouter([]),

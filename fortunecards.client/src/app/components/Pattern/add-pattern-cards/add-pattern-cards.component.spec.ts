@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AddPatternCardsComponent } from './add-pattern-cards.component';
 import { PatternService } from '../../../services/pattern.service';
 import { Pattern } from '../../../models/pattern';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('AddPatternCardsComponent', () => {
   let fixture: ComponentFixture<AddPatternCardsComponent>;
@@ -25,7 +26,7 @@ describe('AddPatternCardsComponent', () => {
     };
     const routes: Routes = [{ path: '**', component: AddPatternCardsComponent }];
     await TestBed.configureTestingModule({
-      imports: [AddPatternCardsComponent],
+      imports: [AddPatternCardsComponent, getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideRouter(routes),

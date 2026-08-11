@@ -12,5 +12,16 @@
   },
   "language": {
     "label": "Language"
+  },
+  "nav": {
+    "myDecks": "My decks",
+    "searchDecks": "Search decks",
+    "myPatterns": "My patterns",
+    "browsePatterns": "Browse patterns",
+    "table": "Table",
+    "myProfile": "My profile",
+    "logout": "Logout",
+    "signInGoogle": "Sign in with Google",
+    "menu": "Menu"
   }
 }

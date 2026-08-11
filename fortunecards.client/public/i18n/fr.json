@@ -12,5 +12,16 @@
   },
   "language": {
     "label": "Langue"
+  },
+  "nav": {
+    "myDecks": "Mes jeux",
+    "searchDecks": "Rechercher des jeux",
+    "myPatterns": "Mes modèles",
+    "browsePatterns": "Parcourir les modèles",
+    "table": "Table",
+    "myProfile": "Mon profil",
+    "logout": "Déconnexion",
+    "signInGoogle": "Se connecter avec Google",
+    "menu": "Menu"
   }
 }

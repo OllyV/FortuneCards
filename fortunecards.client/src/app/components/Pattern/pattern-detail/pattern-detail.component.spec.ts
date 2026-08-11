@@ -9,6 +9,7 @@ import { PatternDetailComponent } from './pattern-detail.component';
 import { Pattern } from '../../../models/pattern';
 import { AuthService } from '../../../services/auth.service';
 import { PatternService } from '../../../services/pattern.service';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 const mockPattern: Pattern = {
   id: 1, name: 'Celtic Cross', description: 'Ten positions', createdAt: '2026-01-01',
@@ -32,7 +33,7 @@ describe('PatternDetailComponent', () => {
       removeFavorite: vi.fn(() => of(void 0)),
     };
     await TestBed.configureTestingModule({
-      imports: [PatternDetailComponent, CommonModule, RouterModule.forRoot([])],
+      imports: [PatternDetailComponent, CommonModule, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),
@@ -148,7 +149,7 @@ describe('PatternDetailComponent', () => {
     const params = new Subject<{ id: string }>();
     service = { getPattern: vi.fn(() => of(mockPattern)), addFavorite: vi.fn(() => of(void 0)), removeFavorite: vi.fn(() => of(void 0)) };
     await TestBed.configureTestingModule({
-      imports: [PatternDetailComponent, CommonModule, RouterModule.forRoot([])],
+      imports: [PatternDetailComponent, CommonModule, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),

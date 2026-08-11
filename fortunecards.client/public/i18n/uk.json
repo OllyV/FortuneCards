@@ -12,5 +12,16 @@
   },
   "language": {
     "label": "Мова"
+  },
+  "nav": {
+    "myDecks": "Мої колоди",
+    "searchDecks": "Пошук колод",
+    "myPatterns": "Мої шаблони",
+    "browsePatterns": "Огляд шаблонів",
+    "table": "Стіл",
+    "myProfile": "Мій профіль",
+    "logout": "Вийти",
+    "signInGoogle": "Увійти через Google",
+    "menu": "Меню"
   }
 }

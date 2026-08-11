@@ -12,5 +12,16 @@
   },
   "language": {
     "label": "Idioma"
+  },
+  "nav": {
+    "myDecks": "Mis mazos",
+    "searchDecks": "Buscar mazos",
+    "myPatterns": "Mis patrones",
+    "browsePatterns": "Explorar patrones",
+    "table": "Mesa",
+    "myProfile": "Mi perfil",
+    "logout": "Cerrar sesión",
+    "signInGoogle": "Iniciar sesión con Google",
+    "menu": "Menú"
   }
 }

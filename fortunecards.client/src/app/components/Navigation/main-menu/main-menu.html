@@ -1,28 +1,30 @@
-<div class="menu">
-  <button class="menu-btn" type="button" aria-label="Menu" aria-haspopup="menu" [attr.aria-expanded]="open()" (click)="toggle()" (keydown.escape)="close()">☰</button>
+<div class="menu" *transloco="let t">
+  <button class="menu-btn" type="button" [attr.aria-label]="('nav.menu' | transloco)" aria-haspopup="menu" [attr.aria-expanded]="open()" (click)="toggle()" (keydown.escape)="close()">☰</button>
 
   @if (open()) {
     <div class="menu-backdrop" (click)="close()"></div>
     <div class="menu-panel" (keydown.escape)="close()">
       @if (auth.isLoggedIn()) {
-        <button class="menu-item" type="button" (click)="go('/decks/mine')">My decks</button>
+        <button class="menu-item" type="button" (click)="go('/decks/mine')">{{ t('nav.myDecks') }}</button>
       }
-      <button class="menu-item" type="button" (click)="go('/decks/search')">Search decks</button>
+      <button class="menu-item" type="button" (click)="go('/decks/search')">{{ t('nav.searchDecks') }}</button>
       @if (auth.isLoggedIn()) {
-        <button class="menu-item" type="button" (click)="go('/patterns/mine')">My patterns</button>
+        <button class="menu-item" type="button" (click)="go('/patterns/mine')">{{ t('nav.myPatterns') }}</button>
       }
-      <button class="menu-item" type="button" (click)="go('/patterns/search')">Browse patterns</button>
-      <button class="menu-item" type="button" (click)="go('/table')">Table</button>
+      <button class="menu-item" type="button" (click)="go('/patterns/search')">{{ t('nav.browsePatterns') }}</button>
+      <button class="menu-item" type="button" (click)="go('/table')">{{ t('nav.table') }}</button>
       @if (auth.isLoggedIn()) {
-        <button class="menu-item" type="button" (click)="go('/profile')">My profile</button>
+        <button class="menu-item" type="button" (click)="go('/profile')">{{ t('nav.myProfile') }}</button>
       }
 
       <div class="menu-divider"></div>
 
+      <language-switcher />
+
       @if (auth.isLoggedIn()) {
-        <button class="menu-item" type="button" (click)="logout()">Logout</button>
+        <button class="menu-item" type="button" (click)="logout()">{{ t('nav.logout') }}</button>
       } @else {
-        <button class="menu-item" type="button" (click)="login()">Sign in with Google</button>
+        <button class="menu-item" type="button" (click)="login()">{{ t('nav.signInGoogle') }}</button>
       }
     </div>
   }

@@ -8,6 +8,7 @@ import { vi } from 'vitest';
 import { DrawnCardComponent } from './drawn-card.component';
 import { Deck } from '../../../models/deck';
 import { Card } from '../../../models/card';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 const mockCard: Card = { id: 1, title: 'The Journey', description: 'Step forward', imageUrl: '', createdAt: '2026-01-01', deckId: 1 };
 const mockCard2: Card = { id: 2, title: 'The Return', description: 'Come back', imageUrl: '', createdAt: '2026-01-01', deckId: 1 };
@@ -20,7 +21,7 @@ describe('DrawnCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DrawnCardComponent, RouterModule.forRoot([])],
+      imports: [DrawnCardComponent, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),

@@ -3,6 +3,7 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { MainMenuComponent } from './main-menu';
 import { AuthService } from '../../../services/auth.service';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('MainMenuComponent', () => {
   let component: MainMenuComponent;
@@ -20,7 +21,7 @@ describe('MainMenuComponent', () => {
       logout: vi.fn().mockResolvedValue(undefined),
     };
     await TestBed.configureTestingModule({
-      imports: [MainMenuComponent, RouterModule.forRoot([])],
+      imports: [MainMenuComponent, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         { provide: AuthService, useValue: auth },

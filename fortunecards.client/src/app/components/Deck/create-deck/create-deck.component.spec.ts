@@ -5,6 +5,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CreateDeckComponent } from './create-deck.component';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('CreateDeckComponent', () => {
   let component: CreateDeckComponent;
@@ -12,7 +13,7 @@ describe('CreateDeckComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateDeckComponent, ReactiveFormsModule, RouterModule.forRoot([])],
+      imports: [CreateDeckComponent, ReactiveFormsModule, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),

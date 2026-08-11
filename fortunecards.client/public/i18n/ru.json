@@ -12,5 +12,16 @@
   },
   "language": {
     "label": "Язык"
+  },
+  "nav": {
+    "myDecks": "Мои колоды",
+    "searchDecks": "Поиск колод",
+    "myPatterns": "Мои шаблоны",
+    "browsePatterns": "Обзор шаблонов",
+    "table": "Стол",
+    "myProfile": "Мой профиль",
+    "logout": "Выйти",
+    "signInGoogle": "Войти через Google",
+    "menu": "Меню"
   }
 }
