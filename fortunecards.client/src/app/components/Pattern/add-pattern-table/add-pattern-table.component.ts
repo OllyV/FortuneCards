@@ -1,6 +1,7 @@
 import {
   AfterViewInit, Component, DestroyRef, ElementRef, computed, inject, input, output, signal, viewChild,
 } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { PatternPositionCardComponent } from '../pattern-position-card/pattern-position-card.component';
 import { EditablePatternCard } from '../../../models/pattern';
 
@@ -13,7 +14,7 @@ const ASPECT_H = 5;
   standalone: true,
   templateUrl: './add-pattern-table.component.html',
   styleUrl: './add-pattern-table.component.css',
-  imports: [PatternPositionCardComponent],
+  imports: [PatternPositionCardComponent, TranslocoDirective],
 })
 export class AddPatternTableComponent implements AfterViewInit {
   readonly cards = input.required<EditablePatternCard[]>();

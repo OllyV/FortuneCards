@@ -1,20 +1,20 @@
-<div class="form-page">
+<div class="form-page" *transloco="let t">
   <navigation-bar>
-    <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
-    <span class="nav-title-centered">New Pattern</span>
+    <button class="btn-ghost" (click)="cancel()">✕ {{ t('common.cancel') }}</button>
+    <span class="nav-title-centered">{{ t('pattern.createPageTitle') }}</span>
   </navigation-bar>
 
   <main class="form-content">
     <form (ngSubmit)="submit()" [formGroup]="form">
       <div class="emoji-section">
         <div class="emoji-preview" [style.background]="getSelectedGradient()">
-          <input class="emoji-input" formControlName="emoji" maxlength="10" placeholder="🔮" aria-label="Pattern emoji" />
+          <input class="emoji-input" formControlName="emoji" maxlength="10" placeholder="🔮" [attr.aria-label]="t('pattern.emojiAriaLabel')" />
         </div>
-        <p class="emoji-hint">Type or paste an emoji</p>
+        <p class="emoji-hint">{{ t('pattern.emojiHint') }}</p>
       </div>
 
       <div class="form-field">
-        <label class="form-label">Color</label>
+        <label class="form-label">{{ t('pattern.colorLabel') }}</label>
         <div class="swatch-row">
           <button type="button" class="color-swatch" *ngFor="let i of GRADIENTS"
                   [style.background]="getGradientStyle(i)"
@@ -24,32 +24,32 @@
       </div>
 
       <div class="form-field">
-        <label class="form-label">Visibility</label>
+        <label class="form-label">{{ t('pattern.visibilityLabel') }}</label>
         <div class="visibility-row">
           <button type="button" class="visibility-btn"
                   [class.visibility-btn--active]="!form.get('isPublic')!.value"
-                  (click)="form.get('isPublic')!.setValue(false)">🔒 Private</button>
+                  (click)="form.get('isPublic')!.setValue(false)">🔒 {{ t('pattern.private') }}</button>
           <button type="button" class="visibility-btn"
                   [class.visibility-btn--active]="form.get('isPublic')!.value"
-                  (click)="form.get('isPublic')!.setValue(true)">🌐 Public</button>
+                  (click)="form.get('isPublic')!.setValue(true)">🌐 {{ t('pattern.public') }}</button>
         </div>
       </div>
 
       <div class="form-field">
-        <label class="form-label" for="patternName">Pattern Name</label>
-        <input id="patternName" class="form-input" formControlName="name" placeholder="e.g. Three-Card Spread" maxlength="200" />
+        <label class="form-label" for="patternName">{{ t('pattern.nameLabel') }}</label>
+        <input id="patternName" class="form-input" formControlName="name" [placeholder]="t('pattern.namePlaceholder')" maxlength="200" />
       </div>
 
       <div class="form-field">
-        <label class="form-label" for="patternDesc">Description <span>(optional)</span></label>
+        <label class="form-label" for="patternDesc">{{ t('pattern.descriptionLabel') }} <span>{{ t('pattern.optionalLabel') }}</span></label>
         <textarea id="patternDesc" class="form-textarea" formControlName="description"
-                  placeholder="What is this pattern for?" maxlength="1000" rows="3"></textarea>
+                  [placeholder]="t('pattern.descriptionPlaceholder')" maxlength="1000" rows="3"></textarea>
       </div>
 
       <div *ngIf="error()" class="state-error">{{ error() }}</div>
 
       <button type="submit" class="btn-primary btn-full" [disabled]="form.invalid || submitting()">
-        {{ submitting() ? 'Creating…' : '✨ Create & Add Questions' }}
+        {{ submitting() ? t('pattern.creating') : ('✨ ' + t('pattern.createSubmit')) }}
       </button>
     </form>
   </main>

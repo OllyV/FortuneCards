@@ -2,6 +2,7 @@ import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { AddPatternTableComponent } from '../add-pattern-table/add-pattern-table.component';
 import { PatternService } from '../../../services/pattern.service';
@@ -14,7 +15,7 @@ const ASPECT_MULTIPLIER = 5 / 3;
   standalone: true,
   templateUrl: './add-pattern-cards.component.html',
   styleUrl: './add-pattern-cards.component.css',
-  imports: [NavigationBar, AddPatternTableComponent],
+  imports: [NavigationBar, AddPatternTableComponent, TranslocoDirective],
 })
 export class AddPatternCardsComponent implements OnInit {
   readonly cards = signal<EditablePatternCard[]>([]);
@@ -32,6 +33,7 @@ export class AddPatternCardsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly patternService = inject(PatternService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   ngOnInit(): void {
     this.patternId = Number(this.route.snapshot.paramMap.get('id'));
@@ -48,7 +50,7 @@ export class AddPatternCardsComponent implements OnInit {
           })));
           this.loading.set(false);
         },
-        error: () => { this.error.set('Failed to load pattern.'); this.loading.set(false); },
+        error: () => { this.error.set(this.transloco.translate('errors.patternLoadFailed')); this.loading.set(false); },
       });
   }
 
@@ -120,7 +122,7 @@ export class AddPatternCardsComponent implements OnInit {
     ]).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.router.navigate(['/patterns/mine']),
-        error: () => { this.error.set('Failed to save.'); this.saving.set(false); },
+        error: () => { this.error.set(this.transloco.translate('errors.saveFailed')); this.saving.set(false); },
       });
   }
 
