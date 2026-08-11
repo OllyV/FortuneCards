@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { SkeletonDetailComponent } from '../../shared/skeleton/skeleton-detail.component';
 import { ErrorStateComponent } from '../../shared/error-state/error-state.component';
@@ -15,7 +16,7 @@ import { getDeckGradientStyle, getDeckShadowStyle, getCardAccentColor } from '..
   templateUrl: './deck-detail.component.html',
   styleUrls: ['./deck-detail.component.css'],
   standalone: true,
-  imports: [CommonModule, NavigationBar, SkeletonDetailComponent, ErrorStateComponent]
+  imports: [CommonModule, NavigationBar, SkeletonDetailComponent, ErrorStateComponent, TranslocoDirective]
 })
 export class DeckDetailComponent implements OnInit {
   deck = signal<Deck | null>(null);
@@ -24,6 +25,7 @@ export class DeckDetailComponent implements OnInit {
 
   private readonly destroyRef = inject(DestroyRef);
   protected readonly auth = inject(AuthService);
+  private readonly transloco = inject(TranslocoService);
   private currentId = 0;
 
   constructor(
@@ -46,7 +48,7 @@ export class DeckDetailComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (deck) => { this.deck.set(deck); this.loading.set(false); },
-        error: () => { this.error.set('Failed to load deck.'); this.loading.set(false); },
+        error: () => { this.error.set(this.transloco.translate('errors.deckLoadFailed')); this.loading.set(false); },
       });
   }
 

@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { DeckService } from '../../../services/deck.service';
 import { getDeckGradientStyle } from '../../../utils/deck-colors';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
@@ -12,7 +13,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
   templateUrl: './create-deck.component.html',
   styleUrls: ['./create-deck.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NavigationBar],
+  imports: [CommonModule, ReactiveFormsModule, NavigationBar, TranslocoDirective],
 })
 export class CreateDeckComponent {
   readonly GRADIENTS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
@@ -20,6 +21,7 @@ export class CreateDeckComponent {
   form: FormGroup;
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   cardBackFile = signal<File | null>(null);
   cardBackPreview = signal<string | null>(null);
@@ -86,7 +88,7 @@ export class CreateDeckComponent {
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (deck) => this.router.navigate(['/decks', deck.id]),
-        error: () => { this.error.set('Failed to create deck.'); this.submitting.set(false); }
+        error: () => { this.error.set(this.transloco.translate('errors.deckCreateFailed')); this.submitting.set(false); }
       });
   }
 

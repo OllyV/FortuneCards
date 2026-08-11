@@ -1,7 +1,7 @@
-<div class="form-page">
+<div class="form-page" *transloco="let t">
   <navigation-bar>
-    <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
-    <span class="nav-title-centered">Edit Deck</span>
+    <button class="btn-ghost" (click)="cancel()">✕ {{ t('common.cancel') }}</button>
+    <span class="nav-title-centered">{{ t('deck.editTitle') }}</span>
   </navigation-bar>
 
   <main class="form-content">
@@ -14,14 +14,14 @@
                  formControlName="emoji"
                  maxlength="10"
                  placeholder="🎴"
-                 aria-label="Deck emoji" />
+                 [attr.aria-label]="t('deck.emojiAriaLabel')" />
         </div>
-        <p class="emoji-hint">Type or paste an emoji</p>
+        <p class="emoji-hint">{{ t('deck.emojiHint') }}</p>
       </div>
 
       <!-- Color swatches -->
       <div class="form-field">
-        <label class="form-label">Color</label>
+        <label class="form-label">{{ t('deck.colorLabel') }}</label>
         <div class="swatch-row">
           <button type="button"
                   class="color-swatch"
@@ -34,13 +34,13 @@
 
       <!-- Card shape / aspect ratio -->
       <div class="form-field">
-        <label class="form-label">Card Shape (width : height)</label>
+        <label class="form-label">{{ t('deck.aspectLabel') }}</label>
         <div class="aspect-row">
           <input class="form-input aspect-input" type="number" min="1" max="100" step="1"
-                 formControlName="aspectWidth" aria-label="Aspect width" />
+                 formControlName="aspectWidth" [attr.aria-label]="t('deck.aspectWidthAriaLabel')" />
           <span class="aspect-colon">:</span>
           <input class="form-input aspect-input" type="number" min="1" max="100" step="1"
-                 formControlName="aspectHeight" aria-label="Aspect height" />
+                 formControlName="aspectHeight" [attr.aria-label]="t('deck.aspectHeightAriaLabel')" />
           <div class="aspect-preview"
                [style.aspect-ratio]="(form.get('aspectWidth')!.value || 3) + ' / ' + (form.get('aspectHeight')!.value || 5)"
                [style.background]="getSelectedGradient()"></div>
@@ -49,11 +49,11 @@
 
       <!-- Card back upload -->
       <div class="form-field">
-        <label class="form-label">Card Back <span>(optional)</span></label>
+        <label class="form-label">{{ t('deck.cardBackLabel') }} <span>{{ t('deck.optionalLabel') }}</span></label>
         <div class="card-back-row">
           <div class="card-back-preview">
-            <img *ngIf="cardBackPreview()" [src]="cardBackPreview()!" alt="Card back preview" />
-            <img *ngIf="!cardBackPreview() && currentBackUrl()" [src]="currentBackUrl()!" alt="Current card back" />
+            <img *ngIf="cardBackPreview()" [src]="cardBackPreview()!" [alt]="t('deck.cardBackPreviewAlt')" />
+            <img *ngIf="!cardBackPreview() && currentBackUrl()" [src]="currentBackUrl()!" [alt]="t('deck.currentCardBackAlt')" />
             <div *ngIf="!cardBackPreview() && !currentBackUrl()"
                  class="card-back-gradient"
                  [style.background]="getSelectedGradient()">
@@ -61,47 +61,47 @@
             </div>
           </div>
           <div class="card-back-actions">
-            <p class="card-back-status" *ngIf="cardBackPreview()">✓ New back selected</p>
+            <p class="card-back-status" *ngIf="cardBackPreview()">✓ {{ t('deck.cardBackNewSelected') }}</p>
             <label class="btn-secondary btn-file">
-              📷 {{ (cardBackPreview() || currentBackUrl()) ? 'Replace Image' : 'Upload Image' }}
+              📷 {{ (cardBackPreview() || currentBackUrl()) ? t('deck.replaceImage') : t('deck.uploadImage') }}
               <input type="file" accept="image/*" (change)="onCardBackSelected($event)" hidden />
             </label>
-            <button type="button" class="btn-ghost" *ngIf="cardBackPreview()" (click)="removeCardBack()">✕ Undo</button>
+            <button type="button" class="btn-ghost" *ngIf="cardBackPreview()" (click)="removeCardBack()">✕ {{ t('deck.undo') }}</button>
           </div>
         </div>
       </div>
 
       <!-- Name -->
       <div class="form-field">
-        <label class="form-label" for="deckName">Deck Name</label>
+        <label class="form-label" for="deckName">{{ t('deck.nameLabel') }}</label>
         <input id="deckName"
                class="form-input"
                formControlName="name"
-               placeholder="e.g. Adventure Deck"
+               [placeholder]="t('deck.namePlaceholder')"
                maxlength="200" />
       </div>
 
       <!-- Description -->
       <div class="form-field">
-        <label class="form-label" for="deckDesc">Description <span>(optional)</span></label>
+        <label class="form-label" for="deckDesc">{{ t('deck.descriptionLabel') }} <span>{{ t('deck.optionalLabel') }}</span></label>
         <textarea id="deckDesc"
                   class="form-textarea"
                   formControlName="description"
-                  placeholder="What is this deck about?"
+                  [placeholder]="t('deck.descriptionPlaceholder')"
                   maxlength="1000"
                   rows="3"></textarea>
       </div>
 
       <!-- Visibility -->
       <div class="form-field">
-        <label class="form-label">Visibility</label>
+        <label class="form-label">{{ t('deck.visibilityLabel') }}</label>
         <div class="visibility-row">
           <button type="button" class="visibility-btn"
                   [class.visibility-btn--active]="!form.get('isPublic')!.value"
-                  (click)="form.get('isPublic')!.setValue(false)">🔒 Private</button>
+                  (click)="form.get('isPublic')!.setValue(false)">🔒 {{ t('deck.private') }}</button>
           <button type="button" class="visibility-btn"
                   [class.visibility-btn--active]="form.get('isPublic')!.value"
-                  (click)="form.get('isPublic')!.setValue(true)">🌐 Public</button>
+                  (click)="form.get('isPublic')!.setValue(true)">🌐 {{ t('deck.public') }}</button>
         </div>
       </div>
 
@@ -110,14 +110,14 @@
       <button type="submit"
               class="btn-primary btn-full"
               [disabled]="form.invalid || submitting()">
-        {{ submitting() ? 'Saving…' : '💾 Save Changes' }}
+        {{ submitting() ? t('deck.saving') : ('💾 ' + t('deck.saveChanges')) }}
       </button>
 
       <button type="button"
               class="btn-danger btn-full"
               [disabled]="deleting()"
               (click)="deleteDeck()">
-        {{ deleting() ? 'Deleting…' : '🗑 Delete Deck' }}
+        {{ deleting() ? t('deck.deleting') : ('🗑 ' + t('deck.deleteButton')) }}
       </button>
     </form>
   </main>

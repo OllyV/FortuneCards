@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { DeckService } from '../../../services/deck.service';
 import { getDeckGradientStyle } from '../../../utils/deck-colors';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
@@ -12,7 +13,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
   templateUrl: './deck-edit.component.html',
   styleUrls: ['./deck-edit.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NavigationBar],
+  imports: [CommonModule, ReactiveFormsModule, NavigationBar, TranslocoDirective],
 })
 export class DeckEditComponent implements OnInit {
   readonly GRADIENTS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
@@ -28,6 +29,7 @@ export class DeckEditComponent implements OnInit {
   error = signal<string | null>(null);
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   constructor(
     private fb: FormBuilder,
@@ -67,7 +69,7 @@ export class DeckEditComponent implements OnInit {
             this.currentBackUrl.set(deck.cardBackImageUrl);
             this.loading.set(false);
           },
-          error: () => { this.error.set('Failed to load deck.'); this.loading.set(false); }
+          error: () => { this.error.set(this.transloco.translate('errors.deckLoadFailed')); this.loading.set(false); }
         });
     });
   }
@@ -116,18 +118,18 @@ export class DeckEditComponent implements OnInit {
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.router.navigate(['/decks', this.deckId()]),
-        error: () => { this.error.set('Failed to save deck.'); this.submitting.set(false); }
+        error: () => { this.error.set(this.transloco.translate('errors.deckSaveFailed')); this.submitting.set(false); }
       });
   }
 
   deleteDeck(): void {
-    if (!confirm('Delete this deck and all its cards?')) return;
+    if (!confirm(this.transloco.translate('deck.deleteConfirm'))) return;
     this.deleting.set(true);
     this.deckService.deleteDeck(this.deckId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.router.navigate(['/decks']),
-        error: () => { this.error.set('Failed to delete deck.'); this.deleting.set(false); }
+        error: () => { this.error.set(this.transloco.translate('errors.deckDeleteFailed')); this.deleting.set(false); }
       });
   }
 
