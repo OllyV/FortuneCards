@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
+import { provideTransloco } from '@jsverse/transloco';
 
 import { App } from './app/app';
 import { routes } from './app/app.routes';
@@ -14,6 +15,7 @@ import { AuthService } from './app/services/auth.service';
 import { MonitoringService } from './app/services/monitoring.service';
 import { MonitoringErrorHandler } from './app/monitoring-error-handler';
 import { retryInterceptor } from './app/services/http/retry.interceptor';
+import { TranslocoHttpLoader } from './app/services/transloco-loader';
 
 function initAuth(auth: AuthService): () => Promise<void> {
   return () => auth.loadCurrentUser();
@@ -29,6 +31,17 @@ bootstrapApplication(App, {
     provideZonelessChangeDetection(),
     provideHttpClient(withInterceptors([retryInterceptor])),
     provideRouter(routes),
+    provideTransloco({
+      config: {
+        availableLangs: ['en', 'uk', 'ru', 'es', 'de', 'fr', 'pt'],
+        defaultLang: 'en',
+        fallbackLang: 'en',
+        reRenderOnLangChange: true,
+        missingHandler: { logMissingKey: false },
+        prodMode: false,
+      },
+      loader: TranslocoHttpLoader,
+    }),
     { provide: APP_INITIALIZER, useFactory: initAuth, deps: [AuthService], multi: true },
     { provide: APP_INITIALIZER, useFactory: initMonitoring, deps: [MonitoringService], multi: true },
     { provide: ErrorHandler, useClass: MonitoringErrorHandler },

@@ -1,0 +1,13 @@
+{
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "close": "Fechar",
+    "loading": "Carregando…",
+    "retry": "Tentar novamente",
+    "back": "Voltar",
+    "confirm": "Confirmar"
+  }
+}
