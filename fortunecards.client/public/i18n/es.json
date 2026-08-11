@@ -9,5 +9,8 @@
     "retry": "Reintentar",
     "back": "Atrás",
     "confirm": "Confirmar"
+  },
+  "language": {
+    "label": "Idioma"
   }
 }

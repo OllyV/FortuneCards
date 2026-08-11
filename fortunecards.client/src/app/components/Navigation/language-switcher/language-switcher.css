@@ -1,0 +1,5 @@
+.lang-switcher { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.25rem 0; }
+.lang-title { font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.04em; }
+.lang-options { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.lang-option { border: none; background: transparent; cursor: pointer; padding: 0.35rem 0.6rem; border-radius: 999px; font: inherit; }
+.lang-option.active { font-weight: 700; background: rgba(0, 0, 0, 0.08); }

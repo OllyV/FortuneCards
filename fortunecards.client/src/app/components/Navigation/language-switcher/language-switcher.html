@@ -1,0 +1,16 @@
+<div class="lang-switcher" *transloco="let t">
+  <div class="lang-title">{{ t('language.label') }}</div>
+  <div class="lang-options" role="group" [attr.aria-label]="t('language.label')">
+    @for (lang of languages; track lang.code) {
+      <button
+        type="button"
+        class="lang-option"
+        [class.active]="current() === lang.code"
+        [attr.aria-current]="current() === lang.code ? 'true' : null"
+        (click)="select(lang.code)"
+      >
+        {{ lang.nativeName }}
+      </button>
+    }
+  </div>
+</div>
