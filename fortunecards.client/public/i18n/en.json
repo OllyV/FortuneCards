@@ -80,11 +80,46 @@
     "emptyMine": "You have no decks yet — create one.",
     "emptySearch": "No public decks found."
   },
+  "card": {
+    "backLink": "Back to deck",
+    "editCard": "Edit Card",
+    "removeConfirm": "Remove this card from the deck?",
+    "deleting": "Deleting…",
+    "deleteButton": "Delete Card",
+    "loadingCard": "Loading card…",
+    "imageLabel": "Card Image",
+    "imagePreviewAlt": "Card preview",
+    "currentImageAlt": "Current card image",
+    "uploadHint": "Tap to upload card image",
+    "upload": "+ Upload",
+    "replace": "Replace",
+    "titleLabel": "Card Title",
+    "titlePlaceholder": "e.g. The Journey Begins",
+    "descriptionLabel": "Meaning / Description",
+    "descriptionPlaceholder": "What does this card mean?",
+    "saving": "Saving…",
+    "saveChanges": "Save Changes",
+    "addCard": "Add Card",
+    "adding": "Adding…",
+    "drawTitle": "Draw a Card",
+    "tapHint": "Tap the card to reveal your fortune",
+    "backAlt": "Card back",
+    "tapToReveal": "Tap to reveal",
+    "drawAnother": "Draw Another",
+    "backToDeck": "Back to Deck",
+    "loadingDeck": "Loading deck…",
+    "deckEmpty": "This deck has no cards yet."
+  },
   "errors": {
     "deckCreateFailed": "Failed to create deck.",
     "deckLoadFailed": "Failed to load deck.",
     "decksLoadFailed": "Failed to load decks.",
     "deckSaveFailed": "Failed to save deck.",
-    "deckDeleteFailed": "Failed to delete deck."
+    "deckDeleteFailed": "Failed to delete deck.",
+    "cardLoadFailed": "Failed to load card.",
+    "cardDeleteFailed": "Failed to delete card.",
+    "cardNotFound": "Card not found.",
+    "cardSaveFailed": "Failed to save card.",
+    "cardAddFailed": "Failed to add card."
   }
 }

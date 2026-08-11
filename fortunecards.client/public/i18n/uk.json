@@ -80,11 +80,46 @@
     "emptyMine": "У вас ще немає колод — створіть одну.",
     "emptySearch": "Публічні колоди не знайдено."
   },
+  "card": {
+    "backLink": "Назад до колоди",
+    "editCard": "Редагувати картку",
+    "removeConfirm": "Видалити цю картку з колоди?",
+    "deleting": "Видалення…",
+    "deleteButton": "Видалити картку",
+    "loadingCard": "Завантаження картки…",
+    "imageLabel": "Зображення картки",
+    "imagePreviewAlt": "Попередній перегляд картки",
+    "currentImageAlt": "Поточне зображення картки",
+    "uploadHint": "Торкніться, щоб завантажити зображення картки",
+    "upload": "+ Завантажити",
+    "replace": "Замінити",
+    "titleLabel": "Назва картки",
+    "titlePlaceholder": "напр. Подорож починається",
+    "descriptionLabel": "Значення / Опис",
+    "descriptionPlaceholder": "Що означає ця картка?",
+    "saving": "Збереження…",
+    "saveChanges": "Зберегти зміни",
+    "addCard": "Додати картку",
+    "adding": "Додавання…",
+    "drawTitle": "Витягнути картку",
+    "tapHint": "Торкніться картки, щоб дізнатися свою долю",
+    "backAlt": "Сорочка картки",
+    "tapToReveal": "Торкніться, щоб відкрити",
+    "drawAnother": "Витягнути ще",
+    "backToDeck": "Назад до колоди",
+    "loadingDeck": "Завантаження колоди…",
+    "deckEmpty": "У цій колоді ще немає карток."
+  },
   "errors": {
     "deckCreateFailed": "Не вдалося створити колоду.",
     "deckLoadFailed": "Не вдалося завантажити колоду.",
     "decksLoadFailed": "Не вдалося завантажити колоди.",
     "deckSaveFailed": "Не вдалося зберегти колоду.",
-    "deckDeleteFailed": "Не вдалося видалити колоду."
+    "deckDeleteFailed": "Не вдалося видалити колоду.",
+    "cardLoadFailed": "Не вдалося завантажити картку.",
+    "cardDeleteFailed": "Не вдалося видалити картку.",
+    "cardNotFound": "Картку не знайдено.",
+    "cardSaveFailed": "Не вдалося зберегти картку.",
+    "cardAddFailed": "Не вдалося додати картку."
   }
 }

@@ -80,11 +80,46 @@
     "emptyMine": "Você ainda não tem baralhos — crie um.",
     "emptySearch": "Nenhum baralho público encontrado."
   },
+  "card": {
+    "backLink": "Voltar ao baralho",
+    "editCard": "Editar carta",
+    "removeConfirm": "Remover esta carta do baralho?",
+    "deleting": "Excluindo…",
+    "deleteButton": "Excluir carta",
+    "loadingCard": "Carregando carta…",
+    "imageLabel": "Imagem da carta",
+    "imagePreviewAlt": "Pré-visualização da carta",
+    "currentImageAlt": "Imagem atual da carta",
+    "uploadHint": "Toque para enviar a imagem da carta",
+    "upload": "+ Enviar",
+    "replace": "Substituir",
+    "titleLabel": "Título da carta",
+    "titlePlaceholder": "ex. A jornada começa",
+    "descriptionLabel": "Significado / Descrição",
+    "descriptionPlaceholder": "O que esta carta significa?",
+    "saving": "Salvando…",
+    "saveChanges": "Salvar alterações",
+    "addCard": "Adicionar carta",
+    "adding": "Adicionando…",
+    "drawTitle": "Tirar uma carta",
+    "tapHint": "Toque na carta para revelar sua sorte",
+    "backAlt": "Verso da carta",
+    "tapToReveal": "Toque para revelar",
+    "drawAnother": "Tirar outra",
+    "backToDeck": "Voltar ao baralho",
+    "loadingDeck": "Carregando baralho…",
+    "deckEmpty": "Este baralho ainda não tem cartas."
+  },
   "errors": {
     "deckCreateFailed": "Falha ao criar o baralho.",
     "deckLoadFailed": "Falha ao carregar o baralho.",
     "decksLoadFailed": "Falha ao carregar os baralhos.",
     "deckSaveFailed": "Falha ao salvar o baralho.",
-    "deckDeleteFailed": "Falha ao excluir o baralho."
+    "deckDeleteFailed": "Falha ao excluir o baralho.",
+    "cardLoadFailed": "Falha ao carregar a carta.",
+    "cardDeleteFailed": "Falha ao excluir a carta.",
+    "cardNotFound": "Carta não encontrada.",
+    "cardSaveFailed": "Falha ao salvar a carta.",
+    "cardAddFailed": "Falha ao adicionar a carta."
   }
 }

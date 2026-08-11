@@ -80,11 +80,46 @@
     "emptyMine": "Vous n'avez pas encore de jeu — créez-en un.",
     "emptySearch": "Aucun jeu public trouvé."
   },
+  "card": {
+    "backLink": "Retour au jeu",
+    "editCard": "Modifier la carte",
+    "removeConfirm": "Retirer cette carte du jeu ?",
+    "deleting": "Suppression…",
+    "deleteButton": "Supprimer la carte",
+    "loadingCard": "Chargement de la carte…",
+    "imageLabel": "Image de la carte",
+    "imagePreviewAlt": "Aperçu de la carte",
+    "currentImageAlt": "Image actuelle de la carte",
+    "uploadHint": "Touchez pour télécharger l'image de la carte",
+    "upload": "+ Télécharger",
+    "replace": "Remplacer",
+    "titleLabel": "Titre de la carte",
+    "titlePlaceholder": "ex. Le voyage commence",
+    "descriptionLabel": "Signification / Description",
+    "descriptionPlaceholder": "Que signifie cette carte ?",
+    "saving": "Enregistrement…",
+    "saveChanges": "Enregistrer les modifications",
+    "addCard": "Ajouter une carte",
+    "adding": "Ajout…",
+    "drawTitle": "Tirer une carte",
+    "tapHint": "Touchez la carte pour révéler votre destin",
+    "backAlt": "Dos de la carte",
+    "tapToReveal": "Touchez pour révéler",
+    "drawAnother": "Tirer une autre",
+    "backToDeck": "Retour au jeu",
+    "loadingDeck": "Chargement du jeu…",
+    "deckEmpty": "Ce jeu n'a pas encore de cartes."
+  },
   "errors": {
     "deckCreateFailed": "Échec de la création du jeu.",
     "deckLoadFailed": "Échec du chargement du jeu.",
     "decksLoadFailed": "Échec du chargement des jeux.",
     "deckSaveFailed": "Échec de l'enregistrement du jeu.",
-    "deckDeleteFailed": "Échec de la suppression du jeu."
+    "deckDeleteFailed": "Échec de la suppression du jeu.",
+    "cardLoadFailed": "Échec du chargement de la carte.",
+    "cardDeleteFailed": "Échec de la suppression de la carte.",
+    "cardNotFound": "Carte introuvable.",
+    "cardSaveFailed": "Échec de l'enregistrement de la carte.",
+    "cardAddFailed": "Échec de l'ajout de la carte."
   }
 }

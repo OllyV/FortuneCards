@@ -80,11 +80,46 @@
     "emptyMine": "Du hast noch keine Decks — erstelle eins.",
     "emptySearch": "Keine öffentlichen Decks gefunden."
   },
+  "card": {
+    "backLink": "Zurück zum Deck",
+    "editCard": "Karte bearbeiten",
+    "removeConfirm": "Diese Karte aus dem Deck entfernen?",
+    "deleting": "Wird gelöscht…",
+    "deleteButton": "Karte löschen",
+    "loadingCard": "Karte wird geladen…",
+    "imageLabel": "Kartenbild",
+    "imagePreviewAlt": "Kartenvorschau",
+    "currentImageAlt": "Aktuelles Kartenbild",
+    "uploadHint": "Tippen, um ein Kartenbild hochzuladen",
+    "upload": "+ Hochladen",
+    "replace": "Ersetzen",
+    "titleLabel": "Kartentitel",
+    "titlePlaceholder": "z. B. Die Reise beginnt",
+    "descriptionLabel": "Bedeutung / Beschreibung",
+    "descriptionPlaceholder": "Was bedeutet diese Karte?",
+    "saving": "Wird gespeichert…",
+    "saveChanges": "Änderungen speichern",
+    "addCard": "Karte hinzufügen",
+    "adding": "Wird hinzugefügt…",
+    "drawTitle": "Karte ziehen",
+    "tapHint": "Tippe auf die Karte, um dein Schicksal zu enthüllen",
+    "backAlt": "Kartenrückseite",
+    "tapToReveal": "Zum Aufdecken tippen",
+    "drawAnother": "Weitere ziehen",
+    "backToDeck": "Zurück zum Deck",
+    "loadingDeck": "Deck wird geladen…",
+    "deckEmpty": "Dieses Deck hat noch keine Karten."
+  },
   "errors": {
     "deckCreateFailed": "Deck konnte nicht erstellt werden.",
     "deckLoadFailed": "Deck konnte nicht geladen werden.",
     "decksLoadFailed": "Decks konnten nicht geladen werden.",
     "deckSaveFailed": "Deck konnte nicht gespeichert werden.",
-    "deckDeleteFailed": "Deck konnte nicht gelöscht werden."
+    "deckDeleteFailed": "Deck konnte nicht gelöscht werden.",
+    "cardLoadFailed": "Karte konnte nicht geladen werden.",
+    "cardDeleteFailed": "Karte konnte nicht gelöscht werden.",
+    "cardNotFound": "Karte nicht gefunden.",
+    "cardSaveFailed": "Karte konnte nicht gespeichert werden.",
+    "cardAddFailed": "Karte konnte nicht hinzugefügt werden."
   }
 }

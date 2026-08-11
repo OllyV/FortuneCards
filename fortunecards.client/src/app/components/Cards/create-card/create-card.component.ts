@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { DeckService } from '../../../services/deck.service';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 
@@ -11,7 +12,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
   templateUrl: './create-card.component.html',
   styleUrls: ['./create-card.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NavigationBar],
+  imports: [CommonModule, ReactiveFormsModule, NavigationBar, TranslocoDirective],
 })
 export class CreateCardComponent implements OnInit {
   deckId = signal(0);
@@ -25,6 +26,7 @@ export class CreateCardComponent implements OnInit {
   aspectRatio = signal('3 / 5');
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   constructor(
     private fb: FormBuilder,
@@ -75,7 +77,7 @@ export class CreateCardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.router.navigate(['/decks', this.deckId()]),
-        error: () => { this.error.set('Failed to add card.'); this.submitting.set(false); }
+        error: () => { this.error.set(this.transloco.translate('errors.cardAddFailed')); this.submitting.set(false); }
       });
   }
 

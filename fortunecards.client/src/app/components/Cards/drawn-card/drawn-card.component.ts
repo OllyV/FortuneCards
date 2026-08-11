@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { Deck } from '../../../models/deck';
 import { Card } from '../../../models/card';
 import { DeckService } from '../../../services/deck.service';
@@ -13,7 +14,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
   templateUrl: './drawn-card.component.html',
   styleUrls: ['./drawn-card.component.css'],
   standalone: true,
-  imports: [CommonModule, NavigationBar],
+  imports: [CommonModule, NavigationBar, TranslocoDirective],
 })
 export class DrawnCardComponent implements OnInit {
   deck = signal<Deck | null>(null);
@@ -23,6 +24,7 @@ export class DrawnCardComponent implements OnInit {
   error = signal<string | null>(null);
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
   private drawTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
@@ -48,7 +50,7 @@ export class DrawnCardComponent implements OnInit {
             this.pickRandom(deck);
             this.loading.set(false);
           },
-          error: () => { this.error.set('Failed to load deck.'); this.loading.set(false); }
+          error: () => { this.error.set(this.transloco.translate('errors.deckLoadFailed')); this.loading.set(false); }
         });
     });
   }
@@ -56,7 +58,7 @@ export class DrawnCardComponent implements OnInit {
   private pickRandom(deck: Deck): void {
     const cards = deck.cards ?? [];
     if (!cards.length) {
-      this.error.set('This deck has no cards yet.');
+      this.error.set(this.transloco.translate('card.deckEmpty'));
       return;
     }
     this.drawnCard.set(cards[Math.floor(Math.random() * cards.length)]);

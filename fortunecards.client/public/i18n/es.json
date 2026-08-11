@@ -80,11 +80,46 @@
     "emptyMine": "Todavía no tienes mazos — crea uno.",
     "emptySearch": "No se encontraron mazos públicos."
   },
+  "card": {
+    "backLink": "Volver al mazo",
+    "editCard": "Editar carta",
+    "removeConfirm": "¿Quitar esta carta del mazo?",
+    "deleting": "Eliminando…",
+    "deleteButton": "Eliminar carta",
+    "loadingCard": "Cargando carta…",
+    "imageLabel": "Imagen de la carta",
+    "imagePreviewAlt": "Vista previa de la carta",
+    "currentImageAlt": "Imagen actual de la carta",
+    "uploadHint": "Toca para subir la imagen de la carta",
+    "upload": "+ Subir",
+    "replace": "Reemplazar",
+    "titleLabel": "Título de la carta",
+    "titlePlaceholder": "p. ej. El viaje comienza",
+    "descriptionLabel": "Significado / Descripción",
+    "descriptionPlaceholder": "¿Qué significa esta carta?",
+    "saving": "Guardando…",
+    "saveChanges": "Guardar cambios",
+    "addCard": "Añadir carta",
+    "adding": "Añadiendo…",
+    "drawTitle": "Sacar una carta",
+    "tapHint": "Toca la carta para revelar tu fortuna",
+    "backAlt": "Reverso de la carta",
+    "tapToReveal": "Toca para revelar",
+    "drawAnother": "Sacar otra",
+    "backToDeck": "Volver al mazo",
+    "loadingDeck": "Cargando mazo…",
+    "deckEmpty": "Este mazo aún no tiene cartas."
+  },
   "errors": {
     "deckCreateFailed": "Error al crear el mazo.",
     "deckLoadFailed": "Error al cargar el mazo.",
     "decksLoadFailed": "Error al cargar los mazos.",
     "deckSaveFailed": "Error al guardar el mazo.",
-    "deckDeleteFailed": "Error al eliminar el mazo."
+    "deckDeleteFailed": "Error al eliminar el mazo.",
+    "cardLoadFailed": "Error al cargar la carta.",
+    "cardDeleteFailed": "Error al eliminar la carta.",
+    "cardNotFound": "Carta no encontrada.",
+    "cardSaveFailed": "Error al guardar la carta.",
+    "cardAddFailed": "Error al añadir la carta."
   }
 }

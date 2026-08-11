@@ -1,7 +1,7 @@
-<div class="form-page">
+<div class="form-page" *transloco="let t">
   <navigation-bar>
-    <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
-    <span class="nav-title-centered">Add Card</span>
+    <button class="btn-ghost" (click)="cancel()">✕ {{ t('common.cancel') }}</button>
+    <span class="nav-title-centered">{{ t('card.addCard') }}</span>
   </navigation-bar>
 
   <main class="form-content">
@@ -9,15 +9,15 @@
 
       <!-- Card image upload — tarot proportioned -->
       <div class="form-field image-field">
-        <label class="form-label">Card Image</label>
+        <label class="form-label">{{ t('card.imageLabel') }}</label>
         <div class="image-upload-area" [class.has-image]="imagePreview()"
              [style.aspect-ratio]="aspectRatio()">
-          <img *ngIf="imagePreview()" [src]="imagePreview()" class="image-preview" alt="Card preview" />
+          <img *ngIf="imagePreview()" [src]="imagePreview()" class="image-preview" [alt]="t('card.imagePreviewAlt')" />
           <div *ngIf="!imagePreview()" class="image-placeholder">
             <span class="image-placeholder-icon">🖼️</span>
-            <p class="image-placeholder-text">Tap to upload card image</p>
+            <p class="image-placeholder-text">{{ t('card.uploadHint') }}</p>
             <label class="btn-secondary btn-file">
-              + Upload
+              {{ t('card.upload') }}
               <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
             </label>
           </div>
@@ -27,24 +27,24 @@
 
       <!-- Title -->
       <div class="form-field">
-        <label class="form-label" for="cardTitle">Card Title</label>
+        <label class="form-label" for="cardTitle">{{ t('card.titleLabel') }}</label>
         <input
           id="cardTitle"
           class="form-input"
           formControlName="title"
-          placeholder="e.g. The Journey Begins"
+          [placeholder]="t('card.titlePlaceholder')"
           maxlength="200"
         />
       </div>
 
       <!-- Description -->
       <div class="form-field">
-        <label class="form-label" for="cardDesc">Meaning / Description</label>
+        <label class="form-label" for="cardDesc">{{ t('card.descriptionLabel') }}</label>
         <textarea
           id="cardDesc"
           class="form-textarea"
           formControlName="description"
-          placeholder="What does this card mean?"
+          [placeholder]="t('card.descriptionPlaceholder')"
           maxlength="2000"
           rows="4"
         ></textarea>
@@ -57,7 +57,7 @@
         class="btn-primary btn-full"
         [disabled]="form.invalid || !imageFile() || submitting()"
       >
-        {{ submitting() ? 'Adding…' : '🎴 Add Card' }}
+        {{ submitting() ? t('card.adding') : ('🎴 ' + t('card.addCard')) }}
       </button>
     </form>
   </main>

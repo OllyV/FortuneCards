@@ -80,11 +80,46 @@
     "emptyMine": "У вас еще нет колод — создайте одну.",
     "emptySearch": "Публичные колоды не найдены."
   },
+  "card": {
+    "backLink": "Назад к колоде",
+    "editCard": "Редактировать карту",
+    "removeConfirm": "Удалить эту карту из колоды?",
+    "deleting": "Удаление…",
+    "deleteButton": "Удалить карту",
+    "loadingCard": "Загрузка карты…",
+    "imageLabel": "Изображение карты",
+    "imagePreviewAlt": "Предпросмотр карты",
+    "currentImageAlt": "Текущее изображение карты",
+    "uploadHint": "Нажмите, чтобы загрузить изображение карты",
+    "upload": "+ Загрузить",
+    "replace": "Заменить",
+    "titleLabel": "Название карты",
+    "titlePlaceholder": "напр. Путешествие начинается",
+    "descriptionLabel": "Значение / Описание",
+    "descriptionPlaceholder": "Что означает эта карта?",
+    "saving": "Сохранение…",
+    "saveChanges": "Сохранить изменения",
+    "addCard": "Добавить карту",
+    "adding": "Добавление…",
+    "drawTitle": "Вытянуть карту",
+    "tapHint": "Коснитесь карты, чтобы узнать свою судьбу",
+    "backAlt": "Рубашка карты",
+    "tapToReveal": "Нажмите, чтобы открыть",
+    "drawAnother": "Вытянуть еще",
+    "backToDeck": "Назад к колоде",
+    "loadingDeck": "Загрузка колоды…",
+    "deckEmpty": "В этой колоде пока нет карт."
+  },
   "errors": {
     "deckCreateFailed": "Не удалось создать колоду.",
     "deckLoadFailed": "Не удалось загрузить колоду.",
     "decksLoadFailed": "Не удалось загрузить колоды.",
     "deckSaveFailed": "Не удалось сохранить колоду.",
-    "deckDeleteFailed": "Не удалось удалить колоду."
+    "deckDeleteFailed": "Не удалось удалить колоду.",
+    "cardLoadFailed": "Не удалось загрузить карту.",
+    "cardDeleteFailed": "Не удалось удалить карту.",
+    "cardNotFound": "Карта не найдена.",
+    "cardSaveFailed": "Не удалось сохранить карту.",
+    "cardAddFailed": "Не удалось добавить карту."
   }
 }
