@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { AddPatternTableComponent } from './add-pattern-table.component';
 import { EditablePatternCard } from '../../../models/pattern';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('AddPatternTableComponent', () => {
   let fixture: ComponentFixture<AddPatternTableComponent>;
@@ -13,7 +14,7 @@ describe('AddPatternTableComponent', () => {
 
   async function setup(): Promise<void> {
     await TestBed.configureTestingModule({
-      imports: [AddPatternTableComponent],
+      imports: [AddPatternTableComponent, getTranslocoTestingModule()],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
     fixture = TestBed.createComponent(AddPatternTableComponent);

@@ -110,6 +110,27 @@
     "loadingDeck": "Загрузка колоды…",
     "deckEmpty": "В этой колоде пока нет карт."
   },
+  "pattern": {
+    "myPatternsTitle": "Мои шаблоны",
+    "browsePatternsTitle": "Обзор шаблонов",
+    "searchPlaceholder": "Поиск шаблонов…",
+    "createTitle": "Новый шаблон",
+    "emptyState": "Пока нет шаблонов.",
+    "questionCount": "{{n}} вопросов",
+    "toggleFavoriteLabel": "Переключить избранное",
+    "questionsHeading": "Вопросы",
+    "noQuestions": "Пока нет вопросов.",
+    "layoutHeading": "Расположение",
+    "editQuestionsLayoutButton": "Редактировать вопросы и расположение",
+    "usePatternButton": "Использовать шаблон",
+    "editPatternButton": "Редактировать шаблон",
+    "editQuestionsButton": "Редактировать вопросы",
+    "favorited": "В избранном",
+    "favorite": "В избранное",
+    "addFavoriteLabel": "Добавить в избранное",
+    "removeFavoriteLabel": "Удалить из избранного",
+    "dragToRotateLabel": "Потяните, чтобы повернуть"
+  },
   "errors": {
     "deckCreateFailed": "Не удалось создать колоду.",
     "deckLoadFailed": "Не удалось загрузить колоду.",
@@ -120,6 +141,8 @@
     "cardDeleteFailed": "Не удалось удалить карту.",
     "cardNotFound": "Карта не найдена.",
     "cardSaveFailed": "Не удалось сохранить карту.",
-    "cardAddFailed": "Не удалось добавить карту."
+    "cardAddFailed": "Не удалось добавить карту.",
+    "patternLoadFailed": "Не удалось загрузить шаблон.",
+    "patternsLoadFailed": "Не удалось загрузить шаблоны."
   }
 }

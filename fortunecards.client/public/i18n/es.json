@@ -110,6 +110,27 @@
     "loadingDeck": "Cargando mazo…",
     "deckEmpty": "Este mazo aún no tiene cartas."
   },
+  "pattern": {
+    "myPatternsTitle": "Mis Patrones",
+    "browsePatternsTitle": "Explorar Patrones",
+    "searchPlaceholder": "Buscar patrones…",
+    "createTitle": "Nuevo patrón",
+    "emptyState": "Todavía no hay patrones.",
+    "questionCount": "{{n}} preguntas",
+    "toggleFavoriteLabel": "Alternar favorito",
+    "questionsHeading": "Preguntas",
+    "noQuestions": "Todavía no hay preguntas.",
+    "layoutHeading": "Diseño",
+    "editQuestionsLayoutButton": "Editar preguntas y diseño",
+    "usePatternButton": "Usar patrón",
+    "editPatternButton": "Editar patrón",
+    "editQuestionsButton": "Editar preguntas",
+    "favorited": "Favorito",
+    "favorite": "Favorito",
+    "addFavoriteLabel": "Añadir a favoritos",
+    "removeFavoriteLabel": "Quitar de favoritos",
+    "dragToRotateLabel": "Arrastra para rotar"
+  },
   "errors": {
     "deckCreateFailed": "Error al crear el mazo.",
     "deckLoadFailed": "Error al cargar el mazo.",
@@ -120,6 +141,8 @@
     "cardDeleteFailed": "Error al eliminar la carta.",
     "cardNotFound": "Carta no encontrada.",
     "cardSaveFailed": "Error al guardar la carta.",
-    "cardAddFailed": "Error al añadir la carta."
+    "cardAddFailed": "Error al añadir la carta.",
+    "patternLoadFailed": "Error al cargar el patrón.",
+    "patternsLoadFailed": "Error al cargar los patrones."
   }
 }

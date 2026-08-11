@@ -12,9 +12,10 @@
   (pointermove)="onPointerMove($event)"
   (pointerup)="onPointerUp()"
   (pointercancel)="onPointerUp()"
+  *transloco="let t"
 >
   <span class="position-order">{{ card().order }}</span>
   @if (selected() && !readonly()) {
-    <div class="rotate-handle" title="Drag to rotate" (pointerdown)="onRotateStart($event)">⤾</div>
+    <div class="rotate-handle" [attr.title]="t('pattern.dragToRotateLabel')" (pointerdown)="onRotateStart($event)">⤾</div>
   }
 </div>

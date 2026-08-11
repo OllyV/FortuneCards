@@ -110,6 +110,27 @@
     "loadingDeck": "Deck wird geladen…",
     "deckEmpty": "Dieses Deck hat noch keine Karten."
   },
+  "pattern": {
+    "myPatternsTitle": "Meine Muster",
+    "browsePatternsTitle": "Muster durchsuchen",
+    "searchPlaceholder": "Muster suchen…",
+    "createTitle": "Neues Muster",
+    "emptyState": "Noch keine Muster vorhanden.",
+    "questionCount": "{{n}} Fragen",
+    "toggleFavoriteLabel": "Favorit umschalten",
+    "questionsHeading": "Fragen",
+    "noQuestions": "Noch keine Fragen vorhanden.",
+    "layoutHeading": "Layout",
+    "editQuestionsLayoutButton": "Fragen & Layout bearbeiten",
+    "usePatternButton": "Muster verwenden",
+    "editPatternButton": "Muster bearbeiten",
+    "editQuestionsButton": "Fragen bearbeiten",
+    "favorited": "Favorisiert",
+    "favorite": "Favorit",
+    "addFavoriteLabel": "Zu Favoriten hinzufügen",
+    "removeFavoriteLabel": "Aus Favoriten entfernen",
+    "dragToRotateLabel": "Ziehen, um zu drehen"
+  },
   "errors": {
     "deckCreateFailed": "Deck konnte nicht erstellt werden.",
     "deckLoadFailed": "Deck konnte nicht geladen werden.",
@@ -120,6 +141,8 @@
     "cardDeleteFailed": "Karte konnte nicht gelöscht werden.",
     "cardNotFound": "Karte nicht gefunden.",
     "cardSaveFailed": "Karte konnte nicht gespeichert werden.",
-    "cardAddFailed": "Karte konnte nicht hinzugefügt werden."
+    "cardAddFailed": "Karte konnte nicht hinzugefügt werden.",
+    "patternLoadFailed": "Muster konnte nicht geladen werden.",
+    "patternsLoadFailed": "Muster konnten nicht geladen werden."
   }
 }

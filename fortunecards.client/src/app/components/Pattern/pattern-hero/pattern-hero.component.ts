@@ -1,4 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { getDeckGradientStyle } from '../../../utils/deck-colors';
 
 @Component({
@@ -6,6 +7,7 @@ import { getDeckGradientStyle } from '../../../utils/deck-colors';
   standalone: true,
   templateUrl: './pattern-hero.component.html',
   styleUrl: './pattern-hero.component.css',
+  imports: [TranslocoDirective],
 })
 export class PatternHeroComponent {
   readonly name = input.required<string>();

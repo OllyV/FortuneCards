@@ -1,4 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { EditablePatternCard } from '../../../models/pattern';
 
 @Component({
@@ -6,6 +7,7 @@ import { EditablePatternCard } from '../../../models/pattern';
   standalone: true,
   templateUrl: './pattern-position-card.component.html',
   styleUrl: './pattern-position-card.component.css',
+  imports: [TranslocoDirective],
 })
 export class PatternPositionCardComponent {
   readonly card = input.required<EditablePatternCard>();

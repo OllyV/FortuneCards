@@ -1,26 +1,26 @@
-<div class="pattern-hero" [style.background]="gradient()">
+<div class="pattern-hero" [style.background]="gradient()" *transloco="let t">
   <div class="hero-left">
     <span class="hero-emoji">{{ emoji() }}</span>
     <div class="hero-info">
       <h1 class="hero-name">{{ name() }}</h1>
       <p class="hero-meta">
         @if (description()) { <span>{{ description() }} · </span> }
-        {{ cardCount() }} question{{ cardCount() === 1 ? '' : 's' }}
+        {{ t('pattern.questionCount', { n: cardCount() }) }}
       </p>
     </div>
   </div>
   <div class="hero-actions">
-    <button class="hero-btn hero-use" [style.background]="gradient()" (click)="usePattern.emit()">🔮 Use pattern</button>
+    <button class="hero-btn hero-use" [style.background]="gradient()" (click)="usePattern.emit()">🔮 {{ t('pattern.usePatternButton') }}</button>
     @if (isOwner()) {
-      <button class="hero-btn hero-edit-pattern" [style.background]="gradient()" (click)="editPattern.emit()">✏️ Edit pattern</button>
-      <button class="hero-btn hero-edit-questions" [style.background]="gradient()" (click)="editQuestions.emit()">📝 Edit questions</button>
+      <button class="hero-btn hero-edit-pattern" [style.background]="gradient()" (click)="editPattern.emit()">✏️ {{ t('pattern.editPatternButton') }}</button>
+      <button class="hero-btn hero-edit-questions" [style.background]="gradient()" (click)="editQuestions.emit()">📝 {{ t('pattern.editQuestionsButton') }}</button>
     } @else if (isLoggedIn()) {
       <button class="hero-btn hero-fav"
               [class.is-fav]="isFavorite()"
               [attr.aria-pressed]="isFavorite()"
-              [attr.aria-label]="isFavorite() ? 'Remove from favourites' : 'Add to favourites'"
+              [attr.aria-label]="isFavorite() ? t('pattern.removeFavoriteLabel') : t('pattern.addFavoriteLabel')"
               [style.background]="gradient()"
-              (click)="toggleFavorite.emit()">{{ isFavorite() ? '★ Favourited' : '☆ Favourite' }}</button>
+              (click)="toggleFavorite.emit()">{{ isFavorite() ? ('★ ' + t('pattern.favorited')) : ('☆ ' + t('pattern.favorite')) }}</button>
     }
   </div>
 </div>

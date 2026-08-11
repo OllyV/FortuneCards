@@ -110,6 +110,27 @@
     "loadingDeck": "Loading deck…",
     "deckEmpty": "This deck has no cards yet."
   },
+  "pattern": {
+    "myPatternsTitle": "My Patterns",
+    "browsePatternsTitle": "Browse Patterns",
+    "searchPlaceholder": "Search patterns…",
+    "createTitle": "New pattern",
+    "emptyState": "No patterns yet.",
+    "questionCount": "{{n}} questions",
+    "toggleFavoriteLabel": "Toggle favorite",
+    "questionsHeading": "Questions",
+    "noQuestions": "No questions yet.",
+    "layoutHeading": "Layout",
+    "editQuestionsLayoutButton": "Edit questions & layout",
+    "usePatternButton": "Use pattern",
+    "editPatternButton": "Edit pattern",
+    "editQuestionsButton": "Edit questions",
+    "favorited": "Favourited",
+    "favorite": "Favourite",
+    "addFavoriteLabel": "Add to favourites",
+    "removeFavoriteLabel": "Remove from favourites",
+    "dragToRotateLabel": "Drag to rotate"
+  },
   "errors": {
     "deckCreateFailed": "Failed to create deck.",
     "deckLoadFailed": "Failed to load deck.",
@@ -120,6 +141,8 @@
     "cardDeleteFailed": "Failed to delete card.",
     "cardNotFound": "Card not found.",
     "cardSaveFailed": "Failed to save card.",
-    "cardAddFailed": "Failed to add card."
+    "cardAddFailed": "Failed to add card.",
+    "patternLoadFailed": "Failed to load pattern.",
+    "patternsLoadFailed": "Failed to load patterns."
   }
 }

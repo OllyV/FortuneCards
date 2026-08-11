@@ -110,6 +110,27 @@
     "loadingDeck": "Carregando baralho…",
     "deckEmpty": "Este baralho ainda não tem cartas."
   },
+  "pattern": {
+    "myPatternsTitle": "Meus padrões",
+    "browsePatternsTitle": "Explorar padrões",
+    "searchPlaceholder": "Pesquisar padrões…",
+    "createTitle": "Novo padrão",
+    "emptyState": "Ainda não há padrões.",
+    "questionCount": "{{n}} perguntas",
+    "toggleFavoriteLabel": "Alternar favorito",
+    "questionsHeading": "Perguntas",
+    "noQuestions": "Ainda não há perguntas.",
+    "layoutHeading": "Layout",
+    "editQuestionsLayoutButton": "Editar perguntas e layout",
+    "usePatternButton": "Usar padrão",
+    "editPatternButton": "Editar padrão",
+    "editQuestionsButton": "Editar perguntas",
+    "favorited": "Favoritado",
+    "favorite": "Favorito",
+    "addFavoriteLabel": "Adicionar aos favoritos",
+    "removeFavoriteLabel": "Remover dos favoritos",
+    "dragToRotateLabel": "Arraste para girar"
+  },
   "errors": {
     "deckCreateFailed": "Falha ao criar o baralho.",
     "deckLoadFailed": "Falha ao carregar o baralho.",
@@ -120,6 +141,8 @@
     "cardDeleteFailed": "Falha ao excluir a carta.",
     "cardNotFound": "Carta não encontrada.",
     "cardSaveFailed": "Falha ao salvar a carta.",
-    "cardAddFailed": "Falha ao adicionar a carta."
+    "cardAddFailed": "Falha ao adicionar a carta.",
+    "patternLoadFailed": "Falha ao carregar o padrão.",
+    "patternsLoadFailed": "Falha ao carregar os padrões."
   }
 }

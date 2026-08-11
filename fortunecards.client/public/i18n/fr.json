@@ -110,6 +110,27 @@
     "loadingDeck": "Chargement du jeu…",
     "deckEmpty": "Ce jeu n'a pas encore de cartes."
   },
+  "pattern": {
+    "myPatternsTitle": "Mes modèles",
+    "browsePatternsTitle": "Parcourir les modèles",
+    "searchPlaceholder": "Rechercher des modèles…",
+    "createTitle": "Nouveau modèle",
+    "emptyState": "Aucun modèle pour le moment.",
+    "questionCount": "{{n}} questions",
+    "toggleFavoriteLabel": "Basculer le favori",
+    "questionsHeading": "Questions",
+    "noQuestions": "Aucune question pour le moment.",
+    "layoutHeading": "Disposition",
+    "editQuestionsLayoutButton": "Modifier les questions et la disposition",
+    "usePatternButton": "Utiliser le modèle",
+    "editPatternButton": "Modifier le modèle",
+    "editQuestionsButton": "Modifier les questions",
+    "favorited": "Favori",
+    "favorite": "Favori",
+    "addFavoriteLabel": "Ajouter aux favoris",
+    "removeFavoriteLabel": "Retirer des favoris",
+    "dragToRotateLabel": "Faire glisser pour tourner"
+  },
   "errors": {
     "deckCreateFailed": "Échec de la création du jeu.",
     "deckLoadFailed": "Échec du chargement du jeu.",
@@ -120,6 +141,8 @@
     "cardDeleteFailed": "Échec de la suppression de la carte.",
     "cardNotFound": "Carte introuvable.",
     "cardSaveFailed": "Échec de l'enregistrement de la carte.",
-    "cardAddFailed": "Échec de l'ajout de la carte."
+    "cardAddFailed": "Échec de l'ajout de la carte.",
+    "patternLoadFailed": "Échec du chargement du modèle.",
+    "patternsLoadFailed": "Échec du chargement des modèles."
   }
 }
