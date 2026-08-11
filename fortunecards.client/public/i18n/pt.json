@@ -162,6 +162,31 @@
     "shortenTableLabel": "Encurtar mesa",
     "lengthenTableLabel": "Alongar mesa"
   },
+  "table": {
+    "settingsTitle": "Configurações da mesa",
+    "increaseHeightAriaLabel": "Aumentar a altura da mesa",
+    "decreaseHeightAriaLabel": "Diminuir a altura da mesa",
+    "deckMenuButton": "Baralho ▾",
+    "selectDeckButton": "Selecionar baralho",
+    "reloadDeckButton": "Recarregar baralho",
+    "patternMenuButton": "Padrão ▾",
+    "addPatternCardButton": "Adicionar carta de padrão",
+    "loadPatternButton": "Carregar padrão",
+    "unlockPatternButton": "Desbloquear padrão",
+    "lockPatternButton": "Bloquear padrão",
+    "startFortuneButton": "Iniciar a leitura de fortuna",
+    "cardInfoAriaLabel": "Informações da carta",
+    "cardInfoLabel": "Info da carta",
+    "colorOfTableLabel": "Cor da mesa",
+    "cardSizeLabel": "Tamanho das cartas: {{n}}% da largura da mesa",
+    "positionDefault": "Posição {{n}}",
+    "color": {
+      "beige": "Beige",
+      "pink": "Rosa",
+      "yellow": "Amarelo",
+      "dark-red": "Vermelho escuro"
+    }
+  },
   "errors": {
     "deckCreateFailed": "Falha ao criar o baralho.",
     "deckLoadFailed": "Falha ao carregar o baralho.",

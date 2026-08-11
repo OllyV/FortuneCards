@@ -1,9 +1,9 @@
 <div class="dialog-backdrop" (click)="closed.emit()"></div>
-<div class="dialog-panel" role="dialog" aria-label="Table settings">
-  <h2>Table settings</h2>
+<div class="dialog-panel" role="dialog" [attr.aria-label]="t('table.settingsTitle')" *transloco="let t">
+  <h2>{{ t('table.settingsTitle') }}</h2>
 
   <div class="setting">
-    <span class="setting-label">Color of table</span>
+    <span class="setting-label">{{ t('table.colorOfTableLabel') }}</span>
     <div class="swatches">
       @for (c of colors; track c) {
         <button
@@ -11,7 +11,7 @@
           class="swatch"
           [attr.data-color]="c"
           [class.active]="color() === c"
-          [attr.aria-label]="c"
+          [attr.aria-label]="t('table.color.' + c)"
           (click)="colorChange.emit(c)"
         ></button>
       }
@@ -19,9 +19,9 @@
   </div>
 
   <div class="setting">
-    <label class="setting-label" for="card-size">Size of cards: {{ cardSize() }}% of table width</label>
+    <label class="setting-label" for="card-size">{{ t('table.cardSizeLabel', { n: cardSize() }) }}</label>
     <input id="card-size" type="range" min="5" max="50" [value]="cardSize()" (input)="onSizeInput($event)" />
   </div>
 
-  <button class="dialog-close" type="button" (click)="closed.emit()">Close</button>
+  <button class="dialog-close" type="button" (click)="closed.emit()">{{ t('common.close') }}</button>
 </div>

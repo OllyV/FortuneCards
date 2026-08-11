@@ -162,6 +162,31 @@
     "shortenTableLabel": "Скоротити стіл",
     "lengthenTableLabel": "Подовжити стіл"
   },
+  "table": {
+    "settingsTitle": "Налаштування столу",
+    "increaseHeightAriaLabel": "Збільшити висоту столу",
+    "decreaseHeightAriaLabel": "Зменшити висоту столу",
+    "deckMenuButton": "Колода ▾",
+    "selectDeckButton": "Вибрати колоду",
+    "reloadDeckButton": "Перезавантажити колоду",
+    "patternMenuButton": "Шаблон ▾",
+    "addPatternCardButton": "Додати картку шаблону",
+    "loadPatternButton": "Завантажити шаблон",
+    "unlockPatternButton": "Розблокувати шаблон",
+    "lockPatternButton": "Заблокувати шаблон",
+    "startFortuneButton": "Почати ворожіння",
+    "cardInfoAriaLabel": "Інформація про картку",
+    "cardInfoLabel": "Інфо про картку",
+    "colorOfTableLabel": "Колір столу",
+    "cardSizeLabel": "Розмір карток: {{n}}% ширини столу",
+    "positionDefault": "Позиція {{n}}",
+    "color": {
+      "beige": "Бежевий",
+      "pink": "Рожевий",
+      "yellow": "Жовтий",
+      "dark-red": "Темно-червоний"
+    }
+  },
   "errors": {
     "deckCreateFailed": "Не вдалося створити колоду.",
     "deckLoadFailed": "Не вдалося завантажити колоду.",

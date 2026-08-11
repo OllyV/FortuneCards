@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { PatternService } from '../../../services/pattern.service';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { TableCardComponent } from '../table-card/table-card.component';
@@ -18,12 +19,13 @@ import { Pattern } from '../../../models/pattern';
   standalone: true,
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
-  imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent, PatternSelectorComponent, CardInfoDialogComponent],
+  imports: [NavigationBar, TableCardComponent, TablePatternCardComponent, TableSettingsDialogComponent, DeckSelectorComponent, PatternSelectorComponent, CardInfoDialogComponent, TranslocoDirective],
 })
 export class TableComponent implements OnInit, AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly patternService = inject(PatternService);
+  private readonly transloco = inject(TranslocoService);
   private readonly tableRef = viewChild.required<ElementRef<HTMLDivElement>>('table');
   private readonly controlsRef = viewChild.required<ElementRef<HTMLDivElement>>('controls');
   private nextPatternId = 1;
@@ -175,7 +177,7 @@ export class TableComponent implements OnInit, AfterViewInit {
           x: 5,
           y,
           rotation: 0,
-          text: `Position ${order}`,
+          text: this.transloco.translate('table.positionDefault', { n: order }),
           order,
           locked: this.patternsLocked(),
           z: this.nextZ++, // start on top of everything currently on the table

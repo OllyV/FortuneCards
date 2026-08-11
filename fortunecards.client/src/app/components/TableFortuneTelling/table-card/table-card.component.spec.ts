@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TableCardComponent } from './table-card.component';
 import { TableDeckCard } from '../../../models/table';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('TableCardComponent', () => {
   let fixture: ComponentFixture<TableCardComponent>;
@@ -15,7 +16,7 @@ describe('TableCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TableCardComponent],
+      imports: [TableCardComponent, getTranslocoTestingModule()],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
     fixture = TestBed.createComponent(TableCardComponent);

@@ -1,8 +1,10 @@
 import { Component, input, output } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'card-info-dialog',
   standalone: true,
+  imports: [TranslocoDirective],
   templateUrl: './card-info-dialog.component.html',
   styleUrl: './card-info-dialog.component.css',
 })

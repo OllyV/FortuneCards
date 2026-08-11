@@ -162,6 +162,31 @@
     "shortenTableLabel": "Уменьшить стол",
     "lengthenTableLabel": "Увеличить стол"
   },
+  "table": {
+    "settingsTitle": "Настройки стола",
+    "increaseHeightAriaLabel": "Увеличить высоту стола",
+    "decreaseHeightAriaLabel": "Уменьшить высоту стола",
+    "deckMenuButton": "Колода ▾",
+    "selectDeckButton": "Выбрать колоду",
+    "reloadDeckButton": "Перезагрузить колоду",
+    "patternMenuButton": "Шаблон ▾",
+    "addPatternCardButton": "Добавить карточку шаблона",
+    "loadPatternButton": "Загрузить шаблон",
+    "unlockPatternButton": "Разблокировать шаблон",
+    "lockPatternButton": "Заблокировать шаблон",
+    "startFortuneButton": "Начать гадание",
+    "cardInfoAriaLabel": "Информация о карте",
+    "cardInfoLabel": "Инфо о карте",
+    "colorOfTableLabel": "Цвет стола",
+    "cardSizeLabel": "Размер карт: {{n}}% ширины стола",
+    "positionDefault": "Позиция {{n}}",
+    "color": {
+      "beige": "Бежевый",
+      "pink": "Розовый",
+      "yellow": "Жёлтый",
+      "dark-red": "Тёмно-красный"
+    }
+  },
   "errors": {
     "deckCreateFailed": "Не удалось создать колоду.",
     "deckLoadFailed": "Не удалось загрузить колоду.",

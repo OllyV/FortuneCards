@@ -6,6 +6,7 @@
   [attr.data-color]="tableColor()"
   [style.height]="heightStyle()"
   (pointerdown)="onTablePointerDown($event)"
+  *transloco="let t"
 >
   <div class="card-layer">
     @for (pattern of patternCards(); track pattern.id) {
@@ -40,10 +41,10 @@
       />
     }
   </div>
-  <button class="settings-btn" type="button" aria-label="Table settings" (click)="settingsOpen.set(true)">⚙</button>
+  <button class="settings-btn" type="button" [attr.aria-label]="t('table.settingsTitle')" (click)="settingsOpen.set(true)">⚙</button>
   <div class="height-controls">
-    <button class="height-btn height-btn--plus" type="button" aria-label="Increase table height" (click)="increaseHeight()">+</button>
-    <button class="height-btn height-btn--minus" type="button" aria-label="Decrease table height" (click)="decreaseHeight()">−</button>
+    <button class="height-btn height-btn--plus" type="button" [attr.aria-label]="t('table.increaseHeightAriaLabel')" (click)="increaseHeight()">+</button>
+    <button class="height-btn height-btn--minus" type="button" [attr.aria-label]="t('table.decreaseHeightAriaLabel')" (click)="decreaseHeight()">−</button>
   </div>
   @if (deckMenuOpen() || patternMenuOpen()) {
     <div class="menu-backdrop" (click)="closeMenus()"></div>
@@ -58,11 +59,11 @@
         [disabled]="fortuneActive()"
         (click)="toggleDeckMenu()"
         (keydown.escape)="closeMenus()"
-      >Deck ▾</button>
+      >{{ t('table.deckMenuButton') }}</button>
       @if (deckMenuOpen()) {
         <div class="dropdown-panel" (keydown.escape)="closeMenus()">
-          <button class="dropdown-item select-deck-item" type="button" (click)="openDeckSelector()">Select deck</button>
-          <button class="dropdown-item reload-deck-item" type="button" [disabled]="cards().length === 0" (click)="reloadDeck()">Re-load deck</button>
+          <button class="dropdown-item select-deck-item" type="button" (click)="openDeckSelector()">{{ t('table.selectDeckButton') }}</button>
+          <button class="dropdown-item reload-deck-item" type="button" [disabled]="cards().length === 0" (click)="reloadDeck()">{{ t('table.reloadDeckButton') }}</button>
         </div>
       }
     </div>
@@ -75,16 +76,16 @@
         [disabled]="fortuneActive()"
         (click)="togglePatternMenu()"
         (keydown.escape)="closeMenus()"
-      >Pattern ▾</button>
+      >{{ t('table.patternMenuButton') }}</button>
       @if (patternMenuOpen()) {
         <div class="dropdown-panel" (keydown.escape)="closeMenus()">
-          <button class="dropdown-item add-pattern-item" type="button" (click)="closeMenus(); addPatternCard()">Add pattern card</button>
-          <button class="dropdown-item load-pattern-item" type="button" (click)="openPatternSelector()">Load pattern</button>
+          <button class="dropdown-item add-pattern-item" type="button" (click)="closeMenus(); addPatternCard()">{{ t('table.addPatternCardButton') }}</button>
+          <button class="dropdown-item load-pattern-item" type="button" (click)="openPatternSelector()">{{ t('table.loadPatternButton') }}</button>
           <button class="dropdown-item lock-pattern-item" type="button" (click)="closeMenus(); toggleLockPattern()">
-            {{ patternsLocked() ? 'Unlock pattern' : 'Lock pattern' }}
+            {{ patternsLocked() ? t('table.unlockPatternButton') : t('table.lockPatternButton') }}
           </button>
           <button class="dropdown-item start-fortune-item" type="button" [disabled]="patternCards().length === 0 || cards().length === 0" (click)="closeMenus(); startFortuneTelling()">
-            Start fortune-telling
+            {{ t('table.startFortuneButton') }}
           </button>
         </div>
       }

@@ -162,6 +162,31 @@
     "shortenTableLabel": "Shorten table",
     "lengthenTableLabel": "Lengthen table"
   },
+  "table": {
+    "settingsTitle": "Table settings",
+    "increaseHeightAriaLabel": "Increase table height",
+    "decreaseHeightAriaLabel": "Decrease table height",
+    "deckMenuButton": "Deck ▾",
+    "selectDeckButton": "Select deck",
+    "reloadDeckButton": "Re-load deck",
+    "patternMenuButton": "Pattern ▾",
+    "addPatternCardButton": "Add pattern card",
+    "loadPatternButton": "Load pattern",
+    "unlockPatternButton": "Unlock pattern",
+    "lockPatternButton": "Lock pattern",
+    "startFortuneButton": "Start fortune-telling",
+    "cardInfoAriaLabel": "Card information",
+    "cardInfoLabel": "Card info",
+    "colorOfTableLabel": "Color of table",
+    "cardSizeLabel": "Size of cards: {{n}}% of table width",
+    "positionDefault": "Position {{n}}",
+    "color": {
+      "beige": "Beige",
+      "pink": "Pink",
+      "yellow": "Yellow",
+      "dark-red": "Dark red"
+    }
+  },
   "errors": {
     "deckCreateFailed": "Failed to create deck.",
     "deckLoadFailed": "Failed to load deck.",

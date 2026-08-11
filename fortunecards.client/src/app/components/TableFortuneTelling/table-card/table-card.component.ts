@@ -1,10 +1,12 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { TableDeckCard } from '../../../models/table';
 import { getDeckGradientStyle } from '../../../utils/deck-colors';
 
 @Component({
   selector: 'table-card',
   standalone: true,
+  imports: [TranslocoDirective],
   templateUrl: './table-card.component.html',
   styleUrl: './table-card.component.css',
 })

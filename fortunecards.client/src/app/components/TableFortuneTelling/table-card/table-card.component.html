@@ -12,6 +12,7 @@
   (pointerup)="onPointerUp()"
   (pointercancel)="onPointerUp()"
   (dblclick)="cardFlip.emit()"
+  *transloco="let t"
 >
   <div class="flip-inner" [class.flipped]="card().flipped">
     <div class="face back" [style.background]="backStyle()">
@@ -26,9 +27,9 @@
     </div>
   </div>
   @if (selected()) {
-    <div class="rotate-handle" title="Drag to rotate" (pointerdown)="onRotateStart($event)">⤾</div>
+    <div class="rotate-handle" [attr.title]="t('pattern.dragToRotateLabel')" (pointerdown)="onRotateStart($event)">⤾</div>
   }
   @if (selected() && card().flipped) {
-    <div class="info-handle" title="Card info" (pointerdown)="onInfoClick($event)">ⓘ</div>
+    <div class="info-handle" [attr.title]="t('table.cardInfoLabel')" (pointerdown)="onInfoClick($event)">ⓘ</div>
   }
 </div>

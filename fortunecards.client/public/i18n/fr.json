@@ -162,6 +162,31 @@
     "shortenTableLabel": "Réduire la table",
     "lengthenTableLabel": "Allonger la table"
   },
+  "table": {
+    "settingsTitle": "Paramètres de la table",
+    "increaseHeightAriaLabel": "Augmenter la hauteur de la table",
+    "decreaseHeightAriaLabel": "Diminuer la hauteur de la table",
+    "deckMenuButton": "Paquet ▾",
+    "selectDeckButton": "Sélectionner un paquet",
+    "reloadDeckButton": "Recharger le paquet",
+    "patternMenuButton": "Modèle ▾",
+    "addPatternCardButton": "Ajouter une carte de modèle",
+    "loadPatternButton": "Charger un modèle",
+    "unlockPatternButton": "Déverrouiller le modèle",
+    "lockPatternButton": "Verrouiller le modèle",
+    "startFortuneButton": "Démarrer la diseuse de bonne aventure",
+    "cardInfoAriaLabel": "Informations sur la carte",
+    "cardInfoLabel": "Infos carte",
+    "colorOfTableLabel": "Couleur de la table",
+    "cardSizeLabel": "Taille des cartes : {{n}}% de la largeur de la table",
+    "positionDefault": "Position {{n}}",
+    "color": {
+      "beige": "Beige",
+      "pink": "Rose",
+      "yellow": "Jaune",
+      "dark-red": "Rouge foncé"
+    }
+  },
   "errors": {
     "deckCreateFailed": "Échec de la création du jeu.",
     "deckLoadFailed": "Échec du chargement du jeu.",

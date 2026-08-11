@@ -162,6 +162,31 @@
     "shortenTableLabel": "Tisch verkürzen",
     "lengthenTableLabel": "Tisch verlängern"
   },
+  "table": {
+    "settingsTitle": "Tischeinstellungen",
+    "increaseHeightAriaLabel": "Tischhöhe erhöhen",
+    "decreaseHeightAriaLabel": "Tischhöhe verringern",
+    "deckMenuButton": "Deck ▾",
+    "selectDeckButton": "Deck auswählen",
+    "reloadDeckButton": "Deck neu laden",
+    "patternMenuButton": "Muster ▾",
+    "addPatternCardButton": "Musterkarte hinzufügen",
+    "loadPatternButton": "Muster laden",
+    "unlockPatternButton": "Muster entsperren",
+    "lockPatternButton": "Muster sperren",
+    "startFortuneButton": "Wahrsagen starten",
+    "cardInfoAriaLabel": "Karteninformation",
+    "cardInfoLabel": "Karteninfo",
+    "colorOfTableLabel": "Tischfarbe",
+    "cardSizeLabel": "Kartengröße: {{n}}% der Tischbreite",
+    "positionDefault": "Position {{n}}",
+    "color": {
+      "beige": "Beige",
+      "pink": "Rosa",
+      "yellow": "Gelb",
+      "dark-red": "Dunkelrot"
+    }
+  },
   "errors": {
     "deckCreateFailed": "Deck konnte nicht erstellt werden.",
     "deckLoadFailed": "Deck konnte nicht geladen werden.",
