@@ -6,7 +6,7 @@
     "edit": "Edit",
     "close": "Close",
     "loading": "Loading…",
-    "retry": "Retry",
+    "retry": "Try again",
     "back": "Back",
     "confirm": "Confirm"
   },
@@ -23,5 +23,11 @@
     "logout": "Logout",
     "signInGoogle": "Sign in with Google",
     "menu": "Menu"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "prev": "Previous page",
+    "next": "Next page",
+    "status": "Page {{page}} of {{total}}"
   }
 }

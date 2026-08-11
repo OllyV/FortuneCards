@@ -6,7 +6,7 @@
     "edit": "Editar",
     "close": "Cerrar",
     "loading": "Cargando…",
-    "retry": "Reintentar",
+    "retry": "Intentar de nuevo",
     "back": "Atrás",
     "confirm": "Confirmar"
   },
@@ -23,5 +23,11 @@
     "logout": "Cerrar sesión",
     "signInGoogle": "Iniciar sesión con Google",
     "menu": "Menú"
+  },
+  "pagination": {
+    "label": "Paginación",
+    "prev": "Página anterior",
+    "next": "Página siguiente",
+    "status": "Página {{page}} de {{total}}"
   }
 }

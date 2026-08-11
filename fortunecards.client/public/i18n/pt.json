@@ -23,5 +23,11 @@
     "logout": "Sair",
     "signInGoogle": "Entrar com o Google",
     "menu": "Menu"
+  },
+  "pagination": {
+    "label": "Paginação",
+    "prev": "Página anterior",
+    "next": "Próxima página",
+    "status": "Página {{page}} de {{total}}"
   }
 }

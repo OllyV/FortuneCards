@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { PaginationComponent } from './pagination.component';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('PaginationComponent', () => {
   let fixture: ComponentFixture<PaginationComponent>;
@@ -8,7 +9,7 @@ describe('PaginationComponent', () => {
   function setup(page: number, totalCount: number, pageSize = 20) {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      imports: [PaginationComponent],
+      imports: [PaginationComponent, getTranslocoTestingModule()],
       providers: [provideZonelessChangeDetection()],
     });
     fixture = TestBed.createComponent(PaginationComponent);

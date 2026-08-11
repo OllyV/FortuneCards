@@ -23,5 +23,11 @@
     "logout": "Déconnexion",
     "signInGoogle": "Se connecter avec Google",
     "menu": "Menu"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "prev": "Page précédente",
+    "next": "Page suivante",
+    "status": "Page {{page}} sur {{total}}"
   }
 }
