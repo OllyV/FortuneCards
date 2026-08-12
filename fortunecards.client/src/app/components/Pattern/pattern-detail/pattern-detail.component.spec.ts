@@ -121,7 +121,7 @@ describe('PatternDetailComponent', () => {
 
   it('shows an error state when the pattern fails to load', async () => {
     await setup(throwError(() => new Error('boom')));
-    expect(component.error()).toBe('Failed to load pattern.');
+    expect(component.error()).toBe('Failed to load spread.');
     expect(fixture.nativeElement.querySelector('app-error-state')).not.toBeNull();
   });
 
@@ -138,7 +138,7 @@ describe('PatternDetailComponent', () => {
     await setup();
     component.pattern.set(null);
     component.loading.set(false);
-    component.error.set('Failed to load pattern.');
+    component.error.set('Failed to load spread.');
     fixture.detectChanges();
     const spy = vi.spyOn(component, 'load');
     (fixture.nativeElement.querySelector('app-error-state button') as HTMLButtonElement).click();
