@@ -2,6 +2,7 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import {
   APP_INITIALIZER,
   ErrorHandler,
+  isDevMode,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
@@ -16,7 +17,7 @@ import { MonitoringService } from './app/services/monitoring.service';
 import { MonitoringErrorHandler } from './app/monitoring-error-handler';
 import { retryInterceptor } from './app/services/http/retry.interceptor';
 import { TranslocoHttpLoader } from './app/services/transloco-loader';
-import { LanguageService } from './app/services/language.service';
+import { LANGUAGES, LanguageService } from './app/services/language.service';
 
 function initAuth(auth: AuthService): () => Promise<void> {
   return () => auth.loadCurrentUser();
@@ -38,12 +39,12 @@ bootstrapApplication(App, {
     provideRouter(routes),
     provideTransloco({
       config: {
-        availableLangs: ['en', 'uk', 'ru', 'es', 'de', 'fr', 'pt'],
+        availableLangs: LANGUAGES.map((l) => l.code),
         defaultLang: 'en',
         fallbackLang: 'en',
         reRenderOnLangChange: true,
         missingHandler: { logMissingKey: false },
-        prodMode: false,
+        prodMode: !isDevMode(),
       },
       loader: TranslocoHttpLoader,
     }),

@@ -24,10 +24,11 @@ export class LanguageService {
     const lang = this.resolveInitialLang();
     try {
       await firstValueFrom(this.transloco.load(lang));
-    } catch {
+    } catch (e) {
       // Translation preload failed (offline/transient at cold start).
       // Proceed anyway: Transloco falls back to 'en' and re-fetches lazily
       // on first render — a failed fetch must never block app bootstrap.
+      console.warn('[i18n] translation preload failed; continuing with fallback language', e);
     }
     this.apply(lang);
   }
