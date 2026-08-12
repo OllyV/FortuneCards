@@ -185,7 +185,37 @@
       "pink": "Рожевий",
       "yellow": "Жовтий",
       "dark-red": "Темно-червоний"
-    }
+    },
+    "selectDeckDialogAriaLabel": "Вибрати колоду",
+    "selectDeckTitle": "Виберіть колоду",
+    "searchPublicDecksPlaceholder": "Пошук публічних колод…",
+    "loadingDecksState": "Завантаження колод…",
+    "noDecksOwned": "У вас ще немає колод.",
+    "noPublicDecksFound": "Публічні колоди не знайдено.",
+    "loadPatternDialogAriaLabel": "Завантажити шаблон",
+    "loadPatternTitle": "Завантажити шаблон",
+    "searchPublicPatternsPlaceholder": "Пошук публічних шаблонів…",
+    "loadingPatternsState": "Завантаження шаблонів…",
+    "noPatternsOwned": "У вас ще немає шаблонів.",
+    "noPublicPatternsFound": "Публічні шаблони не знайдено.",
+    "questionsCount": "{{n}} запитань"
+  },
+  "pages": {
+    "decksLink": "Колоди",
+    "accountSettingsLink": "Налаштування облікового запису",
+    "myDecksTitle": "Мої колоди",
+    "newDeckButton": "+ Нова колода",
+    "loadingDecksState": "Завантаження колод…",
+    "publicBadge": "🌐 Публічна",
+    "privateBadge": "🔒 Приватна",
+    "accountSettingsPageTitle": "Налаштування облікового запису",
+    "connectedAccountLabel": "Підключений акаунт",
+    "connectedAccountBadge": "G Google",
+    "dangerZoneLabel": "Небезпечна зона",
+    "accountDeleteDesc": "Видаляє ваш обліковий запис і всі приватні колоди. Публічні колоди залишаються як колоди спільноти.",
+    "deletingButton": "Видалення…",
+    "deleteAccountButton": "Видалити обліковий запис",
+    "accountDeleteConfirm": "Видалити ваш обліковий запис? Це видалить усі приватні колоди. Публічні колоди залишаться як колоди спільноти. Це неможливо скасувати."
   },
   "errors": {
     "deckCreateFailed": "Не вдалося створити колоду.",
@@ -203,6 +233,7 @@
     "patternCreateFailed": "Не вдалося створити шаблон.",
     "patternSaveFailed": "Не вдалося зберегти шаблон.",
     "patternDeleteFailed": "Не вдалося видалити шаблон.",
-    "saveFailed": "Не вдалося зберегти."
+    "saveFailed": "Не вдалося зберегти.",
+    "accountDeleteFailed": "Не вдалося видалити обліковий запис. Спробуйте ще раз."
   }
 }

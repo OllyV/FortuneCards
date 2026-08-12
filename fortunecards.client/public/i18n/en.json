@@ -185,7 +185,37 @@
       "pink": "Pink",
       "yellow": "Yellow",
       "dark-red": "Dark red"
-    }
+    },
+    "selectDeckDialogAriaLabel": "Select deck",
+    "selectDeckTitle": "Select a deck",
+    "searchPublicDecksPlaceholder": "Search public decks…",
+    "loadingDecksState": "Loading decks…",
+    "noDecksOwned": "You have no decks yet.",
+    "noPublicDecksFound": "No public decks found.",
+    "loadPatternDialogAriaLabel": "Load a pattern",
+    "loadPatternTitle": "Load a pattern",
+    "searchPublicPatternsPlaceholder": "Search public patterns…",
+    "loadingPatternsState": "Loading patterns…",
+    "noPatternsOwned": "You have no patterns yet.",
+    "noPublicPatternsFound": "No public patterns found.",
+    "questionsCount": "{{n}} questions"
+  },
+  "pages": {
+    "decksLink": "Decks",
+    "accountSettingsLink": "Account Settings",
+    "myDecksTitle": "My Decks",
+    "newDeckButton": "+ New Deck",
+    "loadingDecksState": "Loading decks…",
+    "publicBadge": "🌐 Public",
+    "privateBadge": "🔒 Private",
+    "accountSettingsPageTitle": "Account Settings",
+    "connectedAccountLabel": "Connected Account",
+    "connectedAccountBadge": "G Google",
+    "dangerZoneLabel": "Danger Zone",
+    "accountDeleteDesc": "Deletes your account and all private decks. Public decks are kept as community decks.",
+    "deletingButton": "Deleting…",
+    "deleteAccountButton": "Delete Account",
+    "accountDeleteConfirm": "Delete your account? This removes all private decks. Public decks are kept as community decks. This cannot be undone."
   },
   "errors": {
     "deckCreateFailed": "Failed to create deck.",
@@ -203,6 +233,7 @@
     "patternCreateFailed": "Failed to create pattern.",
     "patternSaveFailed": "Failed to save pattern.",
     "patternDeleteFailed": "Failed to delete pattern.",
-    "saveFailed": "Failed to save."
+    "saveFailed": "Failed to save.",
+    "accountDeleteFailed": "Failed to delete account. Please try again."
   }
 }

@@ -185,7 +185,37 @@
       "pink": "Rose",
       "yellow": "Jaune",
       "dark-red": "Rouge foncé"
-    }
+    },
+    "selectDeckDialogAriaLabel": "Sélectionner un paquet",
+    "selectDeckTitle": "Sélectionnez un paquet",
+    "searchPublicDecksPlaceholder": "Rechercher des paquets publics…",
+    "loadingDecksState": "Chargement des paquets…",
+    "noDecksOwned": "Vous n'avez pas encore de paquet.",
+    "noPublicDecksFound": "Aucun paquet public trouvé.",
+    "loadPatternDialogAriaLabel": "Charger un modèle",
+    "loadPatternTitle": "Charger un modèle",
+    "searchPublicPatternsPlaceholder": "Rechercher des modèles publics…",
+    "loadingPatternsState": "Chargement des modèles…",
+    "noPatternsOwned": "Vous n'avez pas encore de modèle.",
+    "noPublicPatternsFound": "Aucun modèle public trouvé.",
+    "questionsCount": "{{n}} questions"
+  },
+  "pages": {
+    "decksLink": "Jeux",
+    "accountSettingsLink": "Paramètres du compte",
+    "myDecksTitle": "Mes Jeux",
+    "newDeckButton": "+ Nouveau Jeu",
+    "loadingDecksState": "Chargement des jeux…",
+    "publicBadge": "🌐 Public",
+    "privateBadge": "🔒 Privé",
+    "accountSettingsPageTitle": "Paramètres du compte",
+    "connectedAccountLabel": "Compte connecté",
+    "connectedAccountBadge": "G Google",
+    "dangerZoneLabel": "Zone de danger",
+    "accountDeleteDesc": "Supprime votre compte et tous les jeux privés. Les jeux publics sont conservés comme jeux communautaires.",
+    "deletingButton": "Suppression…",
+    "deleteAccountButton": "Supprimer le compte",
+    "accountDeleteConfirm": "Supprimer votre compte ? Cela supprime tous les jeux privés. Les jeux publics sont conservés comme jeux communautaires. Cette action est irréversible."
   },
   "errors": {
     "deckCreateFailed": "Échec de la création du jeu.",
@@ -203,6 +233,7 @@
     "patternCreateFailed": "Échec de la création du modèle.",
     "patternSaveFailed": "Échec de l'enregistrement du modèle.",
     "patternDeleteFailed": "Échec de la suppression du modèle.",
-    "saveFailed": "Échec de l'enregistrement."
+    "saveFailed": "Échec de l'enregistrement.",
+    "accountDeleteFailed": "Échec de la suppression du compte. Veuillez réessayer."
   }
 }

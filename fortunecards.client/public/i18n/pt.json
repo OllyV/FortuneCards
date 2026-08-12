@@ -185,7 +185,37 @@
       "pink": "Rosa",
       "yellow": "Amarelo",
       "dark-red": "Vermelho escuro"
-    }
+    },
+    "selectDeckDialogAriaLabel": "Selecionar baralho",
+    "selectDeckTitle": "Selecione um baralho",
+    "searchPublicDecksPlaceholder": "Pesquisar baralhos públicos…",
+    "loadingDecksState": "Carregando baralhos…",
+    "noDecksOwned": "Você ainda não tem baralhos.",
+    "noPublicDecksFound": "Nenhum baralho público encontrado.",
+    "loadPatternDialogAriaLabel": "Carregar um padrão",
+    "loadPatternTitle": "Carregar um padrão",
+    "searchPublicPatternsPlaceholder": "Pesquisar padrões públicos…",
+    "loadingPatternsState": "Carregando padrões…",
+    "noPatternsOwned": "Você ainda não tem padrões.",
+    "noPublicPatternsFound": "Nenhum padrão público encontrado.",
+    "questionsCount": "{{n}} perguntas"
+  },
+  "pages": {
+    "decksLink": "Baralhos",
+    "accountSettingsLink": "Configurações da Conta",
+    "myDecksTitle": "Meus Baralhos",
+    "newDeckButton": "+ Novo Baralho",
+    "loadingDecksState": "Carregando baralhos…",
+    "publicBadge": "🌐 Público",
+    "privateBadge": "🔒 Privado",
+    "accountSettingsPageTitle": "Configurações da Conta",
+    "connectedAccountLabel": "Conta conectada",
+    "connectedAccountBadge": "G Google",
+    "dangerZoneLabel": "Zona de perigo",
+    "accountDeleteDesc": "Exclui sua conta e todos os baralhos privados. Baralhos públicos são mantidos como baralhos da comunidade.",
+    "deletingButton": "Excluindo…",
+    "deleteAccountButton": "Excluir Conta",
+    "accountDeleteConfirm": "Excluir sua conta? Isso remove todos os baralhos privados. Baralhos públicos são mantidos como baralhos da comunidade. Isso não pode ser desfeito."
   },
   "errors": {
     "deckCreateFailed": "Falha ao criar o baralho.",
@@ -203,6 +233,7 @@
     "patternCreateFailed": "Falha ao criar o padrão.",
     "patternSaveFailed": "Falha ao salvar o padrão.",
     "patternDeleteFailed": "Falha ao excluir o padrão.",
-    "saveFailed": "Falha ao salvar."
+    "saveFailed": "Falha ao salvar.",
+    "accountDeleteFailed": "Falha ao excluir a conta. Tente novamente."
   }
 }

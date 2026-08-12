@@ -1,19 +1,20 @@
+<ng-container *transloco="let t">
 <div class="dialog-backdrop" (click)="closed.emit()"></div>
-<div class="dialog-panel" role="dialog" aria-label="Load a pattern">
-  <h2>Load a pattern</h2>
+<div class="dialog-panel" role="dialog" [attr.aria-label]="t('table.loadPatternDialogAriaLabel')">
+  <h2>{{ t('table.loadPatternTitle') }}</h2>
 
   @if (!isAuthorized()) {
     <input
       class="deck-search"
       type="search"
-      placeholder="Search public patterns…"
+      [placeholder]="t('table.searchPublicPatternsPlaceholder')"
       [value]="searchTerm()"
       (input)="onSearchInput($event)"
     />
   }
 
   @if (loading()) {
-    <div class="state">Loading patterns…</div>
+    <div class="state">{{ t('table.loadingPatternsState') }}</div>
   } @else if (error()) {
     <div class="state state-error">{{ error() }}</div>
   } @else {
@@ -25,12 +26,12 @@
         <button type="button" class="deck-tile" [style.background]="gradient(p.colorIndex)" (click)="selectPattern(p)">
           <span class="deck-emoji">{{ p.emoji }}</span>
           <span class="deck-name">{{ p.name }}</span>
-          <span class="tile-count">{{ p.cardCount ?? 0 }} questions</span>
+          <span class="tile-count">{{ t('table.questionsCount', { n: p.cardCount ?? 0 }) }}</span>
         </button>
       }
     </div>
     @if (patterns().length === 0) {
-      <p class="state">{{ isAuthorized() ? 'You have no patterns yet.' : 'No public patterns found.' }}</p>
+      <p class="state">{{ isAuthorized() ? t('table.noPatternsOwned') : t('table.noPublicPatternsFound') }}</p>
     }
     @if (!isAuthorized() && totalCount() > 0) {
       <app-pagination
@@ -41,5 +42,6 @@
     }
   }
 
-  <button class="dialog-close" type="button" (click)="closed.emit()">Close</button>
+  <button class="dialog-close" type="button" (click)="closed.emit()">{{ t('common.close') }}</button>
 </div>
+</ng-container>

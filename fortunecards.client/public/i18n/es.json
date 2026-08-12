@@ -185,7 +185,37 @@
       "pink": "Rosa",
       "yellow": "Amarillo",
       "dark-red": "Rojo oscuro"
-    }
+    },
+    "selectDeckDialogAriaLabel": "Seleccionar mazo",
+    "selectDeckTitle": "Selecciona un mazo",
+    "searchPublicDecksPlaceholder": "Buscar mazos públicos…",
+    "loadingDecksState": "Cargando mazos…",
+    "noDecksOwned": "Todavía no tienes mazos.",
+    "noPublicDecksFound": "No se encontraron mazos públicos.",
+    "loadPatternDialogAriaLabel": "Cargar un patrón",
+    "loadPatternTitle": "Cargar un patrón",
+    "searchPublicPatternsPlaceholder": "Buscar patrones públicos…",
+    "loadingPatternsState": "Cargando patrones…",
+    "noPatternsOwned": "Todavía no tienes patrones.",
+    "noPublicPatternsFound": "No se encontraron patrones públicos.",
+    "questionsCount": "{{n}} preguntas"
+  },
+  "pages": {
+    "decksLink": "Mazos",
+    "accountSettingsLink": "Configuración de la cuenta",
+    "myDecksTitle": "Mis Mazos",
+    "newDeckButton": "+ Nuevo Mazo",
+    "loadingDecksState": "Cargando mazos…",
+    "publicBadge": "🌐 Público",
+    "privateBadge": "🔒 Privado",
+    "accountSettingsPageTitle": "Configuración de la cuenta",
+    "connectedAccountLabel": "Cuenta conectada",
+    "connectedAccountBadge": "G Google",
+    "dangerZoneLabel": "Zona de peligro",
+    "accountDeleteDesc": "Elimina tu cuenta y todos los mazos privados. Los mazos públicos se conservan como mazos de la comunidad.",
+    "deletingButton": "Eliminando…",
+    "deleteAccountButton": "Eliminar cuenta",
+    "accountDeleteConfirm": "¿Eliminar tu cuenta? Esto elimina todos los mazos privados. Los mazos públicos se conservan como mazos de la comunidad. Esta acción no se puede deshacer."
   },
   "errors": {
     "deckCreateFailed": "Error al crear el mazo.",
@@ -203,6 +233,7 @@
     "patternCreateFailed": "Error al crear el patrón.",
     "patternSaveFailed": "Error al guardar el patrón.",
     "patternDeleteFailed": "Error al eliminar el patrón.",
-    "saveFailed": "Error al guardar."
+    "saveFailed": "Error al guardar.",
+    "accountDeleteFailed": "Error al eliminar la cuenta. Inténtalo de nuevo."
   }
 }

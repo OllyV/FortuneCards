@@ -185,7 +185,37 @@
       "pink": "Rosa",
       "yellow": "Gelb",
       "dark-red": "Dunkelrot"
-    }
+    },
+    "selectDeckDialogAriaLabel": "Deck auswählen",
+    "selectDeckTitle": "Wähle ein Deck",
+    "searchPublicDecksPlaceholder": "Öffentliche Decks suchen…",
+    "loadingDecksState": "Decks werden geladen…",
+    "noDecksOwned": "Du hast noch keine Decks.",
+    "noPublicDecksFound": "Keine öffentlichen Decks gefunden.",
+    "loadPatternDialogAriaLabel": "Muster laden",
+    "loadPatternTitle": "Muster laden",
+    "searchPublicPatternsPlaceholder": "Öffentliche Muster suchen…",
+    "loadingPatternsState": "Muster werden geladen…",
+    "noPatternsOwned": "Du hast noch keine Muster.",
+    "noPublicPatternsFound": "Keine öffentlichen Muster gefunden.",
+    "questionsCount": "{{n}} Fragen"
+  },
+  "pages": {
+    "decksLink": "Decks",
+    "accountSettingsLink": "Kontoeinstellungen",
+    "myDecksTitle": "Meine Decks",
+    "newDeckButton": "+ Neues Deck",
+    "loadingDecksState": "Decks werden geladen…",
+    "publicBadge": "🌐 Öffentlich",
+    "privateBadge": "🔒 Privat",
+    "accountSettingsPageTitle": "Kontoeinstellungen",
+    "connectedAccountLabel": "Verbundenes Konto",
+    "connectedAccountBadge": "G Google",
+    "dangerZoneLabel": "Gefahrenzone",
+    "accountDeleteDesc": "Löscht dein Konto und alle privaten Decks. Öffentliche Decks bleiben als Community-Decks erhalten.",
+    "deletingButton": "Wird gelöscht…",
+    "deleteAccountButton": "Konto löschen",
+    "accountDeleteConfirm": "Dein Konto löschen? Dadurch werden alle privaten Decks entfernt. Öffentliche Decks bleiben als Community-Decks erhalten. Dies kann nicht rückgängig gemacht werden."
   },
   "errors": {
     "deckCreateFailed": "Deck konnte nicht erstellt werden.",
@@ -203,6 +233,7 @@
     "patternCreateFailed": "Muster konnte nicht erstellt werden.",
     "patternSaveFailed": "Muster konnte nicht gespeichert werden.",
     "patternDeleteFailed": "Muster konnte nicht gelöscht werden.",
-    "saveFailed": "Speichern fehlgeschlagen."
+    "saveFailed": "Speichern fehlgeschlagen.",
+    "accountDeleteFailed": "Konto konnte nicht gelöscht werden. Bitte versuche es erneut."
   }
 }

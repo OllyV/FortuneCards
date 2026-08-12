@@ -5,6 +5,7 @@ import { PatternSelectorComponent } from './pattern-selector.component';
 import { PatternService } from '../../../services/pattern.service';
 import { AuthService } from '../../../services/auth.service';
 import { Pattern } from '../../../models/pattern';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 function pattern(id: number): Pattern {
   return {
@@ -23,7 +24,7 @@ describe('PatternSelectorComponent', () => {
       getPattern: vi.fn().mockReturnValue(of(pattern(1))),
     };
     await TestBed.configureTestingModule({
-      imports: [PatternSelectorComponent],
+      imports: [PatternSelectorComponent, getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         { provide: PatternService, useValue: service },

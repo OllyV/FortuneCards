@@ -185,7 +185,37 @@
       "pink": "Розовый",
       "yellow": "Жёлтый",
       "dark-red": "Тёмно-красный"
-    }
+    },
+    "selectDeckDialogAriaLabel": "Выбрать колоду",
+    "selectDeckTitle": "Выберите колоду",
+    "searchPublicDecksPlaceholder": "Поиск публичных колод…",
+    "loadingDecksState": "Загрузка колод…",
+    "noDecksOwned": "У вас еще нет колод.",
+    "noPublicDecksFound": "Публичные колоды не найдены.",
+    "loadPatternDialogAriaLabel": "Загрузить шаблон",
+    "loadPatternTitle": "Загрузить шаблон",
+    "searchPublicPatternsPlaceholder": "Поиск публичных шаблонов…",
+    "loadingPatternsState": "Загрузка шаблонов…",
+    "noPatternsOwned": "У вас еще нет шаблонов.",
+    "noPublicPatternsFound": "Публичные шаблоны не найдены.",
+    "questionsCount": "{{n}} вопросов"
+  },
+  "pages": {
+    "decksLink": "Колоды",
+    "accountSettingsLink": "Настройки аккаунта",
+    "myDecksTitle": "Мои колоды",
+    "newDeckButton": "+ Новая колода",
+    "loadingDecksState": "Загрузка колод…",
+    "publicBadge": "🌐 Публичная",
+    "privateBadge": "🔒 Приватная",
+    "accountSettingsPageTitle": "Настройки аккаунта",
+    "connectedAccountLabel": "Подключенный аккаунт",
+    "connectedAccountBadge": "G Google",
+    "dangerZoneLabel": "Опасная зона",
+    "accountDeleteDesc": "Удаляет ваш аккаунт и все приватные колоды. Публичные колоды останутся как колоды сообщества.",
+    "deletingButton": "Удаление…",
+    "deleteAccountButton": "Удалить аккаунт",
+    "accountDeleteConfirm": "Удалить ваш аккаунт? Это удалит все приватные колоды. Публичные колоды останутся как колоды сообщества. Это невозможно отменить."
   },
   "errors": {
     "deckCreateFailed": "Не удалось создать колоду.",
@@ -203,6 +233,7 @@
     "patternCreateFailed": "Не удалось создать шаблон.",
     "patternSaveFailed": "Не удалось сохранить шаблон.",
     "patternDeleteFailed": "Не удалось удалить шаблон.",
-    "saveFailed": "Не удалось сохранить."
+    "saveFailed": "Не удалось сохранить.",
+    "accountDeleteFailed": "Не удалось удалить аккаунт. Попробуйте снова."
   }
 }

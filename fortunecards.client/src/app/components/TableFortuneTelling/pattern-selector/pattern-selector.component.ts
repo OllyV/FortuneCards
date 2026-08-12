@@ -1,6 +1,7 @@
 import { Component, DestroyRef, computed, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, switchMap, map, catchError, of } from 'rxjs';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { Pattern, PagedResult } from '../../../models/pattern';
 import { PatternService } from '../../../services/pattern.service';
 import { AuthService } from '../../../services/auth.service';
@@ -14,12 +15,13 @@ const PAGE_SIZE = 12;
   standalone: true,
   templateUrl: './pattern-selector.component.html',
   styleUrl: './pattern-selector.component.css',
-  imports: [PaginationComponent],
+  imports: [PaginationComponent, TranslocoDirective],
 })
 export class PatternSelectorComponent {
   private readonly patternService = inject(PatternService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
   private readonly searchInput = new Subject<string>();
   private readonly pageLoad = new Subject<void>();
 
@@ -57,7 +59,7 @@ export class PatternSelectorComponent {
       )
       .subscribe(({ result, failed }) => {
         if (failed || !result) {
-          this.error.set('Failed to load patterns.');
+          this.error.set(this.transloco.translate('errors.patternsLoadFailed'));
           this.loading.set(false);
           return;
         }
@@ -77,7 +79,7 @@ export class PatternSelectorComponent {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (patterns) => { this.patterns.set(patterns); this.loading.set(false); },
-          error: () => { this.error.set('Failed to load patterns.'); this.loading.set(false); },
+          error: () => { this.error.set(this.transloco.translate('errors.patternsLoadFailed')); this.loading.set(false); },
         });
       return;
     }
@@ -107,7 +109,7 @@ export class PatternSelectorComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (full) => { this.patternSelected.emit(full); this.closed.emit(); },
-        error: () => this.selectError.set('Failed to load pattern.'),
+        error: () => this.selectError.set(this.transloco.translate('errors.patternLoadFailed')),
       });
   }
 }
