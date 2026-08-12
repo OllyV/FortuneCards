@@ -11,7 +11,8 @@
     "confirm": "Confirmer"
   },
   "language": {
-    "label": "Langue"
+    "label": "Langue",
+    "select": "Choisir la langue"
   },
   "nav": {
     "myDecks": "Mes jeux",

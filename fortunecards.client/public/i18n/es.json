@@ -11,7 +11,8 @@
     "confirm": "Confirmar"
   },
   "language": {
-    "label": "Idioma"
+    "label": "Idioma",
+    "select": "Seleccionar idioma"
   },
   "nav": {
     "myDecks": "Mis mazos",

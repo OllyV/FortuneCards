@@ -11,7 +11,8 @@
     "confirm": "Bestätigen"
   },
   "language": {
-    "label": "Sprache"
+    "label": "Sprache",
+    "select": "Sprache wählen"
   },
   "nav": {
     "myDecks": "Meine Decks",

@@ -1,16 +1,29 @@
 <div class="lang-switcher" *transloco="let t">
-  <div class="lang-title">{{ t('language.label') }}</div>
-  <div class="lang-options" role="group" [attr.aria-label]="t('language.label')">
-    @for (lang of languages; track lang.code) {
-      <button
-        type="button"
-        class="lang-option"
-        [class.active]="current() === lang.code"
-        [attr.aria-current]="current() === lang.code ? 'true' : null"
-        (click)="select(lang.code)"
-      >
-        {{ lang.nativeName }}
-      </button>
-    }
-  </div>
+  <button
+    type="button"
+    class="lang-trigger"
+    [attr.aria-expanded]="expanded()"
+    aria-controls="lang-options-list"
+    (click)="toggle()"
+  >
+    <span class="lang-trigger-label">{{ t('language.select') }}</span>
+    <span class="lang-trigger-current">{{ currentNativeName() }}</span>
+    <span class="lang-trigger-caret" aria-hidden="true">{{ expanded() ? '▴' : '▾' }}</span>
+  </button>
+
+  @if (expanded()) {
+    <div id="lang-options-list" class="lang-options" role="group" [attr.aria-label]="t('language.label')">
+      @for (lang of languages; track lang.code) {
+        <button
+          type="button"
+          class="lang-option"
+          [class.active]="current() === lang.code"
+          [attr.aria-current]="current() === lang.code ? 'true' : null"
+          (click)="select(lang.code)"
+        >
+          {{ lang.nativeName }}
+        </button>
+      }
+    </div>
+  }
 </div>
