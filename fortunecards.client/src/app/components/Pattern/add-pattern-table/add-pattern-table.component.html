@@ -1,14 +1,14 @@
-<div class="add-pattern-table-wrap">
+<div class="add-pattern-table-wrap" *transloco="let t">
   <div class="table-controls-bar">
     <label class="size-control">
-      Card size
+      {{ t('pattern.cardSizeLabel') }}
       <input type="range" min="5" max="50" step="1"
              [value]="cardSizePercent()" (input)="onCardSizeInput($event)" />
     </label>
     <div class="height-controls">
-      <span>Table length</span>
-      <button type="button" class="height-decrease" (click)="decreaseHeight()" aria-label="Shorten table">−</button>
-      <button type="button" class="height-increase" (click)="increaseHeight()" aria-label="Lengthen table">+</button>
+      <span>{{ t('pattern.tableLengthLabel') }}</span>
+      <button type="button" class="height-decrease" (click)="decreaseHeight()" [attr.aria-label]="t('pattern.shortenTableLabel')">−</button>
+      <button type="button" class="height-increase" (click)="increaseHeight()" [attr.aria-label]="t('pattern.lengthenTableLabel')">+</button>
     </div>
   </div>
 

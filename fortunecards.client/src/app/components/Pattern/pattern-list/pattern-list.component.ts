@@ -2,6 +2,7 @@ import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, debounceTime, switchMap, map, catchError, of } from 'rxjs';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { PaginationComponent } from '../../shared/pagination/pagination.component';
 import { SkeletonCardGridComponent } from '../../shared/skeleton/skeleton-card-grid.component';
@@ -20,7 +21,7 @@ const PAGE_SIZE = 20;
   templateUrl: './pattern-list.component.html',
   styleUrls: ['./pattern-list.component.css'],
   standalone: true,
-  imports: [RouterLink, NavigationBar, PaginationComponent, SkeletonCardGridComponent, ErrorStateComponent],
+  imports: [RouterLink, NavigationBar, PaginationComponent, SkeletonCardGridComponent, ErrorStateComponent, TranslocoDirective],
 })
 export class PatternListComponent {
   patterns = signal<Pattern[]>([]);
@@ -32,11 +33,10 @@ export class PatternListComponent {
   readonly pageSize = PAGE_SIZE;
   totalCount = signal(0);
 
-  readonly title = () => (this.mode() === 'mine' ? 'My Patterns 🔮' : 'Browse Patterns 🔍');
-
   protected readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
+  private readonly transloco = inject(TranslocoService);
   private readonly searchInput = new Subject<string>();
   private readonly pageLoad = new Subject<void>();
 
@@ -69,7 +69,7 @@ export class PatternListComponent {
       )
       .subscribe(({ result, failed }) => {
         if (failed || !result) {
-          this.error.set('Failed to load patterns.');
+          this.error.set(this.transloco.translate('errors.patternsLoadFailed'));
           this.loading.set(false);
           return;
         }
@@ -96,7 +96,7 @@ export class PatternListComponent {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (patterns) => { this.patterns.set(patterns); this.loading.set(false); },
-          error: () => { this.error.set('Failed to load patterns.'); this.loading.set(false); },
+          error: () => { this.error.set(this.transloco.translate('errors.patternsLoadFailed')); this.loading.set(false); },
         });
       return;
     }

@@ -1,13 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { PatternHeroComponent } from './pattern-hero.component';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('PatternHeroComponent', () => {
   let fixture: ComponentFixture<PatternHeroComponent>;
 
   async function setup(over: Partial<{ isOwner: boolean; isFavorite: boolean; isLoggedIn: boolean }> = {}): Promise<void> {
     await TestBed.configureTestingModule({
-      imports: [PatternHeroComponent],
+      imports: [PatternHeroComponent, getTranslocoTestingModule()],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
     fixture = TestBed.createComponent(PatternHeroComponent);

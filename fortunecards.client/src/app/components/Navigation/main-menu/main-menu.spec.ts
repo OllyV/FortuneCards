@@ -3,6 +3,7 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { MainMenuComponent } from './main-menu';
 import { AuthService } from '../../../services/auth.service';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('MainMenuComponent', () => {
   let component: MainMenuComponent;
@@ -20,7 +21,7 @@ describe('MainMenuComponent', () => {
       logout: vi.fn().mockResolvedValue(undefined),
     };
     await TestBed.configureTestingModule({
-      imports: [MainMenuComponent, RouterModule.forRoot([])],
+      imports: [MainMenuComponent, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         { provide: AuthService, useValue: auth },
@@ -49,14 +50,14 @@ describe('MainMenuComponent', () => {
   it('shows Search decks and Sign in when logged out', () => {
     component.open.set(true);
     fixture.detectChanges();
-    expect(itemLabels()).toEqual(['Search decks', 'Browse patterns', 'Table', 'Sign in with Google']);
+    expect(itemLabels()).toEqual(['Search decks', 'Browse spreads', 'Table', 'Sign in with Google']);
   });
 
   it('shows all nav items and Logout when logged in', () => {
     auth.isLoggedIn.set(true);
     component.open.set(true);
     fixture.detectChanges();
-    expect(itemLabels()).toEqual(['My decks', 'Search decks', 'My patterns', 'Browse patterns', 'Table', 'My profile', 'Logout']);
+    expect(itemLabels()).toEqual(['My decks', 'Search decks', 'My spreads', 'Browse spreads', 'Table', 'My profile', 'Logout']);
   });
 
   it('go() navigates and closes the panel', () => {

@@ -1,7 +1,7 @@
-<div class="page">
+<div class="page" *transloco="let t">
   <navigation-bar>
     <div class="nav-actions">
-      <button class="nav-back" (click)="goBack()">← Back to deck</button>
+      <button class="nav-back" (click)="goBack()">← {{ t('card.backLink') }}</button>
     </div>
   </navigation-bar>
 
@@ -16,9 +16,9 @@
       <p class="card-detail-desc">{{ c.description }}</p>
 
       <div *ngIf="isOwner()" class="card-actions">
-        <button type="button" class="btn-primary" (click)="editCard()">✏️ Edit Card</button>
+        <button type="button" class="btn-primary" (click)="editCard()">✏️ {{ t('card.editCard') }}</button>
         <button type="button" class="btn-danger" [disabled]="deleting()" (click)="deleteCard()">
-          {{ deleting() ? 'Deleting…' : '🗑 Delete Card' }}
+          {{ deleting() ? t('card.deleting') : ('🗑 ' + t('card.deleteButton')) }}
         </button>
       </div>
       <div *ngIf="error()" class="state-error">{{ error() }}</div>
@@ -26,9 +26,9 @@
     </div>
 
     <ng-template #notFoundOrLoading>
-      <div *ngIf="loading()" class="state-loading">Loading card…</div>
+      <div *ngIf="loading()" class="state-loading">{{ t('card.loadingCard') }}</div>
       <div *ngIf="!loading() && error()" class="state-error">{{ error() }}</div>
-      <div *ngIf="!loading() && !error()" class="state-error">Card not found.</div>
+      <div *ngIf="!loading() && !error()" class="state-error">{{ t('errors.cardNotFound') }}</div>
     </ng-template>
   </main>
 </div>

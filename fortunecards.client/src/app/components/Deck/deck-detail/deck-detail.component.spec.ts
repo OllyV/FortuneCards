@@ -10,6 +10,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { Deck } from '../../../models/deck';
 import { AuthService } from '../../../services/auth.service';
 import { DeckService } from '../../../services/deck.service';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 const mockDeck: Deck = {
   id: 1, name: 'Adventure', description: 'Bold quests',
@@ -23,7 +24,7 @@ describe('DeckDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DeckDetailComponent, CommonModule, RouterModule.forRoot([]), NavigationBar],
+      imports: [DeckDetailComponent, CommonModule, RouterModule.forRoot([]), NavigationBar, getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),

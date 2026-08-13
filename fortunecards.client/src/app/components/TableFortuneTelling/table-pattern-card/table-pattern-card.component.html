@@ -14,6 +14,7 @@
   (pointermove)="onPointerMove($event)"
   (pointerup)="onPointerUp()"
   (pointercancel)="onPointerUp()"
+  *transloco="let t"
 >
   <div class="pattern-face">
     <span #order class="pattern-order">{{ card().order }}</span>
@@ -28,6 +29,6 @@
     ></textarea>
   </div>
   @if (selected() && !card().locked) {
-    <div class="rotate-handle" title="Drag to rotate" (pointerdown)="onRotateStart($event)">⤾</div>
+    <div class="rotate-handle" [attr.title]="t('pattern.dragToRotateLabel')" (pointerdown)="onRotateStart($event)">⤾</div>
   }
 </div>

@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { PatternService } from '../../../services/pattern.service';
 import { getDeckGradientStyle } from '../../../utils/deck-colors';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
@@ -12,7 +13,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
   templateUrl: './update-pattern.component.html',
   styleUrls: ['./update-pattern.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NavigationBar],
+  imports: [CommonModule, ReactiveFormsModule, NavigationBar, TranslocoDirective],
 })
 export class UpdatePatternComponent implements OnInit {
   readonly GRADIENTS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
@@ -25,6 +26,7 @@ export class UpdatePatternComponent implements OnInit {
   error = signal<string | null>(null);
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   constructor(
     private fb: FormBuilder,
@@ -58,7 +60,7 @@ export class UpdatePatternComponent implements OnInit {
           });
           this.loading.set(false);
         },
-        error: () => { this.error.set('Failed to load pattern.'); this.loading.set(false); },
+        error: () => { this.error.set(this.transloco.translate('errors.patternLoadFailed')); this.loading.set(false); },
       });
   }
 
@@ -80,20 +82,20 @@ export class UpdatePatternComponent implements OnInit {
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.router.navigate(['/patterns/mine']),
-        error: () => { this.error.set('Failed to save pattern.'); this.submitting.set(false); },
+        error: () => { this.error.set(this.transloco.translate('errors.patternSaveFailed')); this.submitting.set(false); },
       });
   }
 
   editQuestions(): void { this.router.navigate(['/patterns', this.patternId(), 'cards']); }
 
   deletePattern(): void {
-    if (!confirm('Delete this pattern and all its questions?')) return;
+    if (!confirm(this.transloco.translate('pattern.deleteConfirm'))) return;
     this.deleting.set(true);
     this.patternService.deletePattern(this.patternId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.router.navigate(['/patterns/mine']),
-        error: () => { this.error.set('Failed to delete pattern.'); this.deleting.set(false); },
+        error: () => { this.error.set(this.transloco.translate('errors.patternDeleteFailed')); this.deleting.set(false); },
       });
   }
 

@@ -9,6 +9,7 @@ import { vi } from 'vitest';
 import { CardEditComponent } from './card-edit.component';
 import { DeckService } from '../../../services/deck.service';
 import { Deck } from '../../../models/deck';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 const deckWithCard: Deck = {
   id: 1, name: 'Adventure', description: null,
@@ -31,7 +32,7 @@ describe('CardEditComponent', () => {
   beforeEach(async () => {
     const mockDeckService = { getDeck: () => of(deckWithCard) };
     await TestBed.configureTestingModule({
-      imports: [CardEditComponent, ReactiveFormsModule, RouterModule.forRoot([])],
+      imports: [CardEditComponent, ReactiveFormsModule, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),
@@ -68,7 +69,7 @@ describe('CardEditComponent (non-owner)', () => {
   beforeEach(async () => {
     const mockDeckService = { getDeck: () => of(nonOwnerDeckWithCard) };
     await TestBed.configureTestingModule({
-      imports: [CardEditComponent, ReactiveFormsModule, RouterModule.forRoot([])],
+      imports: [CardEditComponent, ReactiveFormsModule, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),

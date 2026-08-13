@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { AuthService } from '../../../services/auth.service';
 import { MainMenuComponent } from '../main-menu/main-menu';
 
@@ -9,7 +10,7 @@ import { MainMenuComponent } from '../main-menu/main-menu';
   standalone: true,
   templateUrl: './navigation-bar.html',
   styleUrl: './navigation-bar.css',
-  imports: [CommonModule, MainMenuComponent],
+  imports: [CommonModule, MainMenuComponent, TranslocoDirective],
 })
 export class NavigationBar {
   protected readonly auth = inject(AuthService);

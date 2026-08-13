@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../services/auth.service';
 import { NavigationBar } from '../../components/Navigation/navigation-bar/navigation-bar';
 
@@ -12,13 +13,14 @@ import { NavigationBar } from '../../components/Navigation/navigation-bar/naviga
   standalone: true,
   templateUrl: './account-settings.component.html',
   styleUrls: ['./account-settings.component.css'],
-  imports: [CommonModule, FormsModule, NavigationBar],
+  imports: [CommonModule, FormsModule, NavigationBar, TranslocoDirective],
 })
 export class AccountSettingsComponent {
   protected readonly auth = inject(AuthService);
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   displayName = signal(this.auth.currentUser()?.displayName ?? '');
   saving = signal(false);
@@ -31,7 +33,7 @@ export class AccountSettingsComponent {
   }
 
   deleteAccount(): void {
-    if (!confirm('Delete your account? This removes all private decks. Public decks are kept as community decks. This cannot be undone.')) return;
+    if (!confirm(this.transloco.translate('pages.accountDeleteConfirm'))) return;
     this.deleting.set(true);
     this.http.delete('/api/auth/account')
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -41,7 +43,7 @@ export class AccountSettingsComponent {
         },
         error: () => {
           this.deleting.set(false);
-          alert('Failed to delete account. Please try again.');
+          alert(this.transloco.translate('errors.accountDeleteFailed'));
         }
       });
   }

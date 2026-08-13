@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { PatternService } from '../../../services/pattern.service';
 import { getDeckGradientStyle } from '../../../utils/deck-colors';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
@@ -12,7 +13,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
   templateUrl: './create-pattern.component.html',
   styleUrls: ['./create-pattern.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NavigationBar],
+  imports: [CommonModule, ReactiveFormsModule, NavigationBar, TranslocoDirective],
 })
 export class CreatePatternComponent {
   readonly GRADIENTS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
@@ -22,6 +23,7 @@ export class CreatePatternComponent {
   error = signal<string | null>(null);
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   constructor(
     private fb: FormBuilder,
@@ -55,7 +57,7 @@ export class CreatePatternComponent {
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (pattern) => this.router.navigate(['/patterns', pattern.id, 'cards']),
-        error: () => { this.error.set('Failed to create pattern.'); this.submitting.set(false); },
+        error: () => { this.error.set(this.transloco.translate('errors.patternCreateFailed')); this.submitting.set(false); },
       });
   }
 

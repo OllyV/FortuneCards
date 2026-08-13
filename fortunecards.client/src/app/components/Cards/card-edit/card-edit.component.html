@@ -1,7 +1,7 @@
-<div class="form-page">
+<div class="form-page" *transloco="let t">
   <navigation-bar>
-    <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
-    <span class="nav-title-centered">Edit Card</span>
+    <button class="btn-ghost" (click)="cancel()">✕ {{ t('common.cancel') }}</button>
+    <span class="nav-title-centered">{{ t('card.editCard') }}</span>
   </navigation-bar>
 
   <main class="form-content">
@@ -9,17 +9,17 @@
 
       <!-- Card image -->
       <div class="form-field image-field">
-        <label class="form-label">Card Image</label>
+        <label class="form-label">{{ t('card.imageLabel') }}</label>
         <div class="image-upload-area" [class.has-image]="imagePreview() || currentImageUrl()"
              [style.aspect-ratio]="aspectRatio()">
-          <img *ngIf="imagePreview()" [src]="imagePreview()" class="image-preview" alt="Card preview" />
-          <img *ngIf="!imagePreview() && currentImageUrl()" [src]="currentImageUrl()!" class="image-preview" alt="Current card image" />
+          <img *ngIf="imagePreview()" [src]="imagePreview()" class="image-preview" [alt]="t('card.imagePreviewAlt')" />
+          <img *ngIf="!imagePreview() && currentImageUrl()" [src]="currentImageUrl()!" class="image-preview" [alt]="t('card.currentImageAlt')" />
           <div *ngIf="!imagePreview() && !currentImageUrl()" class="image-placeholder">
             <span class="image-placeholder-icon">🖼️</span>
-            <p class="image-placeholder-text">Tap to upload card image</p>
+            <p class="image-placeholder-text">{{ t('card.uploadHint') }}</p>
           </div>
           <label class="image-replace btn-secondary btn-file">
-            {{ (imagePreview() || currentImageUrl()) ? 'Replace' : '+ Upload' }}
+            {{ (imagePreview() || currentImageUrl()) ? t('card.replace') : t('card.upload') }}
             <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
           </label>
           <button type="button" class="image-remove" *ngIf="imagePreview()" (click)="removeImage()">✕</button>
@@ -28,24 +28,24 @@
 
       <!-- Title -->
       <div class="form-field">
-        <label class="form-label" for="cardTitle">Card Title</label>
+        <label class="form-label" for="cardTitle">{{ t('card.titleLabel') }}</label>
         <input
           id="cardTitle"
           class="form-input"
           formControlName="title"
-          placeholder="e.g. The Journey Begins"
+          [placeholder]="t('card.titlePlaceholder')"
           maxlength="200"
         />
       </div>
 
       <!-- Description -->
       <div class="form-field">
-        <label class="form-label" for="cardDesc">Meaning / Description</label>
+        <label class="form-label" for="cardDesc">{{ t('card.descriptionLabel') }}</label>
         <textarea
           id="cardDesc"
           class="form-textarea"
           formControlName="description"
-          placeholder="What does this card mean?"
+          [placeholder]="t('card.descriptionPlaceholder')"
           maxlength="2000"
           rows="4"
         ></textarea>
@@ -54,11 +54,11 @@
       <div *ngIf="error()" class="state-error">{{ error() }}</div>
 
       <button type="submit" class="btn-primary btn-full" [disabled]="form.invalid || submitting()">
-        {{ submitting() ? 'Saving…' : '💾 Save Changes' }}
+        {{ submitting() ? t('card.saving') : ('💾 ' + t('card.saveChanges')) }}
       </button>
 
       <button type="button" class="btn-danger btn-full" [disabled]="deleting()" (click)="deleteCard()">
-        {{ deleting() ? 'Deleting…' : '🗑 Delete Card' }}
+        {{ deleting() ? t('card.deleting') : ('🗑 ' + t('card.deleteButton')) }}
       </button>
     </form>
   </main>

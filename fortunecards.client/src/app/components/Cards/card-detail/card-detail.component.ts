@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { Deck } from '../../../models/deck';
 import { Card } from '../../../models/card';
 import { DeckService } from '../../../services/deck.service';
@@ -13,7 +14,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
   templateUrl: './card-detail.component.html',
   styleUrls: ['./card-detail.component.css'],
   standalone: true,
-  imports: [CommonModule, NavigationBar],
+  imports: [CommonModule, NavigationBar, TranslocoDirective],
 })
 export class CardDetailComponent implements OnInit {
   deckId = signal(0);
@@ -25,6 +26,7 @@ export class CardDetailComponent implements OnInit {
   error = signal<string | null>(null);
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   constructor(
     private route: ActivatedRoute,
@@ -47,7 +49,7 @@ export class CardDetailComponent implements OnInit {
             this.card.set((deck.cards ?? []).find(c => c.id === cardId) ?? null);
             this.loading.set(false);
           },
-          error: () => { this.error.set('Failed to load card.'); this.loading.set(false); }
+          error: () => { this.error.set(this.transloco.translate('errors.cardLoadFailed')); this.loading.set(false); }
         });
     });
   }
@@ -61,14 +63,14 @@ export class CardDetailComponent implements OnInit {
   }
 
   deleteCard(): void {
-    if (!confirm('Remove this card from the deck?')) return;
+    if (!confirm(this.transloco.translate('card.removeConfirm'))) return;
     this.deleting.set(true);
     this.error.set(null);
     this.cardService.deleteCard(this.cardId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.router.navigate(['/decks', this.deckId()]),
-        error: () => { this.error.set('Failed to delete card.'); this.deleting.set(false); }
+        error: () => { this.error.set(this.transloco.translate('errors.cardDeleteFailed')); this.deleting.set(false); }
       });
   }
 

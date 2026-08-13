@@ -2,6 +2,7 @@ import { Component, signal, inject, DestroyRef, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, debounceTime, switchMap, map, catchError, of } from 'rxjs';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { PaginationComponent } from '../../shared/pagination/pagination.component';
 import { SkeletonCardGridComponent } from '../../shared/skeleton/skeleton-card-grid.component';
@@ -20,7 +21,7 @@ const PAGE_SIZE = 20;
   templateUrl: './deck-list.component.html',
   styleUrls: ['./deck-list.component.css'],
   standalone: true,
-  imports: [RouterLink, NavigationBar, PaginationComponent, SkeletonCardGridComponent, ErrorStateComponent],
+  imports: [RouterLink, NavigationBar, PaginationComponent, SkeletonCardGridComponent, ErrorStateComponent, TranslocoDirective],
 })
 export class DeckListComponent {
   decks = signal<Deck[]>([]);
@@ -32,11 +33,10 @@ export class DeckListComponent {
   readonly pageSize = PAGE_SIZE;
   totalCount = signal(0);
 
-  readonly title = () => (this.mode() === 'mine' ? 'My Decks ✨' : 'Search Decks 🔍');
-
   protected readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
+  private readonly transloco = inject(TranslocoService);
   private readonly searchInput = new Subject<string>();
   private readonly pageLoad = new Subject<void>();
 
@@ -69,7 +69,7 @@ export class DeckListComponent {
       )
       .subscribe(({ result, failed }) => {
         if (failed || !result) {
-          this.error.set('Failed to load decks.');
+          this.error.set(this.transloco.translate('errors.decksLoadFailed'));
           this.loading.set(false);
           return;
         }
@@ -96,7 +96,7 @@ export class DeckListComponent {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (decks) => { this.decks.set(decks); this.loading.set(false); },
-          error: () => { this.error.set('Failed to load decks.'); this.loading.set(false); },
+          error: () => { this.error.set(this.transloco.translate('errors.decksLoadFailed')); this.loading.set(false); },
         });
       return;
     }

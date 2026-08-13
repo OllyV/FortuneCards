@@ -1,9 +1,11 @@
 import { Component, ElementRef, afterRenderEffect, computed, input, output, viewChild } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { TablePatternCard } from '../../../models/table';
 
 @Component({
   selector: 'table-pattern-card',
   standalone: true,
+  imports: [TranslocoDirective],
   templateUrl: './table-pattern-card.component.html',
   styleUrl: './table-pattern-card.component.css',
 })

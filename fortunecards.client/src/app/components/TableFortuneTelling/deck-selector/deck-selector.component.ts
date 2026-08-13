@@ -1,6 +1,7 @@
 import { Component, DestroyRef, computed, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, switchMap, map, catchError, of } from 'rxjs';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { Deck, PagedResult } from '../../../models/deck';
 import { DeckService } from '../../../services/deck.service';
 import { AuthService } from '../../../services/auth.service';
@@ -14,12 +15,13 @@ const PAGE_SIZE = 12;
   standalone: true,
   templateUrl: './deck-selector.component.html',
   styleUrl: './deck-selector.component.css',
-  imports: [PaginationComponent],
+  imports: [PaginationComponent, TranslocoDirective],
 })
 export class DeckSelectorComponent {
   private readonly deckService = inject(DeckService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
   private readonly searchInput = new Subject<string>();
   private readonly pageLoad = new Subject<void>();
 
@@ -57,7 +59,7 @@ export class DeckSelectorComponent {
       )
       .subscribe(({ result, failed }) => {
         if (failed || !result) {
-          this.error.set('Failed to load decks.');
+          this.error.set(this.transloco.translate('errors.decksLoadFailed'));
           this.loading.set(false);
           return;
         }
@@ -77,7 +79,7 @@ export class DeckSelectorComponent {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (decks) => { this.decks.set(decks); this.loading.set(false); },
-          error: () => { this.error.set('Failed to load decks.'); this.loading.set(false); },
+          error: () => { this.error.set(this.transloco.translate('errors.decksLoadFailed')); this.loading.set(false); },
         });
       return;
     }
@@ -112,7 +114,7 @@ export class DeckSelectorComponent {
           this.deckSelected.emit(full);
           this.closed.emit();
         },
-        error: () => this.selectError.set('Failed to load deck.'),
+        error: () => this.selectError.set(this.transloco.translate('errors.deckLoadFailed')),
       });
   }
 }

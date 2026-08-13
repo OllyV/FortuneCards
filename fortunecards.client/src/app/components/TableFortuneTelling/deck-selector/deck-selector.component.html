@@ -1,19 +1,20 @@
+<ng-container *transloco="let t">
 <div class="dialog-backdrop" (click)="closed.emit()"></div>
-<div class="dialog-panel" role="dialog" aria-label="Select deck">
-  <h2>Select a deck</h2>
+<div class="dialog-panel" role="dialog" [attr.aria-label]="t('table.selectDeckDialogAriaLabel')">
+  <h2>{{ t('table.selectDeckTitle') }}</h2>
 
   @if (!isAuthorized()) {
     <input
       class="deck-search"
       type="search"
-      placeholder="Search public decks…"
+      [placeholder]="t('table.searchPublicDecksPlaceholder')"
       [value]="searchTerm()"
       (input)="onSearchInput($event)"
     />
   }
 
   @if (loading()) {
-    <div class="state">Loading decks…</div>
+    <div class="state">{{ t('table.loadingDecksState') }}</div>
   }
   @if (error()) {
     <div class="state state-error">{{ error() }}</div>
@@ -32,7 +33,7 @@
       }
     </div>
     @if (decks().length === 0) {
-      <p class="state">{{ isAuthorized() ? 'You have no decks yet.' : 'No public decks found.' }}</p>
+      <p class="state">{{ isAuthorized() ? t('table.noDecksOwned') : t('table.noPublicDecksFound') }}</p>
     }
     @if (!isAuthorized() && totalCount() > 0) {
       <app-pagination
@@ -43,5 +44,6 @@
     }
   }
 
-  <button class="dialog-close" type="button" (click)="closed.emit()">Close</button>
+  <button class="dialog-close" type="button" (click)="closed.emit()">{{ t('common.close') }}</button>
 </div>
+</ng-container>

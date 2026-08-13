@@ -7,6 +7,7 @@ import { PatternListComponent } from './pattern-list.component';
 import { PatternService } from '../../../services/pattern.service';
 import { AuthService } from '../../../services/auth.service';
 import { Pattern } from '../../../models/pattern';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 function pattern(id: number, over: Partial<Pattern> = {}): Pattern {
   return {
@@ -26,7 +27,7 @@ describe('PatternListComponent (mine)', () => {
       removeFavorite: vi.fn().mockReturnValue(of(void 0)),
     };
     await TestBed.configureTestingModule({
-      imports: [PatternListComponent],
+      imports: [PatternListComponent, getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideRouter([]),
@@ -63,7 +64,7 @@ describe('PatternListComponent (mine)', () => {
     const { service } = await setup();
     service.getMyPatterns.mockReturnValueOnce(of([])); // ensure a clean reload result
     // Force an error state, then verify retry re-invokes the loader.
-    fixture.componentInstance.error.set('Failed to load patterns.');
+    fixture.componentInstance.error.set('Failed to load spreads.');
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('app-error-state')).not.toBeNull();
     const spy = vi.spyOn(fixture.componentInstance, 'load');

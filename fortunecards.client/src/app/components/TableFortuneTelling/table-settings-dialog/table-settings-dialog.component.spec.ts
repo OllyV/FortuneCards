@@ -1,13 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TableSettingsDialogComponent } from './table-settings-dialog.component';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('TableSettingsDialogComponent', () => {
   let fixture: ComponentFixture<TableSettingsDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TableSettingsDialogComponent],
+      imports: [TableSettingsDialogComponent, getTranslocoTestingModule()],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
     fixture = TestBed.createComponent(TableSettingsDialogComponent);

@@ -7,6 +7,7 @@ import { NavigationBar } from '../../components/Navigation/navigation-bar/naviga
 import { DeckService } from '../../services/deck.service';
 import { AuthService } from '../../services/auth.service';
 import { Deck } from '../../models/deck';
+import { getTranslocoTestingModule } from '../../../testing/transloco-testing';
 
 function deck(over: Partial<Deck>): Deck {
   return {
@@ -23,7 +24,7 @@ describe('ProfileComponent', () => {
       getMyDecks: vi.fn(() => of([deck({ id: 1, isOwner: true }), deck({ id: 2, isFavorite: true, isPublic: true })])),
     };
     TestBed.configureTestingModule({
-      imports: [ProfileComponent, RouterModule.forRoot([]), NavigationBar],
+      imports: [ProfileComponent, RouterModule.forRoot([]), NavigationBar, getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         { provide: DeckService, useValue: svc },

@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { DeckService } from '../../../services/deck.service';
 import { CardService } from '../../../services/card.service';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
@@ -12,7 +13,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
   templateUrl: './card-edit.component.html',
   styleUrls: ['./card-edit.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NavigationBar],
+  imports: [CommonModule, ReactiveFormsModule, NavigationBar, TranslocoDirective],
 })
 export class CardEditComponent implements OnInit {
   deckId = signal(0);
@@ -29,6 +30,7 @@ export class CardEditComponent implements OnInit {
   aspectRatio = signal('3 / 5');
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   constructor(
     private fb: FormBuilder,
@@ -55,13 +57,13 @@ export class CardEditComponent implements OnInit {
           next: (deck) => {
             if (!deck.isOwner) { this.router.navigate(['/decks', deckId, 'cards', cardId]); return; }
             const card = (deck.cards ?? []).find(c => c.id === cardId);
-            if (!card) { this.error.set('Card not found.'); this.loading.set(false); return; }
+            if (!card) { this.error.set(this.transloco.translate('errors.cardNotFound')); this.loading.set(false); return; }
             this.aspectRatio.set(`${deck.aspectWidth} / ${deck.aspectHeight}`);
             this.form.patchValue({ title: card.title, description: card.description });
             this.currentImageUrl.set(card.imageUrl);
             this.loading.set(false);
           },
-          error: () => { this.error.set('Failed to load card.'); this.loading.set(false); }
+          error: () => { this.error.set(this.transloco.translate('errors.cardLoadFailed')); this.loading.set(false); }
         });
     });
   }
@@ -90,18 +92,18 @@ export class CardEditComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.router.navigate(['/decks', this.deckId(), 'cards', this.cardId()]),
-        error: () => { this.error.set('Failed to save card.'); this.submitting.set(false); }
+        error: () => { this.error.set(this.transloco.translate('errors.cardSaveFailed')); this.submitting.set(false); }
       });
   }
 
   deleteCard(): void {
-    if (!confirm('Remove this card from the deck?')) return;
+    if (!confirm(this.transloco.translate('card.removeConfirm'))) return;
     this.deleting.set(true);
     this.cardService.deleteCard(this.cardId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.router.navigate(['/decks', this.deckId()]),
-        error: () => { this.error.set('Failed to delete card.'); this.deleting.set(false); }
+        error: () => { this.error.set(this.transloco.translate('errors.cardDeleteFailed')); this.deleting.set(false); }
       });
   }
 

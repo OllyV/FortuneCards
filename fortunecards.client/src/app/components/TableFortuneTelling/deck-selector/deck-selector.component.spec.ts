@@ -5,6 +5,7 @@ import { DeckSelectorComponent } from './deck-selector.component';
 import { DeckService } from '../../../services/deck.service';
 import { AuthService } from '../../../services/auth.service';
 import { Deck, PagedResult } from '../../../models/deck';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 function deck(over: Partial<Deck>): Deck {
   return {
@@ -30,7 +31,7 @@ describe('DeckSelectorComponent', () => {
       getDeck,
     };
     TestBed.configureTestingModule({
-      imports: [DeckSelectorComponent],
+      imports: [DeckSelectorComponent, getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         { provide: DeckService, useValue: svc },

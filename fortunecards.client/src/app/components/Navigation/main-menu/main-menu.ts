@@ -1,13 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '../../../services/auth.service';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher';
 
 @Component({
   selector: 'main-menu',
   standalone: true,
   templateUrl: './main-menu.html',
   styleUrl: './main-menu.css',
-  imports: [],
+  imports: [TranslocoDirective, TranslocoPipe, LanguageSwitcherComponent],
 })
 export class MainMenuComponent {
   protected readonly auth = inject(AuthService);

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { PatternPositionCardComponent } from './pattern-position-card.component';
 import { EditablePatternCard } from '../../../models/pattern';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('PatternPositionCardComponent', () => {
   let fixture: ComponentFixture<PatternPositionCardComponent>;
@@ -10,7 +11,7 @@ describe('PatternPositionCardComponent', () => {
 
   async function setup(card: EditablePatternCard = baseCard, selected = false, readonly = false): Promise<void> {
     await TestBed.configureTestingModule({
-      imports: [PatternPositionCardComponent],
+      imports: [PatternPositionCardComponent, getTranslocoTestingModule()],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
     fixture = TestBed.createComponent(PatternPositionCardComponent);

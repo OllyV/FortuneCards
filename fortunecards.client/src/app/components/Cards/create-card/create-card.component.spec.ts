@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { CreateCardComponent } from './create-card.component';
 import { DeckService } from '../../../services/deck.service';
 import { Deck } from '../../../models/deck';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 const deckForCard: Deck = {
   id: 1, name: 'Adventure', description: null,
@@ -23,7 +24,7 @@ describe('CreateCardComponent', () => {
   beforeEach(async () => {
     const mockDeckService = { getDeck: () => of(deckForCard) };
     await TestBed.configureTestingModule({
-      imports: [CreateCardComponent, ReactiveFormsModule, RouterModule.forRoot([])],
+      imports: [CreateCardComponent, ReactiveFormsModule, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),

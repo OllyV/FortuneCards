@@ -1,13 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ErrorStateComponent } from './error-state.component';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('ErrorStateComponent', () => {
   let fixture: ComponentFixture<ErrorStateComponent>;
 
   async function setup(): Promise<void> {
     await TestBed.configureTestingModule({
-      imports: [ErrorStateComponent],
+      imports: [ErrorStateComponent, getTranslocoTestingModule()],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
     fixture = TestBed.createComponent(ErrorStateComponent);

@@ -2,6 +2,7 @@ import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angula
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { PatternHeroComponent } from '../pattern-hero/pattern-hero.component';
 import { PatternTableViewComponent } from '../pattern-table-view/pattern-table-view.component';
@@ -16,7 +17,7 @@ import { AuthService } from '../../../services/auth.service';
   standalone: true,
   templateUrl: './pattern-detail.component.html',
   styleUrls: ['./pattern-detail.component.css'],
-  imports: [CommonModule, NavigationBar, PatternHeroComponent, PatternTableViewComponent, SkeletonDetailComponent, ErrorStateComponent],
+  imports: [CommonModule, NavigationBar, PatternHeroComponent, PatternTableViewComponent, SkeletonDetailComponent, ErrorStateComponent, TranslocoDirective],
 })
 export class PatternDetailComponent implements OnInit {
   readonly pattern = signal<Pattern | null>(null);
@@ -34,6 +35,7 @@ export class PatternDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly patternService = inject(PatternService);
+  private readonly transloco = inject(TranslocoService);
   private currentId = 0;
 
   ngOnInit(): void {
@@ -50,7 +52,7 @@ export class PatternDetailComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (pattern) => { this.pattern.set(pattern); this.loading.set(false); },
-        error: () => { this.error.set('Failed to load pattern.'); this.loading.set(false); },
+        error: () => { this.error.set(this.transloco.translate('errors.patternLoadFailed')); this.loading.set(false); },
       });
   }
 

@@ -5,6 +5,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterModule } from '@angular/router';
 
 import { NavigationBar } from './navigation-bar';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 describe('NavigationBar', () => {
   let component: NavigationBar;
@@ -12,7 +13,7 @@ describe('NavigationBar', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NavigationBar, RouterModule.forRoot([])],
+      imports: [NavigationBar, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
         provideHttpClient(),

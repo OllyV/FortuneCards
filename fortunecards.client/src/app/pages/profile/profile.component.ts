@@ -2,6 +2,7 @@ import { Component, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../services/auth.service';
 import { DeckService } from '../../services/deck.service';
 import { Deck } from '../../models/deck';
@@ -13,13 +14,14 @@ import { getDeckGradientStyle } from '../../utils/deck-colors';
   standalone: true,
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
-  imports: [CommonModule, NavigationBar],
+  imports: [CommonModule, NavigationBar, TranslocoDirective],
 })
 export class ProfileComponent {
   protected readonly auth = inject(AuthService);
   private readonly deckService = inject(DeckService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   decks = signal<Deck[]>([]);
   loading = signal(true);
@@ -33,7 +35,7 @@ export class ProfileComponent {
           this.decks.set(all.filter(d => d.isOwner));
           this.loading.set(false);
         },
-        error: () => { this.error.set('Failed to load decks.'); this.loading.set(false); }
+        error: () => { this.error.set(this.transloco.translate('errors.decksLoadFailed')); this.loading.set(false); }
       });
   }
 

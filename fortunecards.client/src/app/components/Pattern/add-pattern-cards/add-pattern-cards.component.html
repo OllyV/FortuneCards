@@ -1,17 +1,17 @@
-<div class="add-cards-page">
+<div class="add-cards-page" *transloco="let t">
   <navigation-bar>
-    <button class="btn-ghost" (click)="cancel()">✕ Cancel</button>
-    <span class="nav-title-centered">Pattern Questions</span>
+    <button class="btn-ghost" (click)="cancel()">✕ {{ t('common.cancel') }}</button>
+    <span class="nav-title-centered">{{ t('pattern.questionsPageTitle') }}</span>
   </navigation-bar>
 
   <main class="add-cards-content">
     @if (loading()) {
-      <p class="state-muted">Loading…</p>
+      <p class="state-muted">{{ t('common.loading') }}</p>
     } @else {
       <section class="questions-panel">
         <div class="questions-header">
-          <h2>Questions</h2>
-          <button type="button" class="btn-secondary" (click)="addQuestion()">＋ Add question</button>
+          <h2>{{ t('pattern.questionsHeading') }}</h2>
+          <button type="button" class="btn-secondary" (click)="addQuestion()">＋ {{ t('pattern.addQuestionButton') }}</button>
         </div>
 
         @for (card of cards(); track card.id; let i = $index) {
@@ -22,15 +22,15 @@
                    [value]="card.text"
                    (input)="setText(card.id, $any($event.target).value)"
                    maxlength="1000"
-                   placeholder="Question text" />
+                   [placeholder]="t('pattern.questionTextPlaceholder')" />
             <div class="question-actions">
-              <button type="button" (click)="moveUp(i); $event.stopPropagation()" [disabled]="i === 0" aria-label="Move up">▲</button>
-              <button type="button" (click)="moveDown(i); $event.stopPropagation()" [disabled]="i === cards().length - 1" aria-label="Move down">▼</button>
-              <button type="button" class="remove" (click)="removeQuestion(card.id); $event.stopPropagation()" aria-label="Remove">✕</button>
+              <button type="button" (click)="moveUp(i); $event.stopPropagation()" [disabled]="i === 0" [attr.aria-label]="t('pattern.moveUpLabel')">▲</button>
+              <button type="button" (click)="moveDown(i); $event.stopPropagation()" [disabled]="i === cards().length - 1" [attr.aria-label]="t('pattern.moveDownLabel')">▼</button>
+              <button type="button" class="remove" (click)="removeQuestion(card.id); $event.stopPropagation()" [attr.aria-label]="t('pattern.removeLabel')">✕</button>
             </div>
           </div>
         } @empty {
-          <p class="state-muted">No questions yet. Add one to begin.</p>
+          <p class="state-muted">{{ t('pattern.noQuestionsAddOne') }}</p>
         }
       </section>
 
@@ -51,7 +51,7 @@
       @if (error()) { <div class="state-error">{{ error() }}</div> }
 
       <button type="button" class="btn-primary btn-full" [disabled]="saving()" (click)="save()">
-        {{ saving() ? 'Saving…' : '💾 Save pattern' }}
+        {{ saving() ? t('pattern.saving') : ('💾 ' + t('pattern.savePatternButton')) }}
       </button>
     }
   </main>

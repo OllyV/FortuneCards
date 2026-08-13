@@ -7,6 +7,7 @@ import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
 import { DeckService } from '../../../services/deck.service';
 import { AuthService } from '../../../services/auth.service';
 import { Deck, PagedResult } from '../../../models/deck';
+import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 
 const ownedDeck: Deck = {
   id: 1, name: 'Adventure', description: null, createdAt: '2026-01-01', emoji: '🌈', colorIndex: 0,
@@ -29,7 +30,7 @@ function configure(mode: 'mine' | 'search', loggedIn = true) {
     removeFavorite: vi.fn(() => of(void 0)),
   };
   TestBed.configureTestingModule({
-    imports: [DeckListComponent, RouterModule.forRoot([]), NavigationBar],
+    imports: [DeckListComponent, RouterModule.forRoot([]), NavigationBar, getTranslocoTestingModule()],
     providers: [
       provideZonelessChangeDetection(),
       { provide: DeckService, useValue: mockDeckService },

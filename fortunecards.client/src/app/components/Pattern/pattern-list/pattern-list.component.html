@@ -1,13 +1,13 @@
-<div class="page">
+<div class="page" *transloco="let t">
   <navigation-bar>
-    <span class="nav-title-centered">{{ title() }}</span>
+    <span class="nav-title-centered">{{ t(mode() === 'mine' ? 'pattern.myPatternsTitle' : 'pattern.browsePatternsTitle') }} {{ mode() === 'mine' ? '🔮' : '🔍' }}</span>
   </navigation-bar>
 
   <main class="page-content">
     @if (mode() === 'search') {
-      <input class="form-input" type="search" placeholder="Search patterns…" (input)="onSearchInput($event)" />
+      <input class="form-input" type="search" [placeholder]="t('pattern.searchPlaceholder')" (input)="onSearchInput($event)" />
     } @else {
-      <button type="button" class="btn-primary" (click)="goToNew()">＋ New pattern</button>
+      <button type="button" class="btn-primary" (click)="goToNew()">＋ {{ t('pattern.createTitle') }}</button>
     }
 
     @if (loading()) {
@@ -15,7 +15,7 @@
     } @else if (error()) {
       <app-error-state [message]="error()!" (retry)="load()" />
     } @else if (patterns().length === 0) {
-      <p class="state-empty">No patterns yet.</p>
+      <p class="state-empty">{{ t('pattern.emptyState') }}</p>
     } @else {
       <div class="pattern-grid">
         @for (p of patterns(); track p.id) {
@@ -23,10 +23,10 @@
              [style.background]="getGradient(p.colorIndex)" [style.boxShadow]="getShadow(p.colorIndex)">
             <span class="pattern-emoji">{{ p.emoji }}</span>
             <span class="pattern-name">{{ p.name }}</span>
-            <span class="pattern-count">{{ p.cardCount ?? 0 }} questions</span>
+            <span class="pattern-count">{{ t('pattern.questionCount', { n: p.cardCount ?? 0 }) }}</span>
             @if (auth.isLoggedIn() && !p.isOwner) {
               <button type="button" class="fav-btn" [class.fav-btn--on]="p.isFavorite"
-                      (click)="toggleFavorite(p, $event)" aria-label="Toggle favorite">
+                      (click)="toggleFavorite(p, $event)" [attr.aria-label]="t('pattern.toggleFavoriteLabel')">
                 {{ p.isFavorite ? '⭐' : '☆' }}
               </button>
             }

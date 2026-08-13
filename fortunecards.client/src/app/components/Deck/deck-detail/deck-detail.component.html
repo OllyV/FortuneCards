@@ -1,65 +1,67 @@
-<div class="page" *ngIf="deck() as d; else loadingOrError">
-  <navigation-bar>
-    <div class="nav-actions">
-      <button class="nav-back" (click)="goBack()">← Back</button>
-      <span class="nav-sep">/</span>
-      <span class="nav-crumb">{{ d.name }}</span>
-    </div>
-  </navigation-bar>
+<ng-container *transloco="let t">
+  <div class="page" *ngIf="deck() as d; else loadingOrError">
+    <navigation-bar>
+      <div class="nav-actions">
+        <button class="nav-back" (click)="goBack()">← {{ t('common.back') }}</button>
+        <span class="nav-sep">/</span>
+        <span class="nav-crumb">{{ d.name }}</span>
+      </div>
+    </navigation-bar>
 
-  <div class="deck-hero" [style.background]="getDeckGradient()">
-    <div class="hero-left">
-      <span class="hero-emoji">{{ d.emoji }}</span>
-      <div class="hero-info">
-        <h1 class="hero-name">{{ d.name }}</h1>
-        <p class="hero-meta">
-          <span *ngIf="d.description">{{ d.description }} · </span>
-          {{ (d.cards ?? []).length }} card{{ (d.cards ?? []).length === 1 ? '' : 's' }}
-        </p>
+    <div class="deck-hero" [style.background]="getDeckGradient()">
+      <div class="hero-left">
+        <span class="hero-emoji">{{ d.emoji }}</span>
+        <div class="hero-info">
+          <h1 class="hero-name">{{ d.name }}</h1>
+          <p class="hero-meta">
+            <span *ngIf="d.description">{{ d.description }} · </span>
+            {{ t('deck.cardCount', { n: (d.cards ?? []).length }) }}
+          </p>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button *ngIf="auth.isLoggedIn() && !d.isOwner"
+                class="hero-btn hero-fav"
+                [class.is-fav]="d.isFavorite"
+                [attr.aria-pressed]="d.isFavorite"
+                [attr.aria-label]="d.isFavorite ? t('deck.removeFavoriteLabel') : t('deck.addFavoriteLabel')"
+                [style.background]="getDeckGradient()"
+                (click)="toggleFavorite()">{{ d.isFavorite ? ('★ ' + t('deck.favorited')) : ('☆ ' + t('deck.favorite')) }}</button>
+        <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="editDeck()">✏️ {{ t('deck.editDeckButton') }}</button>
+        <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="addCard()">+ {{ t('deck.addCardButton') }}</button>
+        <button class="hero-btn" [style.background]="getDeckGradient()" (click)="drawCard()">🎴 {{ t('deck.drawCardButton') }}</button>
       </div>
     </div>
-    <div class="hero-actions">
-      <button *ngIf="auth.isLoggedIn() && !d.isOwner"
-              class="hero-btn hero-fav"
-              [class.is-fav]="d.isFavorite"
-              [attr.aria-pressed]="d.isFavorite"
-              [attr.aria-label]="d.isFavorite ? 'Remove from favourites' : 'Add to favourites'"
-              [style.background]="getDeckGradient()"
-              (click)="toggleFavorite()">{{ d.isFavorite ? '★ Favourited' : '☆ Favourite' }}</button>
-      <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="editDeck()">✏️ Edit deck</button>
-      <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="addCard()">+ Add Card</button>
-      <button class="hero-btn" [style.background]="getDeckGradient()" (click)="drawCard()">🎴 Draw a Card</button>
-    </div>
+
+    <main class="page-content">
+      <h2 class="section-title">{{ t('deck.cardsInDeck') }}</h2>
+
+      <div class="card-grid">
+        <div *ngIf="d.isOwner" class="card-tile card-tile--add"
+             [style.aspect-ratio]="d.aspectWidth + ' / ' + d.aspectHeight"
+             (click)="addCard()">
+          <div class="card-image card-image--add">+</div>
+        </div>
+
+        <div class="card-tile"
+             *ngFor="let card of (d.cards ?? []); let i = index"
+             [style.aspect-ratio]="d.aspectWidth + ' / ' + d.aspectHeight"
+             [style.border-top-color]="getCardAccent(i)"
+             (click)="openCard(card.id)">
+          <div class="card-image" [style.background]="getCardAccent(i) + '18'">
+            <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.title" loading="lazy" decoding="async" />
+            <span *ngIf="!card.imageUrl" class="card-placeholder">🃏</span>
+          </div>
+          <div class="card-body">
+            <p class="card-title">{{ card.title }}</p>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <main class="page-content">
-    <h2 class="section-title">Cards in this deck</h2>
-
-    <div class="card-grid">
-      <div *ngIf="d.isOwner" class="card-tile card-tile--add"
-           [style.aspect-ratio]="d.aspectWidth + ' / ' + d.aspectHeight"
-           (click)="addCard()">
-        <div class="card-image card-image--add">+</div>
-      </div>
-
-      <div class="card-tile"
-           *ngFor="let card of (d.cards ?? []); let i = index"
-           [style.aspect-ratio]="d.aspectWidth + ' / ' + d.aspectHeight"
-           [style.border-top-color]="getCardAccent(i)"
-           (click)="openCard(card.id)">
-        <div class="card-image" [style.background]="getCardAccent(i) + '18'">
-          <img *ngIf="card.imageUrl" [src]="card.imageUrl" [alt]="card.title" loading="lazy" decoding="async" />
-          <span *ngIf="!card.imageUrl" class="card-placeholder">🃏</span>
-        </div>
-        <div class="card-body">
-          <p class="card-title">{{ card.title }}</p>
-        </div>
-      </div>
-    </div>
-  </main>
-</div>
-
-<ng-template #loadingOrError>
-  <app-skeleton-detail *ngIf="loading()" />
-  <app-error-state *ngIf="error()" [message]="error()!" (retry)="retry()" />
-</ng-template>
+  <ng-template #loadingOrError>
+    <app-skeleton-detail *ngIf="loading()" />
+    <app-error-state *ngIf="error()" [message]="error()!" (retry)="retry()" />
+  </ng-template>
+</ng-container>

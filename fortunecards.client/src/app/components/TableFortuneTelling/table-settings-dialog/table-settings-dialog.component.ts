@@ -1,9 +1,11 @@
 import { Component, input, output } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { TableColor } from '../../../models/table';
 
 @Component({
   selector: 'table-settings-dialog',
   standalone: true,
+  imports: [TranslocoDirective],
   templateUrl: './table-settings-dialog.component.html',
   styleUrl: './table-settings-dialog.component.css',
 })
