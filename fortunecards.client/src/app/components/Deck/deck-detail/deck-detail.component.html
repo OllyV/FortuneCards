@@ -8,30 +8,20 @@
       </div>
     </navigation-bar>
 
-    <div class="deck-hero" [style.background]="getDeckGradient()">
-      <div class="hero-left">
-        <span class="hero-emoji">{{ d.emoji }}</span>
-        <div class="hero-info">
-          <h1 class="hero-name">{{ d.name }}</h1>
-          <p class="hero-meta">
-            <span *ngIf="d.description">{{ d.description }} · </span>
-            {{ t('deck.cardCount', { n: (d.cards ?? []).length }) }}
-          </p>
-        </div>
-      </div>
-      <div class="hero-actions">
-        <button *ngIf="auth.isLoggedIn() && !d.isOwner"
-                class="hero-btn hero-fav"
-                [class.is-fav]="d.isFavorite"
-                [attr.aria-pressed]="d.isFavorite"
-                [attr.aria-label]="d.isFavorite ? t('deck.removeFavoriteLabel') : t('deck.addFavoriteLabel')"
-                [style.background]="getDeckGradient()"
-                (click)="toggleFavorite()">{{ d.isFavorite ? ('★ ' + t('deck.favorited')) : ('☆ ' + t('deck.favorite')) }}</button>
-        <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="editDeck()">✏️ {{ t('deck.editDeckButton') }}</button>
-        <button *ngIf="d.isOwner" class="hero-btn" [style.background]="getDeckGradient()" (click)="addCard()">+ {{ t('deck.addCardButton') }}</button>
-        <button class="hero-btn" [style.background]="getDeckGradient()" (click)="drawCard()">🎴 {{ t('deck.drawCardButton') }}</button>
-      </div>
-    </div>
+    <app-deck-hero
+      [name]="d.name"
+      [emoji]="d.emoji"
+      [description]="d.description"
+      [cardCount]="(d.cards ?? []).length"
+      [colorIndex]="d.colorIndex"
+      [isOwner]="d.isOwner"
+      [isFavorite]="d.isFavorite"
+      [isLoggedIn]="auth.isLoggedIn()"
+      (drawCard)="drawCard()"
+      (editDeck)="editDeck()"
+      (addCard)="addCard()"
+      (toggleFavorite)="toggleFavorite()"
+    ></app-deck-hero>
 
     <main class="page-content">
       <h2 class="section-title">{{ t('deck.cardsInDeck') }}</h2>
