@@ -114,6 +114,7 @@
   "pattern": {
     "myPatternsTitle": "Meine Legungen",
     "browsePatternsTitle": "Legungen durchsuchen",
+    "patternCount": "{{n}} Legungen",
     "searchPlaceholder": "Legungen suchen…",
     "createTitle": "Neue Legung",
     "emptyState": "Noch keine Legungen vorhanden.",

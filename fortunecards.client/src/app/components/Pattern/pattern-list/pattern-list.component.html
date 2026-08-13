@@ -1,9 +1,18 @@
 <div class="page" *transloco="let t">
   <navigation-bar>
-    <span class="nav-title-centered">{{ t(mode() === 'mine' ? 'pattern.myPatternsTitle' : 'pattern.browsePatternsTitle') }} {{ mode() === 'mine' ? '🔮' : '🔍' }}</span>
+    <span class="nav-title">🎴 FortuneCards</span>
   </navigation-bar>
 
   <main class="page-content">
+    <div class="list-header">
+      <h1 class="list-title">{{ t(mode() === 'mine' ? 'pattern.myPatternsTitle' : 'pattern.browsePatternsTitle') }} {{ mode() === 'mine' ? '🔮' : '🔍' }}</h1>
+      @if (!loading()) {
+        <p class="list-subtitle">
+          {{ t('pattern.patternCount', { n: patterns().length }) }}
+        </p>
+      }
+    </div>
+
     @if (mode() === 'search') {
       <input class="form-input" type="search" [placeholder]="t('pattern.searchPlaceholder')" (input)="onSearchInput($event)" />
     } @else {

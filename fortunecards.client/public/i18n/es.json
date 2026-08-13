@@ -114,6 +114,7 @@
   "pattern": {
     "myPatternsTitle": "Mis Tiradas",
     "browsePatternsTitle": "Explorar Tiradas",
+    "patternCount": "{{n}} tiradas",
     "searchPlaceholder": "Buscar tiradas…",
     "createTitle": "Nueva tirada",
     "emptyState": "Todavía no hay tiradas.",

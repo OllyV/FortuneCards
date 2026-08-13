@@ -114,6 +114,7 @@
   "pattern": {
     "myPatternsTitle": "Мої розклади",
     "browsePatternsTitle": "Огляд розкладів",
+    "patternCount": "{{n}} розкладів",
     "searchPlaceholder": "Пошук розкладів…",
     "createTitle": "Новий розклад",
     "emptyState": "Поки немає розкладів.",
