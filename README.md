@@ -37,5 +37,6 @@ The development by days:
 - Day 26: Add pattern detail component.
 - Day 27: Update app loading behavior and appearance.
 - Day 28: Add multi-language UI support (i18n) with Transloco — 7 languages (English, Ukrainian, Russian, Spanish, German, French, Portuguese), runtime language switcher in the menu, auto-detected from the browser and remembered.
+- Day 29: Frontend foxes: Hero components, list-header alignment, and owner-only visibility fix. Add backend tests.
 
 It can: create decks of cards with image and description. Randomly pull out one card. Place cards on table and imitate fortune-telling process.
