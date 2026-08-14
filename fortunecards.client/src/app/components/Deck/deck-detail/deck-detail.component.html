@@ -27,7 +27,7 @@
       <h2 class="section-title">{{ t('deck.cardsInDeck') }}</h2>
 
       <div class="card-grid">
-        <div *ngIf="d.isOwner" class="card-tile card-tile--add"
+        <div *ngIf="d.isOwner && auth.isLoggedIn()" class="card-tile card-tile--add"
              [style.aspect-ratio]="d.aspectWidth + ' / ' + d.aspectHeight"
              (click)="addCard()">
           <div class="card-image card-image--add">+</div>

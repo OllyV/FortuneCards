@@ -18,7 +18,7 @@
               [style.background]="gradient()"
               (click)="toggleFavorite.emit()">{{ isFavorite() ? ('★ ' + t('deck.favorited')) : ('☆ ' + t('deck.favorite')) }}</button>
     }
-    @if (isOwner()) {
+    @if (isOwner() && isLoggedIn()) {
       <button class="hero-btn hero-edit" [style.background]="gradient()" (click)="editDeck.emit()">✏️ {{ t('deck.editDeckButton') }}</button>
       <button class="hero-btn hero-add" [style.background]="gradient()" (click)="addCard.emit()">+ {{ t('deck.addCardButton') }}</button>
     }

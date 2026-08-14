@@ -57,6 +57,13 @@ describe('DeckHeroComponent', () => {
     expect(fixture.nativeElement.querySelector('.hero-fav')).toBeNull();
   });
 
+  it('hides the Edit/Add buttons when flagged owner but not logged in (defense-in-depth)', async () => {
+    await setup({ isOwner: true, isLoggedIn: false });
+    expect(fixture.nativeElement.querySelector('.hero-edit')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.hero-add')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.hero-draw')).not.toBeNull();
+  });
+
   it('logged-in non-owner sees a favourite toggle that emits; no Edit/Add buttons', async () => {
     await setup({ isOwner: false, isLoggedIn: true });
     const fav = vi.fn();
