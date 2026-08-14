@@ -46,7 +46,13 @@ ng test --watch=false   # single run (use for CI / verification)
 
 The frontend test runner is **Vitest** (via the `@angular/build` builder — not Karma/Jasmine). Specs use `describe`/`it`/`expect` plus `vitest` utilities (e.g. `vi.spyOn`), and all spec files compile as one bundle, so a type error in any spec fails the whole run. All components are **standalone** — register them (and any standalone components their templates render, e.g. `NavigationBar`) in `TestBed` via `imports:`, never `declarations:`. Import `CommonModule` only where a component uses `*ngIf`/`*ngFor` (newer components use the `@if`/`@for` control-flow syntax and don't need it).
 
-No backend test project exists; verify the backend with `dotnet build`.
+Backend tests live in `FortuneCards.Server.Tests/` (**xUnit**). They run the services against an **in-memory SQLite** database (real EF query translation) via the `TestDb` harness, which opens a kept-alive connection, calls `EnsureCreated()`, and supplies a `MemoryCache`, an empty `IConfiguration`, and a fake `IImageStorage`. Run them with:
+
+```powershell
+dotnet test FortuneCards.Server.Tests
+```
+
+(A plain `dotnet build`/`dotnet test` also transitively builds the Angular client via the server's SPA `ProjectReference`, which just adds npm-audit build noise — harmless.)
 
 ## Architecture
 
