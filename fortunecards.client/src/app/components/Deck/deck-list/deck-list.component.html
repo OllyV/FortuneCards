@@ -31,6 +31,13 @@
 
     @if (!loading() && !error()) {
       <div class="deck-grid">
+        @if (mode() === 'mine' && auth.isLoggedIn()) {
+        <div class="deck-tile deck-tile--add" (click)="goToNew()">
+          <span class="deck-add-icon">+</span>
+          <span class="deck-add-label">{{ t('deck.createTitle') }}</span>
+        </div>
+        }
+
         @for (deck of decks(); track deck.id) {
         <div class="deck-tile"
              [style.background]="getDeckGradient(deck.colorIndex)"
@@ -60,13 +67,6 @@
           }
           }
 
-        </div>
-        }
-
-        @if (mode() === 'mine' && auth.isLoggedIn()) {
-        <div class="deck-tile deck-tile--add" (click)="goToNew()">
-          <span class="deck-add-icon">+</span>
-          <span class="deck-add-label">{{ t('deck.createTitle') }}</span>
         </div>
         }
 

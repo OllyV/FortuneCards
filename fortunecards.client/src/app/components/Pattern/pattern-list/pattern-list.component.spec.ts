@@ -56,7 +56,7 @@ describe('PatternListComponent (mine)', () => {
 
   it('links each pattern card to its detail page', async () => {
     await setup();
-    const anchor = fixture.nativeElement.querySelector('.pattern-card') as HTMLAnchorElement;
+    const anchor = fixture.nativeElement.querySelector('a.pattern-card') as HTMLAnchorElement;
     expect(anchor.getAttribute('href')).toBe('/patterns/1');
   });
 
