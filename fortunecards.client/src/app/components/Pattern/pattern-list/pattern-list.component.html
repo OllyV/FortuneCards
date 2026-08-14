@@ -15,16 +15,12 @@
 
     @if (mode() === 'search') {
       <input class="form-input" type="search" [placeholder]="t('pattern.searchPlaceholder')" (input)="onSearchInput($event)" />
-    } @else {
-      <button type="button" class="btn-primary" (click)="goToNew()">＋ {{ t('pattern.createTitle') }}</button>
     }
 
     @if (loading()) {
       <app-skeleton-card-grid />
     } @else if (error()) {
       <app-error-state [message]="error()!" (retry)="load()" />
-    } @else if (patterns().length === 0) {
-      <p class="state-empty">{{ t('pattern.emptyState') }}</p>
     } @else {
       <div class="pattern-grid">
         @for (p of patterns(); track p.id) {
@@ -41,10 +37,21 @@
             }
           </a>
         }
+
+        @if (mode() === 'mine' && auth.isLoggedIn()) {
+          <div class="pattern-card pattern-card--add" (click)="goToNew()">
+            <span class="pattern-add-icon">+</span>
+            <span class="pattern-add-label">{{ t('pattern.createTitle') }}</span>
+          </div>
+        }
       </div>
 
-      @if (mode() === 'search') {
+      @if (mode() === 'search' && totalCount() > 0) {
         <app-pagination [page]="page()" [pageSize]="pageSize" [totalCount]="totalCount()" (pageChange)="onPageChange($event)"></app-pagination>
+      }
+
+      @if (patterns().length === 0) {
+        <p class="state-empty">{{ t('pattern.emptyState') }}</p>
       }
     }
   </main>

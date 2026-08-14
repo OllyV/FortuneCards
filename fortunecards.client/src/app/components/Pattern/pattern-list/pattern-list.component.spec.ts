@@ -60,6 +60,15 @@ describe('PatternListComponent (mine)', () => {
     expect(anchor.getAttribute('href')).toBe('/patterns/1');
   });
 
+  it('renders the add tile that navigates to the create page when logged in', async () => {
+    await setup();
+    const addTile = fixture.nativeElement.querySelector('.pattern-card--add') as HTMLElement;
+    expect(addTile).not.toBeNull();
+    const navSpy = vi.spyOn(fixture.componentInstance['router'], 'navigate').mockResolvedValue(true);
+    addTile.click();
+    expect(navSpy).toHaveBeenCalledWith(['/patterns', 'new']);
+  });
+
   it('shows the error state and retries when "Try again" is clicked', async () => {
     const { service } = await setup();
     service.getMyPatterns.mockReturnValueOnce(of([])); // ensure a clean reload result
