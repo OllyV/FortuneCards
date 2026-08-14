@@ -23,13 +23,6 @@
       <app-error-state [message]="error()!" (retry)="load()" />
     } @else {
       <div class="pattern-grid">
-        @if (mode() === 'mine' && auth.isLoggedIn()) {
-          <div class="pattern-card pattern-card--add" (click)="goToNew()">
-            <span class="pattern-add-icon">+</span>
-            <span class="pattern-add-label">{{ t('pattern.createTitle') }}</span>
-          </div>
-        }
-
         @for (p of patterns(); track p.id) {
           <a class="pattern-card" [routerLink]="['/patterns', p.id]"
              [style.background]="getGradient(p.colorIndex)" [style.boxShadow]="getShadow(p.colorIndex)">
@@ -43,6 +36,13 @@
               </button>
             }
           </a>
+        }
+
+        @if (mode() === 'mine' && auth.isLoggedIn()) {
+          <div class="pattern-card pattern-card--add" (click)="goToNew()">
+            <span class="pattern-add-icon">+</span>
+            <span class="pattern-add-label">{{ t('pattern.createTitle') }}</span>
+          </div>
         }
       </div>
 
