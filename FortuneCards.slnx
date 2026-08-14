@@ -3,5 +3,6 @@
     <Build />
     <Deploy />
   </Project>
+  <Project Path="FortuneCards.Server.Tests/FortuneCards.Server.Tests.csproj" />
   <Project Path="FortuneCards.Server/FortuneCards.Server.csproj" />
 </Solution>
