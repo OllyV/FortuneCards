@@ -81,12 +81,12 @@ namespace FortuneCards.Server.Services
                 return cached;
 
             var pattern = await _db.Patterns
-                .Where(p => p.Id == id && (p.IsPublic || p.UserId == userId))
+                .Where(p => p.Id == id && (p.IsPublic || (userId != null && p.UserId == userId)))
                 .Select(p => new PatternDetail(
                     p.Id, p.Name, p.Description, p.CreatedAt,
                     p.Cards.OrderBy(c => c.Order)
                         .Select(c => new PatternCardDto(c.Id, c.Text, c.Order, c.X, c.Y, c.Rotation)),
-                    p.Emoji, p.ColorIndex, p.IsPublic, p.UserId == userId,
+                    p.Emoji, p.ColorIndex, p.IsPublic, userId != null && p.UserId == userId,
                     p.FavoritedBy.Any(f => f.UserId == userId),
                     p.CardSizePercent, p.TableHeightPercent))
                 .FirstOrDefaultAsync();

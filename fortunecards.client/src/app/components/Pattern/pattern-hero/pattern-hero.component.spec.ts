@@ -57,6 +57,12 @@ describe('PatternHeroComponent', () => {
     expect(fixture.nativeElement.querySelector('.hero-fav')).toBeNull();
   });
 
+  it('hides the Edit buttons when flagged owner but not logged in (defense-in-depth)', async () => {
+    await setup({ isOwner: true, isLoggedIn: false });
+    expect(fixture.nativeElement.querySelector('.hero-edit-pattern')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.hero-edit-questions')).toBeNull();
+  });
+
   it('logged-in non-owner sees a favourite toggle that emits; no Edit buttons', async () => {
     await setup({ isOwner: false, isLoggedIn: true });
     const fav = vi.fn();

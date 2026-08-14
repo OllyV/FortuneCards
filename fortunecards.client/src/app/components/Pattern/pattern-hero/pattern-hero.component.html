@@ -11,7 +11,7 @@
   </div>
   <div class="hero-actions">
     <button class="hero-btn hero-use" [style.background]="gradient()" (click)="usePattern.emit()">🔮 {{ t('pattern.usePatternButton') }}</button>
-    @if (isOwner()) {
+    @if (isOwner() && isLoggedIn()) {
       <button class="hero-btn hero-edit-pattern" [style.background]="gradient()" (click)="editPattern.emit()">✏️ {{ t('pattern.editPatternButton') }}</button>
       <button class="hero-btn hero-edit-questions" [style.background]="gradient()" (click)="editQuestions.emit()">📝 {{ t('pattern.editQuestionsButton') }}</button>
     } @else if (isLoggedIn()) {

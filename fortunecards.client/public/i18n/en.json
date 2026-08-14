@@ -114,6 +114,7 @@
   "pattern": {
     "myPatternsTitle": "My Spreads",
     "browsePatternsTitle": "Browse Spreads",
+    "patternCount": "{{n}} spreads",
     "searchPlaceholder": "Search spreads…",
     "createTitle": "New spread",
     "emptyState": "No spreads yet.",

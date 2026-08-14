@@ -114,6 +114,7 @@
   "pattern": {
     "myPatternsTitle": "Мои расклады",
     "browsePatternsTitle": "Обзор раскладов",
+    "patternCount": "{{n}} раскладов",
     "searchPlaceholder": "Поиск раскладов…",
     "createTitle": "Новый расклад",
     "emptyState": "Пока нет раскладов.",

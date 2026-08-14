@@ -94,14 +94,14 @@ namespace FortuneCards.Server.Services
 
             var baseUrl = _imageStorage.PublicBaseUrl;
             var deck = await _db.Decks
-                .Where(d => d.Id == id && (d.IsPublic || d.UserId == userId))
+                .Where(d => d.Id == id && (d.IsPublic || (userId != null && d.UserId == userId)))
                 .Select(d => new DeckDetail(
                     d.Id, d.Name, d.Description, d.CreatedAt,
                     d.Cards.Select(c => new CardDto(c.Id, c.Title, c.Description,
                         baseUrl + "/" + c.ImageKey, c.CreatedAt)),
                     d.Emoji, d.ColorIndex,
                     d.CardBackImageKey == null ? null : baseUrl + "/" + d.CardBackImageKey,
-                    d.IsPublic, d.UserId == userId,
+                    d.IsPublic, userId != null && d.UserId == userId,
                     d.AspectWidth, d.AspectHeight, d.FavoritedBy.Any(f => f.UserId == userId)))
                 .FirstOrDefaultAsync();
 

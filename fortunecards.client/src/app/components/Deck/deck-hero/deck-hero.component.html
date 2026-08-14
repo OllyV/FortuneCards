@@ -1,0 +1,27 @@
+<div class="deck-hero" [style.background]="gradient()" *transloco="let t">
+  <div class="hero-left">
+    <span class="hero-emoji">{{ emoji() }}</span>
+    <div class="hero-info">
+      <h1 class="hero-name">{{ name() }}</h1>
+      <p class="hero-meta">
+        @if (description()) { <span>{{ description() }} · </span> }
+        {{ t('deck.cardCount', { n: cardCount() }) }}
+      </p>
+    </div>
+  </div>
+  <div class="hero-actions">
+    @if (isLoggedIn() && !isOwner()) {
+      <button class="hero-btn hero-fav"
+              [class.is-fav]="isFavorite()"
+              [attr.aria-pressed]="isFavorite()"
+              [attr.aria-label]="isFavorite() ? t('deck.removeFavoriteLabel') : t('deck.addFavoriteLabel')"
+              [style.background]="gradient()"
+              (click)="toggleFavorite.emit()">{{ isFavorite() ? ('★ ' + t('deck.favorited')) : ('☆ ' + t('deck.favorite')) }}</button>
+    }
+    @if (isOwner() && isLoggedIn()) {
+      <button class="hero-btn hero-edit" [style.background]="gradient()" (click)="editDeck.emit()">✏️ {{ t('deck.editDeckButton') }}</button>
+      <button class="hero-btn hero-add" [style.background]="gradient()" (click)="addCard.emit()">+ {{ t('deck.addCardButton') }}</button>
+    }
+    <button class="hero-btn hero-draw" [style.background]="gradient()" (click)="drawCard.emit()">🎴 {{ t('deck.drawCardButton') }}</button>
+  </div>
+</div>

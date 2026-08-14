@@ -114,6 +114,7 @@
   "pattern": {
     "myPatternsTitle": "Minhas tiragens",
     "browsePatternsTitle": "Explorar tiragens",
+    "patternCount": "{{n}} tiragens",
     "searchPlaceholder": "Pesquisar tiragens…",
     "createTitle": "Nova tiragem",
     "emptyState": "Ainda não há tiragens.",

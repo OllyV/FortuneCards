@@ -40,7 +40,7 @@
         [tableHeightPercent]="p.tableHeightPercent ?? 60"
       ></app-pattern-table-view>
 
-      <button *ngIf="p.isOwner" class="btn-primary btn-full edit-cta" (click)="editQuestions()">
+      <button *ngIf="p.isOwner && auth.isLoggedIn()" class="btn-primary btn-full edit-cta" (click)="editQuestions()">
         📝 {{ t('pattern.editQuestionsLayoutButton') }}
       </button>
     </main>

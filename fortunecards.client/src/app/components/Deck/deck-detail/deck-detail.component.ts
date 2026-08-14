@@ -4,19 +4,20 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
+import { DeckHeroComponent } from '../deck-hero/deck-hero.component';
 import { SkeletonDetailComponent } from '../../shared/skeleton/skeleton-detail.component';
 import { ErrorStateComponent } from '../../shared/error-state/error-state.component';
 import { Deck } from '../../../models/deck';
 import { DeckService } from '../../../services/deck.service';
 import { AuthService } from '../../../services/auth.service';
-import { getDeckGradientStyle, getDeckShadowStyle, getCardAccentColor } from '../../../utils/deck-colors';
+import { getCardAccentColor } from '../../../utils/deck-colors';
 
 @Component({
   selector: 'app-deck-detail',
   templateUrl: './deck-detail.component.html',
   styleUrls: ['./deck-detail.component.css'],
   standalone: true,
-  imports: [CommonModule, NavigationBar, SkeletonDetailComponent, ErrorStateComponent, TranslocoDirective]
+  imports: [CommonModule, NavigationBar, DeckHeroComponent, SkeletonDetailComponent, ErrorStateComponent, TranslocoDirective]
 })
 export class DeckDetailComponent implements OnInit {
   deck = signal<Deck | null>(null);
@@ -54,14 +55,6 @@ export class DeckDetailComponent implements OnInit {
 
   retry(): void {
     this.load(this.currentId);
-  }
-
-  getDeckGradient(): string {
-    return getDeckGradientStyle(this.deck()?.colorIndex ?? 0);
-  }
-
-  getDeckShadow(): string {
-    return getDeckShadowStyle(this.deck()?.colorIndex ?? 0);
   }
 
   getCardAccent(index: number): string {

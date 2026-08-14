@@ -26,7 +26,7 @@ describe('PatternDetailComponent', () => {
   let fixture: ComponentFixture<PatternDetailComponent>;
   let service: { getPattern: any; addFavorite: any; removeFavorite: any };
 
-  async function setup(getPattern = of(mockPattern)): Promise<void> {
+  async function setup(getPattern = of(mockPattern), isLoggedIn = true): Promise<void> {
     service = {
       getPattern: vi.fn(() => getPattern),
       addFavorite: vi.fn(() => of(void 0)),
@@ -39,7 +39,7 @@ describe('PatternDetailComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: ActivatedRoute, useValue: { params: of({ id: '1' }) } },
-        { provide: AuthService, useValue: { isLoggedIn: () => true, currentUser: signal({ id: 2, displayName: 'U', email: 'u@e.com', avatarUrl: null }) } },
+        { provide: AuthService, useValue: { isLoggedIn: () => isLoggedIn, currentUser: signal({ id: 2, displayName: 'U', email: 'u@e.com', avatarUrl: null }) } },
         { provide: PatternService, useValue: service },
       ],
     }).compileComponents();
@@ -76,6 +76,11 @@ describe('PatternDetailComponent', () => {
 
   it('hides the page-end Edit button for a non-owner', async () => {
     await setup(of({ ...mockPattern, isOwner: false }));
+    expect(fixture.nativeElement.querySelector('.edit-cta')).toBeNull();
+  });
+
+  it('hides the page-end Edit button when flagged owner but not logged in (defense-in-depth)', async () => {
+    await setup(of({ ...mockPattern, isOwner: true }), false);
     expect(fixture.nativeElement.querySelector('.edit-cta')).toBeNull();
   });
 
