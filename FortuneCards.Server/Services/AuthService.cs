@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using FortuneCards.Server.Data;
 using FortuneCards.Server.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,10 +13,14 @@ namespace FortuneCards.Server.Services
     {
         private readonly FortuneCardsDbContext _db;
         private readonly string _jwtSecret;
+        private readonly IImageStorage _imageStorage;
 
-        public AuthService(FortuneCardsDbContext db, IConfiguration configuration)
+        public const int MaxNicknameLength = 50;
+
+        public AuthService(FortuneCardsDbContext db, IConfiguration configuration, IImageStorage imageStorage)
         {
             _db = db;
+            _imageStorage = imageStorage;
             _jwtSecret = configuration["Jwt:Secret"]
                 ?? throw new InvalidOperationException("Jwt:Secret is not configured.");
         }
@@ -80,6 +85,29 @@ namespace FortuneCards.Server.Services
                 user.DisplayName = displayName;
                 user.AvatarUrl = avatarUrl;
             }
+            await _db.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<User?> UpdateProfileAsync(int userId, string? nickname, IFormFile? photo)
+        {
+            var trimmed = nickname?.Trim();
+            if (trimmed is { Length: > MaxNicknameLength })
+                throw new ArgumentException(
+                    $"Nickname must be {MaxNicknameLength} characters or fewer.", nameof(nickname));
+
+            var user = await _db.Users.FindAsync(userId);
+            if (user is null) return null;
+
+            user.Nickname = string.IsNullOrEmpty(trimmed) ? null : trimmed;
+
+            if (photo is { Length: > 0 })
+            {
+                if (!string.IsNullOrEmpty(user.AvatarImageKey))
+                    await _imageStorage.DeleteAsync(user.AvatarImageKey);
+                user.AvatarImageKey = await _imageStorage.SaveAsync(photo);
+            }
+
             await _db.SaveChangesAsync();
             return user;
         }

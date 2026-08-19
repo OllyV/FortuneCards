@@ -49,6 +49,18 @@ public sealed class TestDb : IDisposable
 
     public PatternService NewPatternService() => new(Db, Cache, Config);
 
+    public FakeImageStorage Images { get; } = new();
+
+    public AuthService NewAuthService() => new(Db, AuthConfig(), Images);
+
+    private static IConfiguration AuthConfig() =>
+        new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Jwt:Secret"] = "test-secret-that-is-long-enough-0123456789",
+            })
+            .Build();
+
     public User AddUser(int id, string name = "Owner")
     {
         var user = new User
@@ -86,11 +98,17 @@ public sealed class TestDb : IDisposable
     }
 }
 
-/// <summary>Minimal <see cref="IImageStorage"/> stand-in — DeckService only reads PublicBaseUrl in the paths under test.</summary>
-internal sealed class FakeImageStorage : IImageStorage
+/// <summary>Tracking <see cref="IImageStorage"/> stand-in for service tests.</summary>
+public sealed class FakeImageStorage : IImageStorage
 {
+    public List<string> Deleted { get; } = new();
+    public int SaveCount { get; private set; }
     public string PublicBaseUrl => "https://images.test";
-    public Task<string> SaveAsync(IFormFile file) => Task.FromResult("test-key.png");
-    public Task DeleteAsync(string key) => Task.CompletedTask;
+    public Task<string> SaveAsync(IFormFile file) => Task.FromResult($"saved-{++SaveCount}.png");
+    public Task DeleteAsync(string key)
+    {
+        if (!string.IsNullOrEmpty(key)) Deleted.Add(key);
+        return Task.CompletedTask;
+    }
     public string? PublicUrl(string? key) => string.IsNullOrEmpty(key) ? null : $"{PublicBaseUrl}/{key}";
 }
