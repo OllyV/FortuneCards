@@ -217,7 +217,15 @@
     "accountDeleteDesc": "Supprime votre compte et tous les jeux privés. Les jeux publics sont conservés comme jeux communautaires.",
     "deletingButton": "Suppression…",
     "deleteAccountButton": "Supprimer le compte",
-    "accountDeleteConfirm": "Supprimer votre compte ? Cela supprime tous les jeux privés. Les jeux publics sont conservés comme jeux communautaires. Cette action est irréversible."
+    "accountDeleteConfirm": "Supprimer votre compte ? Cela supprime tous les jeux privés. Les jeux publics sont conservés comme jeux communautaires. Cette action est irréversible.",
+    "profileSectionLabel": "Profile",
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "Choose a nickname",
+    "photoLabel": "Profile Photo",
+    "choosePhotoButton": "Choose Photo",
+    "savingButton": "Saving…",
+    "profileSavedMessage": "Profile saved.",
+    "profilePhotoAlt": "Profile photo"
   },
   "errors": {
     "deckCreateFailed": "Échec de la création du jeu.",

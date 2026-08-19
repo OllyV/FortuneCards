@@ -217,7 +217,15 @@
     "accountDeleteDesc": "Exclui sua conta e todos os baralhos privados. Baralhos públicos são mantidos como baralhos da comunidade.",
     "deletingButton": "Excluindo…",
     "deleteAccountButton": "Excluir Conta",
-    "accountDeleteConfirm": "Excluir sua conta? Isso remove todos os baralhos privados. Baralhos públicos são mantidos como baralhos da comunidade. Isso não pode ser desfeito."
+    "accountDeleteConfirm": "Excluir sua conta? Isso remove todos os baralhos privados. Baralhos públicos são mantidos como baralhos da comunidade. Isso não pode ser desfeito.",
+    "profileSectionLabel": "Profile",
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "Choose a nickname",
+    "photoLabel": "Profile Photo",
+    "choosePhotoButton": "Choose Photo",
+    "savingButton": "Saving…",
+    "profileSavedMessage": "Profile saved.",
+    "profilePhotoAlt": "Profile photo"
   },
   "errors": {
     "deckCreateFailed": "Falha ao criar o baralho.",

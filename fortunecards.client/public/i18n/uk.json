@@ -217,7 +217,15 @@
     "accountDeleteDesc": "Видаляє ваш обліковий запис і всі приватні колоди. Публічні колоди залишаються як колоди спільноти.",
     "deletingButton": "Видалення…",
     "deleteAccountButton": "Видалити обліковий запис",
-    "accountDeleteConfirm": "Видалити ваш обліковий запис? Це видалить усі приватні колоди. Публічні колоди залишаться як колоди спільноти. Це неможливо скасувати."
+    "accountDeleteConfirm": "Видалити ваш обліковий запис? Це видалить усі приватні колоди. Публічні колоди залишаться як колоди спільноти. Це неможливо скасувати.",
+    "profileSectionLabel": "Profile",
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "Choose a nickname",
+    "photoLabel": "Profile Photo",
+    "choosePhotoButton": "Choose Photo",
+    "savingButton": "Saving…",
+    "profileSavedMessage": "Profile saved.",
+    "profilePhotoAlt": "Profile photo"
   },
   "errors": {
     "deckCreateFailed": "Не вдалося створити колоду.",
