@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../services/auth.service';
+import { UserDto } from '../../models/user';
 import { NavigationBar } from '../../components/Navigation/navigation-bar/navigation-bar';
 
 @Component({
@@ -22,11 +23,46 @@ export class AccountSettingsComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly transloco = inject(TranslocoService);
 
-  displayName = signal(this.auth.currentUser()?.displayName ?? '');
+  nickname = signal(this.auth.currentUser()?.nickname ?? '');
+  photoFile = signal<File | null>(null);
+  photoPreview = signal<string | null>(this.auth.currentUser()?.avatarUrl ?? null);
   saving = signal(false);
   saveSuccess = signal(false);
   saveError = signal<string | null>(null);
   deleting = signal(false);
+
+  onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    this.photoFile.set(file);
+    if (file) this.photoPreview.set(URL.createObjectURL(file));
+  }
+
+  save(): void {
+    this.saving.set(true);
+    this.saveSuccess.set(false);
+    this.saveError.set(null);
+
+    const form = new FormData();
+    form.append('Nickname', this.nickname().trim());
+    const file = this.photoFile();
+    if (file) form.append('Photo', file);
+
+    this.http.patch<UserDto>('/api/auth/profile', form)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: async () => {
+          await this.auth.loadCurrentUser();
+          this.photoFile.set(null);
+          this.saving.set(false);
+          this.saveSuccess.set(true);
+        },
+        error: () => {
+          this.saving.set(false);
+          this.saveError.set(this.transloco.translate('errors.saveFailed'));
+        },
+      });
+  }
 
   goBack(): void {
     this.router.navigate(['/profile']);
