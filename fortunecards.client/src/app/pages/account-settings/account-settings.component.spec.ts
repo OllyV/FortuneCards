@@ -49,6 +49,17 @@ describe('AccountSettingsComponent', () => {
     expect(comp.saving()).toBe(false);
   });
 
+  it('save() appends the selected photo to the FormData', async () => {
+    const { comp, http } = setup(() => of({ id: 1, nickname: 'Nick' }));
+    comp.photoFile.set(new File(['x'], 'p.png', { type: 'image/png' }));
+    comp.save();
+    await new Promise((r) => setTimeout(r));
+
+    const form = http.patch.mock.calls[0][1] as FormData;
+    expect(form.get('Photo')).toBeTruthy();
+    expect(form.get('Photo')).toBeInstanceOf(File);
+  });
+
   it('save() surfaces an error on failure', async () => {
     const { comp } = setup(() => throwError(() => new Error('boom')));
     comp.save();

@@ -54,6 +54,33 @@ public class AuthServiceTests
     }
 
     [Fact]
+    public async Task Nickname_of_exactly_50_chars_is_accepted()
+    {
+        using var h = new TestDb();
+        h.AddUser(UserId);
+        var maxLength = new string('x', 50);
+
+        var user = await h.NewAuthService().UpdateProfileAsync(UserId, maxLength, null);
+
+        Assert.NotNull(user);
+        Assert.Equal(maxLength, user!.Nickname);
+    }
+
+    [Fact]
+    public async Task UpdateProfileAsync_leaves_avatar_url_untouched()
+    {
+        using var h = new TestDb();
+        var seeded = h.AddUser(UserId);
+        seeded.AvatarUrl = "https://google.example/avatar.png";
+        h.Db.SaveChanges();
+
+        var user = await h.NewAuthService().UpdateProfileAsync(UserId, "Nick", null);
+
+        Assert.NotNull(user);
+        Assert.Equal("https://google.example/avatar.png", user!.AvatarUrl);
+    }
+
+    [Fact]
     public async Task Uploading_photo_sets_avatar_key()
     {
         using var h = new TestDb();

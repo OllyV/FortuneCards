@@ -31,11 +31,18 @@ export class AccountSettingsComponent {
   saveError = signal<string | null>(null);
   deleting = signal(false);
 
+  private lastObjectUrl: string | null = null;
+
   onPhotoSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     this.photoFile.set(file);
-    if (file) this.photoPreview.set(URL.createObjectURL(file));
+    if (file) {
+      if (this.lastObjectUrl) URL.revokeObjectURL(this.lastObjectUrl);
+      const url = URL.createObjectURL(file);
+      this.photoPreview.set(url);
+      this.lastObjectUrl = url;
+    }
   }
 
   save(): void {
@@ -53,6 +60,11 @@ export class AccountSettingsComponent {
       .subscribe({
         next: async () => {
           await this.auth.loadCurrentUser();
+          if (this.lastObjectUrl) {
+            URL.revokeObjectURL(this.lastObjectUrl);
+            this.lastObjectUrl = null;
+          }
+          this.photoPreview.set(this.auth.currentUser()?.avatarUrl ?? null);
           this.photoFile.set(null);
           this.saving.set(false);
           this.saveSuccess.set(true);
