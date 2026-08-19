@@ -145,10 +145,10 @@
 .text-input {
   width: 100%;
   box-sizing: border-box;
-  background: #1e1e1e;
-  border: 1px solid #444;
+  background: none;
+  border: 1px solid #000;
   border-radius: 6px;
-  color: #eee;
+  color: #ccc;
   padding: 9px 12px;
   font-size: 14px;
   margin-bottom: 14px;
