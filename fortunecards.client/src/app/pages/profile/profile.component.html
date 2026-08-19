@@ -6,9 +6,15 @@
 <main class="profile-page">
   @if (auth.currentUser(); as user) {
     <section class="profile-header">
-      <div class="profile-avatar">{{ user.displayName[0] }}</div>
+      <div class="profile-avatar">
+        @if (user.avatarUrl) {
+          <img class="profile-avatar-img" [src]="user.avatarUrl" [alt]="user.nickname || user.displayName" />
+        } @else {
+          {{ (user.nickname || user.displayName)[0] }}
+        }
+      </div>
       <div class="profile-info">
-        <h1>{{ user.displayName }}</h1>
+        <h1>{{ user.nickname || user.displayName }}</h1>
         <p class="profile-email">{{ user.email }}</p>
         <button class="settings-link" (click)="goToSettings()">{{ t('pages.accountSettingsLink') }} →</button>
       </div>

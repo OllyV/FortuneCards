@@ -217,7 +217,15 @@
     "accountDeleteDesc": "Elimina tu cuenta y todos los mazos privados. Los mazos públicos se conservan como mazos de la comunidad.",
     "deletingButton": "Eliminando…",
     "deleteAccountButton": "Eliminar cuenta",
-    "accountDeleteConfirm": "¿Eliminar tu cuenta? Esto elimina todos los mazos privados. Los mazos públicos se conservan como mazos de la comunidad. Esta acción no se puede deshacer."
+    "accountDeleteConfirm": "¿Eliminar tu cuenta? Esto elimina todos los mazos privados. Los mazos públicos se conservan como mazos de la comunidad. Esta acción no se puede deshacer.",
+    "profileSectionLabel": "Profile",
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "Choose a nickname",
+    "photoLabel": "Profile Photo",
+    "choosePhotoButton": "Choose Photo",
+    "savingButton": "Saving…",
+    "profileSavedMessage": "Profile saved.",
+    "profilePhotoAlt": "Profile photo"
   },
   "errors": {
     "deckCreateFailed": "Error al crear el mazo.",

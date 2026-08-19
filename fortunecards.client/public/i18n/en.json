@@ -217,7 +217,15 @@
     "accountDeleteDesc": "Deletes your account and all private decks. Public decks are kept as community decks.",
     "deletingButton": "Deleting…",
     "deleteAccountButton": "Delete Account",
-    "accountDeleteConfirm": "Delete your account? This removes all private decks. Public decks are kept as community decks. This cannot be undone."
+    "accountDeleteConfirm": "Delete your account? This removes all private decks. Public decks are kept as community decks. This cannot be undone.",
+    "profileSectionLabel": "Profile",
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "Choose a nickname",
+    "photoLabel": "Profile Photo",
+    "choosePhotoButton": "Choose Photo",
+    "savingButton": "Saving…",
+    "profileSavedMessage": "Profile saved.",
+    "profilePhotoAlt": "Profile photo"
   },
   "errors": {
     "deckCreateFailed": "Failed to create deck.",

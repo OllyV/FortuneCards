@@ -36,4 +36,32 @@ describe('ProfileComponent', () => {
     expect(svc.getMyDecks).toHaveBeenCalled();
     expect(fixture.componentInstance.decks().map((d) => d.id)).toEqual([1]);
   });
+
+  function renderWithUser(user: any) {
+    const svc = { getMyDecks: vi.fn(() => of([])) };
+    TestBed.configureTestingModule({
+      imports: [ProfileComponent, RouterModule.forRoot([]), NavigationBar, getTranslocoTestingModule()],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: DeckService, useValue: svc },
+        { provide: AuthService, useValue: { isLoggedIn: signal(true), currentUser: signal(user) } },
+      ],
+    });
+    const fixture = TestBed.createComponent(ProfileComponent);
+    fixture.detectChanges();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('renders the avatar image when avatarUrl is set', () => {
+    const el = renderWithUser({ displayName: 'Goog', email: 't@e.com', nickname: null, avatarUrl: 'https://img/x.png' });
+    const img = el.querySelector('.profile-avatar-img') as HTMLImageElement | null;
+    expect(img).not.toBeNull();
+    expect(img!.src).toContain('https://img/x.png');
+  });
+
+  it('shows the nickname over the display name', () => {
+    const el = renderWithUser({ displayName: 'Goog', email: 't@e.com', nickname: 'Nick', avatarUrl: null });
+    expect(el.querySelector('h1')!.textContent).toContain('Nick');
+    expect(el.querySelector('.profile-avatar-img')).toBeNull(); // letter fallback
+  });
 });

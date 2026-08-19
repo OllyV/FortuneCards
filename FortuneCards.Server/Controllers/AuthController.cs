@@ -1,4 +1,5 @@
 using System.Text.Json;
+using FortuneCards.Server.Models;
 using FortuneCards.Server.Services;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Mvc;
@@ -85,7 +86,9 @@ namespace FortuneCards.Server.Controllers
         }
 
         [HttpGet("me")]
-        public async Task<IActionResult> Me([FromServices] Data.FortuneCardsDbContext db)
+        public async Task<IActionResult> Me(
+            [FromServices] Data.FortuneCardsDbContext db,
+            [FromServices] IImageStorage storage)
         {
             if (HttpContext.Items["UserId"] is not int userId)
                 return Unauthorized();
@@ -93,7 +96,30 @@ namespace FortuneCards.Server.Controllers
             var user = await db.Users.FindAsync(userId);
             if (user is null) return Unauthorized();
 
-            return Ok(new { id = user.Id, email = user.Email, displayName = user.DisplayName, avatarUrl = user.AvatarUrl });
+            return Ok(ToUserDto(user, storage));
+        }
+
+        [HttpPatch("profile")]
+        public async Task<IActionResult> UpdateProfile(
+            [FromForm] UpdateProfileRequest request,
+            [FromServices] IImageStorage storage)
+        {
+            if (HttpContext.Items["UserId"] is not int userId)
+                return Unauthorized();
+
+            User? user;
+            try
+            {
+                user = await _auth.UpdateProfileAsync(userId, request.Nickname, request.Photo);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+
+            if (user is null) return Unauthorized();
+
+            return Ok(ToUserDto(user, storage));
         }
 
         [HttpPost("logout")]
@@ -133,6 +159,15 @@ namespace FortuneCards.Server.Controllers
             return Ok();
         }
 
+        private static object ToUserDto(User user, IImageStorage storage) => new
+        {
+            id = user.Id,
+            email = user.Email,
+            displayName = user.DisplayName,
+            nickname = user.Nickname,
+            avatarUrl = storage.PublicUrl(user.AvatarImageKey) ?? user.AvatarUrl,
+        };
+
         private async Task<string> ExchangeCodeForIdToken(string code)
         {
             var response = await _httpClient.PostAsync("https://oauth2.googleapis.com/token",
@@ -149,5 +184,11 @@ namespace FortuneCards.Server.Controllers
             var doc = JsonDocument.Parse(json);
             return doc.RootElement.GetProperty("id_token").GetString()!;
         }
+    }
+
+    public class UpdateProfileRequest
+    {
+        public string? Nickname { get; set; }
+        public IFormFile? Photo { get; set; }
     }
 }

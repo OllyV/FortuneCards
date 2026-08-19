@@ -217,7 +217,15 @@
     "accountDeleteDesc": "Löscht dein Konto und alle privaten Decks. Öffentliche Decks bleiben als Community-Decks erhalten.",
     "deletingButton": "Wird gelöscht…",
     "deleteAccountButton": "Konto löschen",
-    "accountDeleteConfirm": "Dein Konto löschen? Dadurch werden alle privaten Decks entfernt. Öffentliche Decks bleiben als Community-Decks erhalten. Dies kann nicht rückgängig gemacht werden."
+    "accountDeleteConfirm": "Dein Konto löschen? Dadurch werden alle privaten Decks entfernt. Öffentliche Decks bleiben als Community-Decks erhalten. Dies kann nicht rückgängig gemacht werden.",
+    "profileSectionLabel": "Profile",
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "Choose a nickname",
+    "photoLabel": "Profile Photo",
+    "choosePhotoButton": "Choose Photo",
+    "savingButton": "Saving…",
+    "profileSavedMessage": "Profile saved.",
+    "profilePhotoAlt": "Profile photo"
   },
   "errors": {
     "deckCreateFailed": "Deck konnte nicht erstellt werden.",

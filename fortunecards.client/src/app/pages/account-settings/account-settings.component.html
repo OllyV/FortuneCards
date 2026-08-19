@@ -9,6 +9,46 @@
 
   @if (auth.currentUser(); as user) {
     <section class="settings-section">
+      <div class="settings-label">{{ t('pages.profileSectionLabel') }}</div>
+
+      <label class="field-label">{{ t('pages.photoLabel') }}</label>
+      <div class="profile-photo-row">
+        <div class="settings-avatar">
+          @if (photoPreview()) {
+            <img class="settings-avatar-img" [src]="photoPreview()" [alt]="t('pages.profilePhotoAlt')" />
+          } @else {
+            {{ (nickname() || user.displayName)[0] }}
+          }
+        </div>
+        <label class="choose-photo-btn">
+          {{ t('pages.choosePhotoButton') }}
+          <input type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden />
+        </label>
+      </div>
+
+      <label class="field-label" for="nickname">{{ t('pages.nicknameLabel') }}</label>
+      <input
+        id="nickname"
+        class="text-input"
+        type="text"
+        maxlength="50"
+        [placeholder]="t('pages.nicknamePlaceholder')"
+        [ngModel]="nickname()"
+        (ngModelChange)="nickname.set($event)" />
+
+      @if (saveError()) {
+        <p class="save-error">{{ saveError() }}</p>
+      }
+      @if (saveSuccess()) {
+        <p class="save-success">{{ t('pages.profileSavedMessage') }}</p>
+      }
+
+      <button class="save-profile-btn" (click)="save()" [disabled]="saving()">
+        {{ saving() ? t('pages.savingButton') : t('common.save') }}
+      </button>
+    </section>
+
+    <section class="settings-section">
       <div class="settings-label">{{ t('pages.connectedAccountLabel') }}</div>
       <div class="settings-google-row">
         <span class="google-badge">{{ t('pages.connectedAccountBadge') }}</span>
