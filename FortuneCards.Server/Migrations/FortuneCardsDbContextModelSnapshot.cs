@@ -58,6 +58,51 @@ namespace FortuneCards.Server.Migrations
                     b.ToTable("Cards");
                 });
 
+            modelBuilder.Entity("FortuneCards.Server.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("EditedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("ParentCommentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TargetId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TargetType")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentCommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("TargetType", "TargetId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("FortuneCards.Server.Models.Deck", b =>
                 {
                     b.Property<int>("Id")
@@ -153,6 +198,43 @@ namespace FortuneCards.Server.Migrations
                     b.HasIndex("PatternId");
 
                     b.ToTable("FavoritePatterns");
+                });
+
+            modelBuilder.Entity("FortuneCards.Server.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ActorUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CommentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("RecipientUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActorUserId");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("RecipientUserId", "IsRead");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("FortuneCards.Server.Models.Pattern", b =>
@@ -312,6 +394,23 @@ namespace FortuneCards.Server.Migrations
                     b.Navigation("Deck");
                 });
 
+            modelBuilder.Entity("FortuneCards.Server.Models.Comment", b =>
+                {
+                    b.HasOne("FortuneCards.Server.Models.Comment", "ParentComment")
+                        .WithMany("Replies")
+                        .HasForeignKey("ParentCommentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FortuneCards.Server.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ParentComment");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FortuneCards.Server.Models.Deck", b =>
                 {
                     b.HasOne("FortuneCards.Server.Models.User", "User")
@@ -360,6 +459,32 @@ namespace FortuneCards.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FortuneCards.Server.Models.Notification", b =>
+                {
+                    b.HasOne("FortuneCards.Server.Models.User", "ActorUser")
+                        .WithMany()
+                        .HasForeignKey("ActorUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("FortuneCards.Server.Models.Comment", "Comment")
+                        .WithMany()
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FortuneCards.Server.Models.User", "RecipientUser")
+                        .WithMany()
+                        .HasForeignKey("RecipientUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ActorUser");
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("RecipientUser");
+                });
+
             modelBuilder.Entity("FortuneCards.Server.Models.Pattern", b =>
                 {
                     b.HasOne("FortuneCards.Server.Models.User", "User")
@@ -379,6 +504,11 @@ namespace FortuneCards.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Pattern");
+                });
+
+            modelBuilder.Entity("FortuneCards.Server.Models.Comment", b =>
+                {
+                    b.Navigation("Replies");
                 });
 
             modelBuilder.Entity("FortuneCards.Server.Models.Deck", b =>
