@@ -30,6 +30,7 @@ namespace FortuneCards.Server.Services
             await _imageStorage.DeleteAsync(card.ImageKey);
 
             var deckId = card.DeckId;
+            await RemoveCommentsForCardAsync(id);
             _db.Cards.Remove(card);
             await _db.SaveChangesAsync();
 
@@ -37,6 +38,18 @@ namespace FortuneCards.Server.Services
             _cache.Remove(DeckKey(deckId));
 
             return true;
+        }
+
+        private async Task RemoveCommentsForCardAsync(int cardId)
+        {
+            var comments = await _db.Comments
+                .Where(c => c.TargetType == Models.CommentTargetType.Card && c.TargetId == cardId)
+                .ToListAsync();
+            if (comments.Count == 0) return;
+            var commentIds = comments.Select(c => c.Id).ToList();
+            var notifs = await _db.Notifications.Where(n => commentIds.Contains(n.CommentId)).ToListAsync();
+            _db.Notifications.RemoveRange(notifs);
+            _db.Comments.RemoveRange(comments);
         }
 
         public async Task<CardDto?> UpdateAsync(int cardId, string? title, string? description, IFormFile? image, int userId)

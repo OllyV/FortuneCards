@@ -265,4 +265,42 @@ public class CommentServiceTests
         Assert.False(ok);
         Assert.False(await h.Db.Comments.Where(c => c.Id == 1).Select(c => c.IsDeleted).SingleAsync());
     }
+
+    [Fact]
+    public async Task Deleting_deck_removes_its_and_its_cards_comments_and_notifications()
+    {
+        using var h = new TestDb();
+        h.AddUser(2, "Owner");
+        h.AddUser(3, "Visitor");
+        h.AddDeck(5, userId: 2, isPublic: true);
+        h.AddCard(9, deckId: 5);
+        // A comment on the deck (by visitor → notifies owner) and one on the card.
+        await h.NewCommentService().CreateAsync(CommentTargetType.Deck, 5, null, "on deck", userId: 3);
+        await h.NewCommentService().CreateAsync(CommentTargetType.Card, 9, null, "on card", userId: 3);
+        Assert.Equal(2, await h.Db.Comments.CountAsync());
+        Assert.Equal(2, await h.Db.Notifications.CountAsync());
+
+        var ok = await h.NewDeckService().DeleteAsync(5, userId: 2);
+
+        Assert.True(ok);
+        Assert.Equal(0, await h.Db.Comments.CountAsync());
+        Assert.Equal(0, await h.Db.Notifications.CountAsync());
+    }
+
+    [Fact]
+    public async Task Deleting_pattern_removes_its_comments()
+    {
+        using var h = new TestDb();
+        h.AddUser(2, "Owner");
+        h.AddUser(3, "Visitor");
+        h.AddPattern(7, userId: 2, isPublic: true);
+        await h.NewCommentService().CreateAsync(CommentTargetType.Pattern, 7, null, "nice spread", userId: 3);
+        Assert.Equal(1, await h.Db.Comments.CountAsync());
+
+        var ok = await h.NewPatternService().DeleteAsync(7, userId: 2);
+
+        Assert.True(ok);
+        Assert.Equal(0, await h.Db.Comments.CountAsync());
+        Assert.Equal(0, await h.Db.Notifications.CountAsync());
+    }
 }

@@ -147,12 +147,27 @@ namespace FortuneCards.Server.Services
             if (deck.CardBackImageKey is not null)
                 await _imageStorage.DeleteAsync(deck.CardBackImageKey);
 
+            await RemoveCommentsForDeckAsync(id);
             _db.Decks.Remove(deck);
             await _db.SaveChangesAsync();
             PublicDeckCache.Bump(_cache);
             _cache.Remove(DeckKey(id));
             _cache.Remove(MineKey(userId));
             return true;
+        }
+
+        private async Task RemoveCommentsForDeckAsync(int deckId)
+        {
+            var cardIds = await _db.Cards.Where(c => c.DeckId == deckId).Select(c => c.Id).ToListAsync();
+            var comments = await _db.Comments
+                .Where(c => (c.TargetType == Models.CommentTargetType.Deck && c.TargetId == deckId)
+                         || (c.TargetType == Models.CommentTargetType.Card && cardIds.Contains(c.TargetId)))
+                .ToListAsync();
+            if (comments.Count == 0) return;
+            var commentIds = comments.Select(c => c.Id).ToList();
+            var notifs = await _db.Notifications.Where(n => commentIds.Contains(n.CommentId)).ToListAsync();
+            _db.Notifications.RemoveRange(notifs);
+            _db.Comments.RemoveRange(comments);
         }
 
         public async Task<CardDto?> AddCardAsync(int deckId, string title, string description, IFormFile image, int userId)
