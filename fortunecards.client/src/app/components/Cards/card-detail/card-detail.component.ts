@@ -8,13 +8,15 @@ import { Card } from '../../../models/card';
 import { DeckService } from '../../../services/deck.service';
 import { CardService } from '../../../services/card.service';
 import { NavigationBar } from '../../Navigation/navigation-bar/navigation-bar';
+import { CommentsSectionComponent } from '../../Comments/comments-section/comments-section.component';
+import { CommentTargetType } from '../../../models/comment';
 
 @Component({
   selector: 'app-card-detail',
   templateUrl: './card-detail.component.html',
   styleUrls: ['./card-detail.component.css'],
   standalone: true,
-  imports: [CommonModule, NavigationBar, TranslocoDirective],
+  imports: [CommonModule, NavigationBar, TranslocoDirective, CommentsSectionComponent],
 })
 export class CardDetailComponent implements OnInit {
   deckId = signal(0);
@@ -24,6 +26,7 @@ export class CardDetailComponent implements OnInit {
   loading = signal(true);
   deleting = signal(false);
   error = signal<string | null>(null);
+  protected readonly CommentTargetType = CommentTargetType;
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly transloco = inject(TranslocoService);

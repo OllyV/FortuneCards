@@ -11,18 +11,21 @@ import { ErrorStateComponent } from '../../shared/error-state/error-state.compon
 import { Pattern, EditablePatternCard } from '../../../models/pattern';
 import { PatternService } from '../../../services/pattern.service';
 import { AuthService } from '../../../services/auth.service';
+import { CommentsSectionComponent } from '../../Comments/comments-section/comments-section.component';
+import { CommentTargetType } from '../../../models/comment';
 
 @Component({
   selector: 'app-pattern-detail',
   standalone: true,
   templateUrl: './pattern-detail.component.html',
   styleUrls: ['./pattern-detail.component.css'],
-  imports: [CommonModule, NavigationBar, PatternHeroComponent, PatternTableViewComponent, SkeletonDetailComponent, ErrorStateComponent, TranslocoDirective],
+  imports: [CommonModule, NavigationBar, PatternHeroComponent, PatternTableViewComponent, SkeletonDetailComponent, ErrorStateComponent, TranslocoDirective, CommentsSectionComponent],
 })
 export class PatternDetailComponent implements OnInit {
   readonly pattern = signal<Pattern | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  protected readonly CommentTargetType = CommentTargetType;
 
   readonly tableCards = computed<EditablePatternCard[]>(() =>
     (this.pattern()?.cards ?? []).map((c, i) => ({
