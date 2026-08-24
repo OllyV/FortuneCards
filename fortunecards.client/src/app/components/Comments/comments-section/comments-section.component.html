@@ -1,0 +1,37 @@
+<ng-container *transloco="let t">
+  <section class="comments">
+    <button class="toggle" (click)="toggle()">
+      {{ t('comments.title', { count: total() }) }}
+    </button>
+
+    @if (open()) {
+      <div class="panel">
+        @if (auth.isLoggedIn()) {
+          <div class="composer">
+            <textarea [value]="draft()" (input)="draft.set($any($event.target).value)"
+                      maxlength="2000" [attr.placeholder]="t('comments.placeholder')"></textarea>
+            <button (click)="post()" [disabled]="posting() || !draft().trim()">{{ t('comments.post') }}</button>
+          </div>
+        } @else {
+          <p class="signin-hint">{{ t('comments.signInToComment') }}</p>
+        }
+
+        @if (error()) { <p class="err">{{ t('comments.loadError') }}</p> }
+
+        @if (items().length === 0 && !loading()) {
+          <p class="empty">{{ t('comments.empty') }}</p>
+        }
+
+        <div class="list">
+          @for (c of items(); track c.id) {
+            <comment-item [comment]="c" [canReply]="auth.isLoggedIn()" (changed)="reload()"></comment-item>
+          }
+        </div>
+
+        @if (hasMore()) {
+          <button class="more" (click)="loadMore()" [disabled]="loading()">{{ t('comments.loadMore') }}</button>
+        }
+      </div>
+    }
+  </section>
+</ng-container>

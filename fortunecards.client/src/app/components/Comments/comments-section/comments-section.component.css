@@ -1,0 +1,10 @@
+.comments { margin-top: 1.5rem; }
+.toggle { font-weight: 700; background: none; border: 1px solid #cbd5e0; border-radius: 999px;
+  padding: 0.4rem 1rem; cursor: pointer; }
+.panel { margin-top: 1rem; }
+.composer { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.composer textarea { width: 100%; min-height: 4rem; resize: vertical; box-sizing: border-box; }
+.composer button, .more { align-self: flex-start; padding: 0.4rem 1rem; cursor: pointer; }
+.signin-hint, .empty { opacity: 0.7; }
+.err { color: #c53030; }
+.more { margin-top: 0.5rem; }
