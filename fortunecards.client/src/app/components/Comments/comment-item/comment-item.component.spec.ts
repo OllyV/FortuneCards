@@ -5,7 +5,6 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { getTranslocoTestingModule } from '../../../../testing/transloco-testing';
 import { CommentItemComponent } from './comment-item.component';
 import { CommentDto, CommentTargetType } from '../../../models/comment';
-import { AuthService } from '../../../services/auth.service';
 
 function makeComment(over: Partial<CommentDto> = {}): CommentDto {
   return {

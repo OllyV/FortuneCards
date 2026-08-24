@@ -52,7 +52,7 @@
         </div>
       }
 
-      @if (comment.replies?.length) {
+      @if (comment.replies.length) {
         <div class="replies">
           @for (reply of comment.replies; track reply.id) {
             <comment-item [comment]="reply" [canReply]="false" (changed)="changed.emit()"></comment-item>

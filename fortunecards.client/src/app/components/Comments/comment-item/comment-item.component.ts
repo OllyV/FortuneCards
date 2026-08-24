@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { CommentDto } from '../../../models/comment';
 import { CommentService } from '../../../services/comment.service';
-import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'comment-item',
@@ -18,7 +17,6 @@ export class CommentItemComponent {
   @Output() changed = new EventEmitter<void>();
 
   private readonly comments = inject(CommentService);
-  protected readonly auth = inject(AuthService);
 
   readonly editing = signal(false);
   readonly replying = signal(false);
