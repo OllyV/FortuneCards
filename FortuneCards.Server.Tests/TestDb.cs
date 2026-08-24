@@ -55,6 +55,8 @@ public sealed class TestDb : IDisposable
 
     public CommentService NewCommentService() => new(Db, Images);
 
+    public NotificationService NewNotificationService() => new(Db, Images);
+
     public Card AddCard(int id, int deckId, string title = "Card")
     {
         var card = new Card { Id = id, Title = title, Description = "d", ImageKey = $"card-{id}.png", DeckId = deckId };
@@ -73,6 +75,18 @@ public sealed class TestDb : IDisposable
         Db.Comments.Add(c);
         Db.SaveChanges();
         return c;
+    }
+
+    public Notification AddNotification(int id, int recipientId, int commentId, NotificationType type, int? actorId, bool isRead = false)
+    {
+        var n = new Notification
+        {
+            Id = id, RecipientUserId = recipientId, CommentId = commentId, Type = type,
+            ActorUserId = actorId, IsRead = isRead,
+        };
+        Db.Notifications.Add(n);
+        Db.SaveChanges();
+        return n;
     }
 
     private static IConfiguration AuthConfig() =>
