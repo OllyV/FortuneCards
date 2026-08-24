@@ -5,7 +5,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../services/auth.service';
 import { DeckService } from '../../services/deck.service';
+import { CommentService } from '../../services/comment.service';
 import { Deck } from '../../models/deck';
+import { MyCommentDto } from '../../models/comment';
 import { NavigationBar } from '../../components/Navigation/navigation-bar/navigation-bar';
 import { getDeckGradientStyle } from '../../utils/deck-colors';
 
@@ -19,6 +21,7 @@ import { getDeckGradientStyle } from '../../utils/deck-colors';
 export class ProfileComponent {
   protected readonly auth = inject(AuthService);
   private readonly deckService = inject(DeckService);
+  private readonly commentService = inject(CommentService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly transloco = inject(TranslocoService);
@@ -26,6 +29,7 @@ export class ProfileComponent {
   decks = signal<Deck[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
+  myComments = signal<MyCommentDto[]>([]);
 
   constructor() {
     this.deckService.getMyDecks()
@@ -37,6 +41,10 @@ export class ProfileComponent {
         },
         error: () => { this.error.set(this.transloco.translate('errors.decksLoadFailed')); this.loading.set(false); }
       });
+
+    this.commentService.listMine(1, 20)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: (res) => this.myComments.set(res.items), error: () => {} });
   }
 
   getDeckGradient(colorIndex: number): string {
@@ -57,5 +65,9 @@ export class ProfileComponent {
 
   goToDeck(id: number): void {
     this.router.navigate(['/decks', id]);
+  }
+
+  goToComment(route: string): void {
+    this.router.navigateByUrl(route);
   }
 }
