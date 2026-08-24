@@ -136,4 +136,63 @@ public class CommentServiceTests
         var notif = await h.Db.Notifications.SingleAsync();
         Assert.Equal(2, notif.RecipientUserId);
     }
+
+    [Fact]
+    public async Task List_returns_top_level_newest_first_with_replies_oldest_first()
+    {
+        using var h = new TestDb();
+        h.AddUser(2, "A");
+        h.AddDeck(5, 1, true);
+        var first = h.AddComment(1, CommentTargetType.Deck, 5, 2, body: "first");
+        var second = h.AddComment(2, CommentTargetType.Deck, 5, 2, body: "second");
+        h.AddComment(3, CommentTargetType.Deck, 5, 2, parentId: first.Id, body: "reply-a");
+        h.AddComment(4, CommentTargetType.Deck, 5, 2, parentId: first.Id, body: "reply-b");
+
+        var page = await h.NewCommentService().ListAsync(CommentTargetType.Deck, 5, currentUserId: 2, page: 1, pageSize: 20);
+
+        Assert.Equal(2, page.TotalCount);                       // top-level only
+        Assert.Equal("second", page.Items.First().Body);        // newest first
+        var firstDto = page.Items.Last();
+        Assert.Equal(2, firstDto.ReplyCount);
+        Assert.Equal(new[] { "reply-a", "reply-b" }, firstDto.Replies.Select(r => r.Body)); // oldest first
+    }
+
+    [Fact]
+    public async Task List_shows_deleted_body_as_null_but_keeps_replies()
+    {
+        using var h = new TestDb();
+        h.AddUser(2, "A");
+        h.AddDeck(5, 1, true);
+        var top = h.AddComment(1, CommentTargetType.Deck, 5, 2, body: "gone", isDeleted: true);
+        h.AddComment(2, CommentTargetType.Deck, 5, 2, parentId: top.Id, body: "still here");
+
+        var page = await h.NewCommentService().ListAsync(CommentTargetType.Deck, 5, 2, 1, 20);
+
+        var dto = page.Items.Single();
+        Assert.True(dto.IsDeleted);
+        Assert.Null(dto.Body);
+        Assert.Equal("still here", dto.Replies.Single().Body);
+    }
+
+    [Fact]
+    public async Task ListMine_returns_only_my_comments_with_target_route()
+    {
+        using var h = new TestDb();
+        h.AddUser(2, "Me");
+        h.AddUser(3, "Other");
+        h.AddDeck(5, 1, true);
+        h.AddCard(9, deckId: 5, title: "The Card");
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2, body: "mine on deck");
+        h.AddComment(2, CommentTargetType.Card, 9, userId: 2, body: "mine on card");
+        h.AddComment(3, CommentTargetType.Deck, 5, userId: 3, body: "not mine");
+
+        var page = await h.NewCommentService().ListMineAsync(userId: 2, page: 1, pageSize: 20);
+
+        Assert.Equal(2, page.TotalCount);
+        var cardComment = page.Items.Single(i => i.TargetType == CommentTargetType.Card);
+        Assert.Equal("/decks/5/cards/9", cardComment.TargetRoute);
+        Assert.Equal("The Card", cardComment.TargetLabel);
+        var deckComment = page.Items.Single(i => i.TargetType == CommentTargetType.Deck);
+        Assert.Equal("/decks/5", deckComment.TargetRoute);
+    }
 }

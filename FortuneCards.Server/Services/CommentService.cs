@@ -79,10 +79,81 @@ namespace FortuneCards.Server.Services
             return ToDto(comment, author, currentUserId: userId, replies: new List<CommentDto>());
         }
 
-        public Task<PagedResult<CommentDto>> ListAsync(CommentTargetType targetType, int targetId, int? currentUserId, int page, int pageSize)
-            => throw new NotImplementedException();
-        public Task<PagedResult<MyCommentDto>> ListMineAsync(int userId, int page, int pageSize)
-            => throw new NotImplementedException();
+        public async Task<PagedResult<CommentDto>> ListAsync(CommentTargetType targetType, int targetId, int? currentUserId, int page, int pageSize)
+        {
+            page = Math.Max(1, page);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+
+            var topQuery = _db.Comments
+                .Where(c => c.TargetType == targetType && c.TargetId == targetId && c.ParentCommentId == null);
+
+            var total = await topQuery.CountAsync();
+
+            var tops = await topQuery
+                .OrderByDescending(c => c.CreatedAt).ThenByDescending(c => c.Id)
+                .Skip((page - 1) * pageSize).Take(pageSize)
+                .Include(c => c.User)
+                .Include(c => c.Replies.OrderBy(r => r.CreatedAt).ThenBy(r => r.Id))
+                    .ThenInclude(r => r.User)
+                .ToListAsync();
+
+            var items = tops.Select(top =>
+            {
+                var replies = top.Replies
+                    .Select(r => ToDto(r, r.User, currentUserId, Array.Empty<CommentDto>()))
+                    .ToList();
+                var dto = ToDto(top, top.User, currentUserId, replies);
+                return dto;
+            }).ToList();
+
+            return new PagedResult<CommentDto>(items, total, page, pageSize);
+        }
+
+        public async Task<PagedResult<MyCommentDto>> ListMineAsync(int userId, int page, int pageSize)
+        {
+            page = Math.Max(1, page);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+
+            var query = _db.Comments.Where(c => c.UserId == userId);
+            var total = await query.CountAsync();
+
+            var rows = await query
+                .OrderByDescending(c => c.CreatedAt).ThenByDescending(c => c.Id)
+                .Skip((page - 1) * pageSize).Take(pageSize)
+                .ToListAsync();
+
+            var items = new List<MyCommentDto>(rows.Count);
+            foreach (var c in rows)
+            {
+                var (label, route) = await ResolveTargetLinkAsync(c.TargetType, c.TargetId);
+                items.Add(new MyCommentDto(
+                    c.Id, c.TargetType, c.TargetId, c.IsDeleted ? null : c.Body, c.IsDeleted,
+                    c.CreatedAt, c.EditedAt, label, route));
+            }
+
+            return new PagedResult<MyCommentDto>(items, total, page, pageSize);
+        }
+
+        /// <summary>Human label + frontend route for a comment target. Used by My Comments and notifications.</summary>
+        internal async Task<(string Label, string Route)> ResolveTargetLinkAsync(CommentTargetType type, int id)
+        {
+            switch (type)
+            {
+                case CommentTargetType.Deck:
+                    var deckName = await _db.Decks.Where(d => d.Id == id).Select(d => d.Name).FirstOrDefaultAsync();
+                    return (deckName ?? "Deck", $"/decks/{id}");
+                case CommentTargetType.Pattern:
+                    var patName = await _db.Patterns.Where(p => p.Id == id).Select(p => p.Name).FirstOrDefaultAsync();
+                    return (patName ?? "Spread", $"/patterns/{id}");
+                case CommentTargetType.Card:
+                    var card = await _db.Cards.Where(c => c.Id == id)
+                        .Select(c => new { c.Title, c.DeckId }).FirstOrDefaultAsync();
+                    return card is null ? ("Card", "/decks") : (card.Title, $"/decks/{card.DeckId}/cards/{id}");
+                default:
+                    return ("", "/");
+            }
+        }
+
         public Task<CommentDto?> UpdateAsync(int commentId, string body, int userId)
             => throw new NotImplementedException();
         public Task<bool> DeleteAsync(int commentId, int userId)
