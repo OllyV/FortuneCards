@@ -16,7 +16,7 @@
           <p class="signin-hint">{{ t('comments.signInToComment') }}</p>
         }
 
-        @if (error()) { <p class="err">{{ t('comments.loadError') }}</p> }
+        @if (error()) { <p class="err">{{ error() === 'save' ? t('comments.saveError') : t('comments.loadError') }}</p> }
 
         @if (items().length === 0 && !loading()) {
           <p class="empty">{{ t('comments.empty') }}</p>

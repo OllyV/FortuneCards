@@ -34,9 +34,8 @@ export class NotificationBellComponent {
       next: (res) => {
         this.items.set(res.items);
         this.loading.set(false);
-        const unread = res.items.filter((n) => !n.isRead).map((n) => n.id);
-        if (unread.length) {
-          this.notifications.markRead(unread).subscribe(() => this.notifications.refreshCount());
+        if (res.items.some((n) => !n.isRead)) {
+          this.notifications.markRead().subscribe(() => this.notifications.refreshCount());
         }
       },
       error: () => this.loading.set(false),

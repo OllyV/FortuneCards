@@ -38,7 +38,7 @@ describe('NotificationBellComponent', () => {
     });
 
     const mark = httpMock.expectOne('/api/notifications/mark-read');
-    expect(mark.request.body).toEqual({ ids: [1] });
+    expect(mark.request.body).toEqual({ ids: null });
     mark.flush({ marked: 1 });
 
     httpMock.expectOne('/api/notifications/unread-count').flush({ count: 0 });
