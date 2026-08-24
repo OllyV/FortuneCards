@@ -1,0 +1,14 @@
+.bell-wrap { position: relative; display: inline-block; }
+.bell { background: none; border: none; font-size: 1.25rem; cursor: pointer; position: relative; }
+.badge { position: absolute; top: -0.25rem; right: -0.4rem; background: #c53030; color: #fff;
+  border-radius: 999px; font-size: 0.7rem; padding: 0 0.35rem; min-width: 1.1rem; text-align: center; }
+.dropdown { position: absolute; right: 0; top: 2rem; width: 20rem; max-height: 24rem; overflow-y: auto;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 0.5rem; box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  z-index: 50; }
+.head { font-weight: 700; padding: 0.6rem 0.8rem; border-bottom: 1px solid #edf2f7; }
+.empty { padding: 0.8rem; opacity: 0.7; }
+.item { display: block; width: 100%; text-align: left; background: none; border: none;
+  padding: 0.6rem 0.8rem; cursor: pointer; border-bottom: 1px solid #f7fafc; }
+.item:hover { background: #f7fafc; }
+.actor { font-weight: 600; margin-right: 0.25rem; }
+.snippet { display: block; opacity: 0.7; font-size: 0.85rem; margin-top: 0.15rem; }

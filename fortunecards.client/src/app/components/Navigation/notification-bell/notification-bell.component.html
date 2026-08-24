@@ -1,0 +1,30 @@
+<ng-container *transloco="let t">
+  @if (auth.isLoggedIn()) {
+    <div class="bell-wrap">
+      <button class="bell" (click)="toggle()" [attr.aria-label]="t('notifications.title')">
+        🔔
+        @if (notifications.unreadCount() > 0) {
+          <span class="badge">{{ notifications.unreadCount() }}</span>
+        }
+      </button>
+
+      @if (open()) {
+        <div class="dropdown">
+          <div class="head">{{ t('notifications.title') }}</div>
+          @if (items().length === 0 && !loading()) {
+            <p class="empty">{{ t('notifications.empty') }}</p>
+          }
+          @for (n of items(); track n.id) {
+            <button class="item" (click)="go(n)">
+              <span class="actor">{{ n.actorName }}</span>
+              <span class="what">
+                {{ n.type === 0 ? t('notifications.replied') : t('notifications.commented') }}
+              </span>
+              @if (n.commentSnippet) { <span class="snippet">{{ n.commentSnippet }}</span> }
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</ng-container>

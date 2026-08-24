@@ -8,6 +8,7 @@
     <button class="nav-login-btn" (click)="login()">{{ t('nav.signInGoogle') }}</button>
   } @else {
     <div class="nav-user">
+      <notification-bell></notification-bell>
       <div class="nav-avatar" (click)="goToProfile()">{{ auth.currentUser()!.displayName[0] }}</div>
       <span class="nav-username" (click)="goToProfile()">{{ auth.currentUser()!.displayName }}</span>
       <button class="nav-logout-btn" (click)="logout()">{{ t('nav.logout') }}</button>
