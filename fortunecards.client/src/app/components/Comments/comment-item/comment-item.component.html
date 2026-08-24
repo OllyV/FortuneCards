@@ -1,0 +1,64 @@
+<ng-container *transloco="let t">
+  <div class="comment" [class.deleted]="comment.isDeleted">
+    <div class="avatar">
+      @if (comment.authorAvatarUrl) {
+        <img [src]="comment.authorAvatarUrl" alt="" />
+      } @else {
+        <span class="letter">{{ comment.authorName.charAt(0) }}</span>
+      }
+    </div>
+    <div class="body">
+      <div class="meta">
+        <span class="name">{{ comment.authorName }}</span>
+        @if (comment.editedAt && !comment.isDeleted) {
+          <span class="edited">{{ t('comments.edited') }}</span>
+        }
+      </div>
+
+      @if (comment.isDeleted) {
+        <p class="text tombstone">{{ t('comments.deletedPlaceholder') }}</p>
+      } @else if (editing()) {
+        <textarea [value]="draft()" (input)="draft.set($any($event.target).value)" maxlength="2000"></textarea>
+        <div class="actions">
+          <button (click)="saveEdit()" [disabled]="busy() || !draft().trim()">{{ t('common.save') }}</button>
+          <button (click)="cancelEdit()" [disabled]="busy()">{{ t('common.cancel') }}</button>
+        </div>
+      } @else {
+        <p class="text">{{ comment.body }}</p>
+      }
+
+      @if (error()) { <p class="err">{{ t('comments.saveError') }}</p> }
+
+      @if (!comment.isDeleted && !editing()) {
+        <div class="row-actions">
+          @if (canReply) {
+            <button class="link" (click)="startReply()">{{ t('comments.reply') }}</button>
+          }
+          @if (comment.isMine) {
+            <button class="link" (click)="startEdit()">{{ t('common.edit') }}</button>
+            <button class="link danger" (click)="remove()" [disabled]="busy()">{{ t('common.delete') }}</button>
+          }
+        </div>
+      }
+
+      @if (replying()) {
+        <div class="reply-box">
+          <textarea [value]="draft()" (input)="draft.set($any($event.target).value)"
+                    maxlength="2000" [attr.placeholder]="t('comments.replyPlaceholder')"></textarea>
+          <div class="actions">
+            <button (click)="saveReply()" [disabled]="busy() || !draft().trim()">{{ t('comments.post') }}</button>
+            <button (click)="cancelReply()" [disabled]="busy()">{{ t('common.cancel') }}</button>
+          </div>
+        </div>
+      }
+
+      @if (comment.replies?.length) {
+        <div class="replies">
+          @for (reply of comment.replies; track reply.id) {
+            <comment-item [comment]="reply" [canReply]="false" (changed)="changed.emit()"></comment-item>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</ng-container>
