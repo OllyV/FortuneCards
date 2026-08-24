@@ -154,10 +154,34 @@ namespace FortuneCards.Server.Services
             }
         }
 
-        public Task<CommentDto?> UpdateAsync(int commentId, string body, int userId)
-            => throw new NotImplementedException();
-        public Task<bool> DeleteAsync(int commentId, int userId)
-            => throw new NotImplementedException();
+        public async Task<CommentDto?> UpdateAsync(int commentId, string body, int userId)
+        {
+            var trimmed = (body ?? string.Empty).Trim();
+            if (trimmed.Length == 0)
+                throw new ArgumentException("Comment body is required.", nameof(body));
+            if (trimmed.Length > MaxBodyLength)
+                throw new ArgumentException($"Comment must be {MaxBodyLength} characters or fewer.", nameof(body));
+
+            var comment = await _db.Comments.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == commentId);
+            if (comment is null || comment.UserId != userId || comment.IsDeleted) return null;
+
+            comment.Body = trimmed;
+            comment.EditedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+
+            return ToDto(comment, comment.User, currentUserId: userId, replies: Array.Empty<CommentDto>());
+        }
+
+        public async Task<bool> DeleteAsync(int commentId, int userId)
+        {
+            var comment = await _db.Comments.FirstOrDefaultAsync(c => c.Id == commentId);
+            if (comment is null || comment.UserId != userId || comment.IsDeleted) return false;
+
+            comment.IsDeleted = true;
+            comment.Body = string.Empty;    // scrub stored text; DTO returns null while IsDeleted
+            await _db.SaveChangesAsync();
+            return true;
+        }
 
         // --- helpers ---
 

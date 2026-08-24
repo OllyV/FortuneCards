@@ -195,4 +195,74 @@ public class CommentServiceTests
         var deckComment = page.Items.Single(i => i.TargetType == CommentTargetType.Deck);
         Assert.Equal("/decks/5", deckComment.TargetRoute);
     }
+
+    [Fact]
+    public async Task Update_by_author_sets_body_and_editedAt()
+    {
+        using var h = new TestDb();
+        h.AddUser(2, "A");
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2, body: "old");
+
+        var dto = await h.NewCommentService().UpdateAsync(1, "  new text  ", userId: 2);
+
+        Assert.NotNull(dto);
+        Assert.Equal("new text", dto!.Body);
+        Assert.NotNull(dto.EditedAt);
+    }
+
+    [Fact]
+    public async Task Update_by_non_author_returns_null()
+    {
+        using var h = new TestDb();
+        h.AddUser(2); h.AddUser(3);
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2, body: "old");
+
+        var dto = await h.NewCommentService().UpdateAsync(1, "hax", userId: 3);
+
+        Assert.Null(dto);
+        Assert.Equal("old", await h.Db.Comments.Where(c => c.Id == 1).Select(c => c.Body).SingleAsync());
+    }
+
+    [Fact]
+    public async Task Update_empty_body_is_rejected()
+    {
+        using var h = new TestDb();
+        h.AddUser(2);
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2);
+        await Assert.ThrowsAsync<ArgumentException>(() => h.NewCommentService().UpdateAsync(1, "  ", 2));
+    }
+
+    [Fact]
+    public async Task Delete_by_author_tombstones_and_keeps_replies()
+    {
+        using var h = new TestDb();
+        h.AddUser(2);
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2, body: "secret");
+        h.AddComment(2, CommentTargetType.Deck, 5, userId: 2, parentId: 1, body: "reply");
+
+        var ok = await h.NewCommentService().DeleteAsync(1, userId: 2);
+
+        Assert.True(ok);
+        var top = await h.Db.Comments.SingleAsync(c => c.Id == 1);
+        Assert.True(top.IsDeleted);
+        Assert.Equal(2, await h.Db.Comments.CountAsync());   // reply still present
+    }
+
+    [Fact]
+    public async Task Delete_by_non_author_returns_false()
+    {
+        using var h = new TestDb();
+        h.AddUser(2); h.AddUser(3);
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2);
+
+        var ok = await h.NewCommentService().DeleteAsync(1, userId: 3);
+
+        Assert.False(ok);
+        Assert.False(await h.Db.Comments.Where(c => c.Id == 1).Select(c => c.IsDeleted).SingleAsync());
+    }
 }
