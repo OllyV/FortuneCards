@@ -1,0 +1,15 @@
+<ng-container *transloco="let t">
+  <h2 class="tab-title">{{ t('comments.myComments') }}</h2>
+  @if (myComments().length === 0) {
+    <p class="empty">{{ t('comments.myCommentsEmpty') }}</p>
+  } @else {
+    <ul>
+      @for (c of myComments(); track c.id) {
+        <li>
+          <button class="link" (click)="openComment(c.targetRoute)">{{ c.targetLabel }}</button>
+          <span class="body">{{ c.isDeleted ? t('comments.deletedPlaceholder') : c.body }}</span>
+        </li>
+      }
+    </ul>
+  }
+</ng-container>

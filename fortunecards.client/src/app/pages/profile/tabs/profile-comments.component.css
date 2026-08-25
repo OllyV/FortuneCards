@@ -1,0 +1,8 @@
+.tab-title { margin: 0 0 16px; font-size: 18px; font-weight: 800; }
+.empty { color: var(--color-label); font-size: 14px; }
+ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+li { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background: #fff;
+  border: 1.5px solid var(--color-border); border-radius: var(--radius-md); }
+.link { align-self: flex-start; background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--font); font-weight: 800; font-size: 13.5px; color: var(--color-coral-ink); }
+.body { font-size: 14px; color: var(--color-charcoal); }
