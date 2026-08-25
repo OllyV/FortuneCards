@@ -8,6 +8,9 @@ namespace FortuneCards.Server.Services
     {
         public const int MaxBodyLength = 2000;
 
+        /// <summary>Deepest tier a stored reply may occupy (top-level = 0, so 3 = three tiers of replies).</summary>
+        public const int MaxReplyDepth = 3;
+
         private readonly FortuneCardsDbContext _db;
         private readonly IImageStorage _imageStorage;
 
@@ -29,22 +32,29 @@ namespace FortuneCards.Server.Services
             var target = await ResolveTargetOwnerAsync(targetType, targetId);
             if (!target.Exists) return null;
 
-            Comment? parent = null;
+            // The comment the user actually replied to (drives the Reply notification), and the
+            // parent we will store (clamped so the tree never exceeds MaxReplyDepth).
+            Comment? repliedTo = null;
+            int? storedParentId = null;
             if (parentCommentId is int pid)
             {
-                parent = await _db.Comments.FirstOrDefaultAsync(c => c.Id == pid);
-                if (parent is null || parent.ParentCommentId != null
-                    || parent.TargetType != targetType || parent.TargetId != targetId)
+                repliedTo = await _db.Comments.FirstOrDefaultAsync(c => c.Id == pid);
+                if (repliedTo is null || repliedTo.TargetType != targetType || repliedTo.TargetId != targetId)
                     throw new ArgumentException("Invalid parent comment.", nameof(parentCommentId));
-                if (parent.IsDeleted)
+                if (repliedTo.IsDeleted)
                     throw new ArgumentException("Cannot reply to a deleted comment.", nameof(parentCommentId));
+
+                // Clamp: if replying here would exceed the cap, attach as a sibling of the target
+                // (store its parent) so the reply lands at the deepest allowed tier.
+                var depth = await DepthOfAsync(repliedTo);
+                storedParentId = depth + 1 <= MaxReplyDepth ? repliedTo.Id : repliedTo.ParentCommentId;
             }
 
             var comment = new Comment
             {
                 TargetType = targetType,
                 TargetId = targetId,
-                ParentCommentId = parentCommentId,
+                ParentCommentId = storedParentId,
                 UserId = userId,
                 Body = trimmed,
             };
@@ -52,9 +62,10 @@ namespace FortuneCards.Server.Services
             await _db.SaveChangesAsync();  // assigns comment.Id
 
             // Fire notifications (no self-notify).
-            if (parent is not null)
+            if (repliedTo is not null)
             {
-                if (parent.UserId is int recipient && recipient != userId)
+                // Notify the author of the comment actually replied to, even if the stored parent was clamped.
+                if (repliedTo.UserId is int recipient && recipient != userId)
                     _db.Notifications.Add(new Notification
                     {
                         RecipientUserId = recipient,
@@ -93,20 +104,43 @@ namespace FortuneCards.Server.Services
                 .OrderByDescending(c => c.CreatedAt).ThenByDescending(c => c.Id)
                 .Skip((page - 1) * pageSize).Take(pageSize)
                 .Include(c => c.User)
-                .Include(c => c.Replies.OrderBy(r => r.CreatedAt).ThenBy(r => r.Id))
-                    .ThenInclude(r => r.User)
                 .ToListAsync();
 
-            var items = tops.Select(top =>
+            // Load the page's subtrees level by level (bounded by MaxReplyDepth), so only the
+            // returned roots' descendants are fetched — no full-thread scan, no unbounded recursion.
+            var childrenByParent = new Dictionary<int, List<Comment>>();
+            var frontier = tops.Select(c => c.Id).ToList();
+            for (var level = 0; level < MaxReplyDepth && frontier.Count > 0; level++)
             {
-                var replies = top.Replies
-                    .Select(r => ToDto(r, r.User, currentUserId, Array.Empty<CommentDto>()))
-                    .ToList();
-                var dto = ToDto(top, top.User, currentUserId, replies);
-                return dto;
-            }).ToList();
+                var parentIds = frontier;
+                var children = await _db.Comments
+                    .Where(c => c.ParentCommentId != null && parentIds.Contains(c.ParentCommentId.Value))
+                    .OrderBy(c => c.CreatedAt).ThenBy(c => c.Id)
+                    .Include(c => c.User)
+                    .ToListAsync();
 
+                frontier = new List<int>(children.Count);
+                foreach (var child in children)
+                {
+                    var pid = child.ParentCommentId!.Value;
+                    if (!childrenByParent.TryGetValue(pid, out var list))
+                        childrenByParent[pid] = list = new List<Comment>();
+                    list.Add(child);
+                    frontier.Add(child.Id);
+                }
+            }
+
+            var items = tops.Select(top => BuildTree(top, childrenByParent, currentUserId)).ToList();
             return new PagedResult<CommentDto>(items, total, page, pageSize);
+        }
+
+        /// <summary>Recursively builds a comment DTO with its (oldest-first) descendants attached.</summary>
+        private CommentDto BuildTree(Comment comment, Dictionary<int, List<Comment>> childrenByParent, int? currentUserId)
+        {
+            var replies = childrenByParent.TryGetValue(comment.Id, out var kids)
+                ? kids.Select(k => BuildTree(k, childrenByParent, currentUserId)).ToList()
+                : new List<CommentDto>();
+            return ToDto(comment, comment.User, currentUserId, replies);
         }
 
         public async Task<PagedResult<MyCommentDto>> ListMineAsync(int userId, int page, int pageSize)
@@ -185,6 +219,20 @@ namespace FortuneCards.Server.Services
 
         // --- helpers ---
 
+        /// <summary>Ancestor count of a comment (top-level = 0). Bounded: stops once past the cap.</summary>
+        private async Task<int> DepthOfAsync(Comment comment)
+        {
+            var depth = 0;
+            var parentId = comment.ParentCommentId;
+            while (parentId is int pid && depth <= MaxReplyDepth)
+            {
+                depth++;
+                parentId = await _db.Comments.Where(c => c.Id == pid)
+                    .Select(c => c.ParentCommentId).FirstOrDefaultAsync();
+            }
+            return depth;
+        }
+
         /// <summary>Distinguishes "target missing" (Exists=false) from "target exists but ownerless" (UserId=null).</summary>
         private readonly record struct TargetOwner(bool Exists, int? UserId);
 
@@ -199,11 +247,15 @@ namespace FortuneCards.Server.Services
             _ => default,
         };
 
-        internal CommentDto ToDto(Comment c, User? author, int? currentUserId, IReadOnlyList<CommentDto> replies) =>
-            new(c.Id, c.TargetType, c.TargetId, c.ParentCommentId,
+        internal CommentDto ToDto(Comment c, User? author, int? currentUserId, IReadOnlyList<CommentDto> replies)
+        {
+            var descendantCount = replies.Count;
+            foreach (var r in replies) descendantCount += r.ReplyCount;   // total subtree, not just direct children
+            return new(c.Id, c.TargetType, c.TargetId, c.ParentCommentId,
                 c.IsDeleted ? null : c.Body, c.IsDeleted, c.CreatedAt, c.EditedAt,
                 c.UserId, UserDisplay.Name(author), UserDisplay.AvatarUrl(author, _imageStorage),
                 currentUserId != null && c.UserId == currentUserId,
-                replies.Count, replies);
+                descendantCount, replies);
+        }
     }
 }

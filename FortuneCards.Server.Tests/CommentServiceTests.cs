@@ -53,7 +53,7 @@ public class CommentServiceTests
     }
 
     [Fact]
-    public async Task Reply_to_a_reply_is_rejected()
+    public async Task Reply_to_a_reply_is_nested()
     {
         using var h = new TestDb();
         h.AddUser(2);
@@ -61,8 +61,52 @@ public class CommentServiceTests
         var top = h.AddComment(1, CommentTargetType.Deck, 5, userId: 2);
         var reply = h.AddComment(2, CommentTargetType.Deck, 5, userId: 2, parentId: top.Id);
 
-        await Assert.ThrowsAsync<ArgumentException>(
-            () => h.NewCommentService().CreateAsync(CommentTargetType.Deck, 5, reply.Id, "nested", 2));
+        var dto = await h.NewCommentService().CreateAsync(CommentTargetType.Deck, 5, reply.Id, "nested", 2);
+
+        Assert.NotNull(dto);
+        Assert.Equal(reply.Id, dto!.ParentCommentId);   // stored under the reply — within the cap
+    }
+
+    [Fact]
+    public async Task Reply_at_max_depth_clamps_to_sibling()
+    {
+        using var h = new TestDb();
+        h.AddUser(2, "Owner");
+        h.AddUser(3, "Replier");
+        h.AddDeck(5, 1, true);
+        // chain to depth 3: top(0) -> d1(1) -> d2(2) -> d3(3)
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2);
+        h.AddComment(2, CommentTargetType.Deck, 5, userId: 2, parentId: 1);
+        h.AddComment(3, CommentTargetType.Deck, 5, userId: 2, parentId: 2);
+        var d3 = h.AddComment(4, CommentTargetType.Deck, 5, userId: 2, parentId: 3); // depth 3
+
+        var dto = await h.NewCommentService().CreateAsync(CommentTargetType.Deck, 5, d3.Id, "too deep", userId: 3);
+
+        Assert.NotNull(dto);
+        Assert.Equal(3, dto!.ParentCommentId);           // clamped to d3's parent (the depth-2 comment)
+        var notif = await h.Db.Notifications.SingleAsync();
+        Assert.Equal(2, notif.RecipientUserId);          // still notifies the author of the comment replied to (d3)
+        Assert.Equal(NotificationType.Reply, notif.Type);
+    }
+
+    [Fact]
+    public async Task List_builds_multi_level_tree()
+    {
+        using var h = new TestDb();
+        h.AddUser(2);
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2, body: "top");
+        h.AddComment(2, CommentTargetType.Deck, 5, userId: 2, parentId: 1, body: "r1");
+        h.AddComment(3, CommentTargetType.Deck, 5, userId: 2, parentId: 2, body: "r2");
+
+        var page = await h.NewCommentService().ListAsync(CommentTargetType.Deck, 5, 2, 1, 20);
+
+        var top = page.Items.Single();
+        Assert.Equal("top", top.Body);
+        Assert.Equal(2, top.ReplyCount);                 // total descendants, not just direct children
+        var r1 = top.Replies.Single();
+        Assert.Equal("r1", r1.Body);
+        Assert.Equal("r2", r1.Replies.Single().Body);    // nested two levels deep
     }
 
     [Fact]

@@ -14,6 +14,7 @@ import { CommentService } from '../../../services/comment.service';
 export class CommentItemComponent {
   @Input({ required: true }) comment!: CommentDto;
   @Input() canReply = true;
+  @Input() depth = 0;
   @Output() changed = new EventEmitter<void>();
 
   private readonly comments = inject(CommentService);

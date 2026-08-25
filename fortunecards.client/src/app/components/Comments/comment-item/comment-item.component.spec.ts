@@ -47,6 +47,20 @@ describe('CommentItemComponent', () => {
     expect(text).toContain('child');
   });
 
+  it('propagates canReply to nested replies (tree threading)', () => {
+    const fixture = TestBed.createComponent(CommentItemComponent);
+    const cmp = fixture.componentInstance;
+    cmp.comment = makeComment({
+      isMine: false,
+      replies: [makeComment({ id: 2, parentCommentId: 1, body: 'child', isMine: false })],
+    });
+    cmp.canReply = true;
+    fixture.detectChanges();
+    // The nested reply (inside .c-replies) also renders a Reply control, not just the top comment.
+    const nestedReply = (fixture.nativeElement as HTMLElement).querySelector('.c-replies .c-link.reply');
+    expect(nestedReply).not.toBeNull();
+  });
+
   it('emits changed after a successful delete', () => {
     const fixture = TestBed.createComponent(CommentItemComponent);
     const cmp = fixture.componentInstance;
