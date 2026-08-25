@@ -1,12 +1,5 @@
 <ng-container *transloco="let t">
-<navigation-bar></navigation-bar>
-
 <main class="settings-page">
-  <div class="settings-header">
-    <button class="back-btn" (click)="goBack()">← {{ t('common.back') }}</button>
-    <h1>{{ t('pages.accountSettingsPageTitle') }}</h1>
-  </div>
-
   @if (auth.currentUser(); as user) {
     <section class="settings-section">
       <div class="settings-label">{{ t('pages.profileSectionLabel') }}</div>

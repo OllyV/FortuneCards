@@ -7,14 +7,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../services/auth.service';
 import { UserDto } from '../../models/user';
-import { NavigationBar } from '../../components/Navigation/navigation-bar/navigation-bar';
 
 @Component({
   selector: 'app-account-settings',
   standalone: true,
   templateUrl: './account-settings.component.html',
   styleUrls: ['./account-settings.component.css'],
-  imports: [CommonModule, FormsModule, NavigationBar, TranslocoDirective],
+  imports: [CommonModule, FormsModule, TranslocoDirective],
 })
 export class AccountSettingsComponent {
   protected readonly auth = inject(AuthService);
