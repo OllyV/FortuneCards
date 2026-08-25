@@ -66,6 +66,14 @@ namespace FortuneCards.Server.Controllers
             var ok = await _comments.DeleteAsync(id, userId);
             return ok ? NoContent() : NotFound();
         }
+
+        [HttpPost("{id:int}/restore")]
+        public async Task<IActionResult> Restore(int id)
+        {
+            if (CurrentUserId is not int userId) return Unauthorized();
+            var ok = await _comments.RestoreAsync(id, userId);
+            return ok ? NoContent() : NotFound();
+        }
     }
 
     public class CreateCommentRequest

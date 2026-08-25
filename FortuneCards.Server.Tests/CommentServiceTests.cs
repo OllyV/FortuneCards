@@ -347,4 +347,75 @@ public class CommentServiceTests
         Assert.Equal(0, await h.Db.Comments.CountAsync());
         Assert.Equal(0, await h.Db.Notifications.CountAsync());
     }
+
+    [Fact]
+    public async Task Delete_keeps_the_body_for_recovery()
+    {
+        using var h = new TestDb();
+        h.AddUser(2);
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2, body: "secret");
+
+        await h.NewCommentService().DeleteAsync(1, userId: 2);
+
+        var c = await h.Db.Comments.SingleAsync(x => x.Id == 1);
+        Assert.True(c.IsDeleted);
+        Assert.Equal("secret", c.Body);   // body retained, no longer scrubbed
+    }
+
+    [Fact]
+    public async Task ListMine_returns_deleted_body_to_author()
+    {
+        using var h = new TestDb();
+        h.AddUser(2);
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2, body: "secret", isDeleted: true);
+
+        var page = await h.NewCommentService().ListMineAsync(2, 1, 20);
+
+        var item = page.Items.Single();
+        Assert.True(item.IsDeleted);
+        Assert.Equal("secret", item.Body);   // author sees their own deleted text
+    }
+
+    [Fact]
+    public async Task Public_list_still_hides_deleted_body()
+    {
+        using var h = new TestDb();
+        h.AddUser(2);
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2, body: "secret", isDeleted: true);
+
+        var page = await h.NewCommentService().ListAsync(CommentTargetType.Deck, 5, currentUserId: null, 1, 20);
+
+        Assert.Null(page.Items.Single().Body);   // public threads still show [deleted]
+    }
+
+    [Fact]
+    public async Task Restore_by_author_undeletes()
+    {
+        using var h = new TestDb();
+        h.AddUser(2);
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2, body: "secret", isDeleted: true);
+
+        var ok = await h.NewCommentService().RestoreAsync(1, userId: 2);
+
+        Assert.True(ok);
+        Assert.False(await h.Db.Comments.Where(c => c.Id == 1).Select(c => c.IsDeleted).SingleAsync());
+    }
+
+    [Fact]
+    public async Task Restore_by_non_author_returns_false_and_leaves_it_deleted()
+    {
+        using var h = new TestDb();
+        h.AddUser(2); h.AddUser(3);
+        h.AddDeck(5, 1, true);
+        h.AddComment(1, CommentTargetType.Deck, 5, userId: 2, body: "secret", isDeleted: true);
+
+        var ok = await h.NewCommentService().RestoreAsync(1, userId: 3);
+
+        Assert.False(ok);
+        Assert.True(await h.Db.Comments.Where(c => c.Id == 1).Select(c => c.IsDeleted).SingleAsync());
+    }
 }

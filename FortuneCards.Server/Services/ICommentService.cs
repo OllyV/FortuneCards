@@ -19,5 +19,6 @@ namespace FortuneCards.Server.Services
         Task<CommentDto?> CreateAsync(CommentTargetType targetType, int targetId, int? parentCommentId, string body, int userId);
         Task<CommentDto?> UpdateAsync(int commentId, string body, int userId);
         Task<bool> DeleteAsync(int commentId, int userId);
+        Task<bool> RestoreAsync(int commentId, int userId);
     }
 }
