@@ -9,6 +9,13 @@
         <p class="card-info-description">{{ description() }}</p>
       </div>
     </div>
+
+    @if (cardId()) {
+      <div class="card-info-comments">
+        <comments-section [targetType]="CommentTargetType.Card" [targetId]="cardId()!"></comments-section>
+      </div>
+    }
+
     <button class="dialog-close" type="button" (click)="closed.emit()">{{ t('common.close') }}</button>
   </div>
 </ng-container>
