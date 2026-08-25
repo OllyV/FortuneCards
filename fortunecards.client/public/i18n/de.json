@@ -263,7 +263,14 @@
     "loadError": "Couldn't load comments.",
     "saveError": "Couldn't save. Try again.",
     "myComments": "My comments",
-    "myCommentsEmpty": "You haven't commented on anything yet."
+    "myCommentsEmpty": "You haven't commented on anything yet.",
+    "colDate": "Date",
+    "colWhere": "Where",
+    "colComment": "Comment",
+    "typeDeck": "Deck",
+    "typeCard": "Card",
+    "typePattern": "Pattern",
+    "restore": "Restore"
   },
   "notifications": {
     "title": "Notifications",
