@@ -39,4 +39,8 @@ export class CommentService {
   remove(id: number): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
   }
+
+  restore(id: number): Observable<void> {
+    return this.http.post<void>(`${this.base}/${id}/restore`, {});
+  }
 }

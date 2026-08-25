@@ -62,4 +62,11 @@ describe('CommentService', () => {
     expect(req.request.method).toBe('GET');
     req.flush({ items: [], totalCount: 0, page: 1, pageSize: 20 });
   });
+
+  it('POSTs to restore a comment', () => {
+    service.restore(4).subscribe();
+    const req = httpMock.expectOne('/api/comments/4/restore');
+    expect(req.request.method).toBe('POST');
+    req.flush(null);
+  });
 });
