@@ -5,7 +5,7 @@
   display: flex; flex-direction: column; gap: 6px; transition: transform .15s; box-shadow: var(--shadow-card); }
 .card:hover { transform: translateY(-2px); }
 .emoji { font-size: 22px; }
-.name { font-size: 13px; font-weight: 800; color: #2C2C2C; }
+.name { font-size: 13px; font-weight: 800; color: var(--color-charcoal); }
 .badge { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-pill); font-weight: 700; width: fit-content; }
 .badge.public { background: #E7F7EC; color: #1E7A3F; }
 .badge.private { background: var(--color-coral-wash); color: var(--color-coral-ink); }
