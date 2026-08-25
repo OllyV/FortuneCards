@@ -1,6 +1,6 @@
-.comments { margin-top: 1.75rem; }
+.comments { margin-top: 1.75rem; text-align: left; }
 
-.cs-toggle { display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+.cs-toggle { display: flex; width: fit-content; margin: 0 auto; align-items: center; gap: 8px; cursor: pointer;
   font-family: var(--font); font-weight: 800; font-size: 14px; color: var(--color-charcoal);
   background: #fff; border: 1.5px solid var(--color-border); border-radius: var(--radius-pill);
   padding: 8px 16px; box-shadow: var(--shadow-card); }
