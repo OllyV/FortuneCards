@@ -16,51 +16,17 @@
       <div class="profile-info">
         <h1>{{ user.nickname || user.displayName }}</h1>
         <p class="profile-email">{{ user.email }}</p>
-        <button class="settings-link" (click)="goToSettings()">{{ t('pages.accountSettingsLink') }} →</button>
       </div>
     </section>
   }
 
-  <section class="profile-decks">
-    <div class="profile-decks-header">
-      <h2>{{ t('pages.myDecksTitle') }}</h2>
-      <button class="new-deck-btn" (click)="goToNewDeck()">{{ t('pages.newDeckButton') }}</button>
-    </div>
+  <nav class="tab-bar">
+    <a class="tab" routerLink="decks" routerLinkActive="active">{{ t('profile.tabs.decks') }}</a>
+    <a class="tab" routerLink="patterns" routerLinkActive="active">{{ t('profile.tabs.patterns') }}</a>
+    <a class="tab" routerLink="comments" routerLinkActive="active">{{ t('profile.tabs.comments') }}</a>
+    <a class="tab" routerLink="settings" routerLinkActive="active">{{ t('profile.tabs.settings') }}</a>
+  </nav>
 
-    @if (loading()) {
-      <p class="profile-loading">{{ t('pages.loadingDecksState') }}</p>
-    } @else if (error()) {
-      <p class="profile-error">{{ error() }}</p>
-    } @else {
-      <div class="profile-deck-grid">
-        @for (deck of decks(); track deck.id) {
-          <div class="profile-deck-card" [style.background]="getDeckGradient(deck.colorIndex)" (click)="goToDeck(deck.id)">
-            <span class="profile-deck-emoji">{{ deck.emoji }}</span>
-            <span class="profile-deck-name">{{ deck.name }}</span>
-            <span class="profile-deck-badge" [class.public]="deck.isPublic" [class.private]="!deck.isPublic">
-              {{ deck.isPublic ? t('pages.publicBadge') : t('pages.privateBadge') }}
-            </span>
-          </div>
-        }
-        <div class="profile-deck-add" (click)="goToNewDeck()">+</div>
-      </div>
-    }
-  </section>
-
-  <section class="my-comments">
-    <h2>{{ t('comments.myComments') }}</h2>
-    @if (myComments().length === 0) {
-      <p class="empty">{{ t('comments.myCommentsEmpty') }}</p>
-    } @else {
-      <ul>
-        @for (c of myComments(); track c.id) {
-          <li>
-            <button class="link" (click)="goToComment(c.targetRoute)">{{ c.targetLabel }}</button>
-            <span class="body">{{ c.isDeleted ? t('comments.deletedPlaceholder') : c.body }}</span>
-          </li>
-        }
-      </ul>
-    }
-  </section>
+  <router-outlet></router-outlet>
 </main>
 </ng-container>

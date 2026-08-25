@@ -270,5 +270,13 @@
     "empty": "No notifications.",
     "replied": "replied to your comment",
     "commented": "commented on your content"
+  },
+  "profile": {
+    "tabs": {
+      "decks": "Decks",
+      "patterns": "Patterns",
+      "comments": "Comments",
+      "settings": "Settings"
+    }
   }
 }
