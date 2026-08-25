@@ -1,0 +1,25 @@
+<ng-container *transloco="let t">
+  <div class="tab-head">
+    <h2>{{ t('pages.myDecksTitle') }}</h2>
+    <button class="btn-primary" (click)="newDeck()">{{ t('pages.newDeckButton') }}</button>
+  </div>
+
+  @if (loading()) {
+    <p class="state">{{ t('pages.loadingDecksState') }}</p>
+  } @else if (error()) {
+    <p class="state error">{{ error() }}</p>
+  } @else {
+    <div class="grid">
+      @for (deck of decks(); track deck.id) {
+        <div class="card" [style.background]="gradient(deck.colorIndex)" (click)="openDeck(deck.id)">
+          <span class="emoji">{{ deck.emoji }}</span>
+          <span class="name">{{ deck.name }}</span>
+          <span class="badge" [class.public]="deck.isPublic" [class.private]="!deck.isPublic">
+            {{ deck.isPublic ? t('pages.publicBadge') : t('pages.privateBadge') }}
+          </span>
+        </div>
+      }
+      <div class="add" (click)="newDeck()">+</div>
+    </div>
+  }
+</ng-container>
