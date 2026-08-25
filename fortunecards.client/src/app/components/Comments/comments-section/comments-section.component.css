@@ -1,10 +1,34 @@
-.comments { margin-top: 1.5rem; }
-.toggle { font-weight: 700; background: none; border: 1px solid #cbd5e0; border-radius: 999px;
-  padding: 0.4rem 1rem; cursor: pointer; }
-.panel { margin-top: 1rem; }
-.composer { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
-.composer textarea { width: 100%; min-height: 4rem; resize: vertical; box-sizing: border-box; }
-.composer button, .more { align-self: flex-start; padding: 0.4rem 1rem; cursor: pointer; }
-.signin-hint, .empty { opacity: 0.7; }
-.err { color: #c53030; }
-.more { margin-top: 0.5rem; }
+.comments { margin-top: 1.75rem; }
+
+.cs-toggle { display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  font-family: var(--font); font-weight: 800; font-size: 14px; color: var(--color-charcoal);
+  background: #fff; border: 1.5px solid var(--color-border); border-radius: var(--radius-pill);
+  padding: 8px 16px; box-shadow: var(--shadow-card); }
+.cs-toggle.open { background: var(--color-coral-wash); border-color: #f6d9d0; color: var(--color-coral-ink); }
+.cs-ic { font-size: 15px; }
+
+.cs-panel { margin-top: 14px; }
+
+/* Composer: rounded field + circular gradient send */
+.cs-composer { display: flex; gap: 10px; align-items: flex-end; background: #fff;
+  border: 1.5px solid var(--color-border); border-radius: 18px; padding: 8px 8px 8px 14px; margin-bottom: 16px; }
+.cs-input { flex: 1; min-height: 40px; max-height: 180px; border: none; outline: none; resize: none;
+  background: none; font-family: var(--font); font-size: 14px; color: var(--color-charcoal);
+  padding: 8px 0; line-height: 1.45; }
+.cs-send { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer;
+  color: #fff; font-size: 19px; line-height: 1;
+  background: linear-gradient(135deg, var(--color-coral), var(--color-sunny));
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.22); }
+.cs-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.cs-hint, .cs-empty { color: var(--color-label); font-size: 14px; }
+.cs-hint { margin-bottom: 12px; }
+.cs-empty { text-align: center; padding: 10px 0; }
+.cs-err { color: var(--color-coral-ink); font-size: 13px; margin-bottom: 10px; }
+
+.cs-list { display: flex; flex-direction: column; gap: 2px; }
+
+.cs-more { margin-top: 12px; cursor: pointer; font-family: var(--font); font-weight: 800; font-size: 13px;
+  background: #fff; border: 2px solid var(--color-coral); color: var(--color-coral);
+  border-radius: var(--radius-pill); padding: 8px 18px; }
+.cs-more:disabled { opacity: 0.5; cursor: not-allowed; }

@@ -12,6 +12,8 @@
   --color-muted: #999;
   --color-label: #666;
   --color-label-muted: #bbb;
+  --color-coral-wash: #FFF0EC;
+  --color-coral-ink: #C23B3B;
   --shadow-btn-color: #FF6B6B44;
   /* Deck gradients (indices 0–15, mirrors DECK_GRADIENTS in deck-colors.ts) */
   --gradient-0:  linear-gradient(135deg, #B2FEFA, #A29BFE, #aab2ff);
