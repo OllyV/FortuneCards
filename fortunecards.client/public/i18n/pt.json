@@ -208,9 +208,9 @@
     "myDecksTitle": "Meus Baralhos",
     "newDeckButton": "+ Novo Baralho",
     "loadingDecksState": "Carregando baralhos…",
-    "myPatternsTitle": "My patterns",
-    "newPatternButton": "New pattern",
-    "loadingPatternsState": "Loading patterns…",
+    "myPatternsTitle": "Minhas tiragens",
+    "newPatternButton": "Nova tiragem",
+    "loadingPatternsState": "Carregando tiragens…",
     "publicBadge": "🌐 Público",
     "privateBadge": "🔒 Privado",
     "accountSettingsPageTitle": "Configurações da Conta",
@@ -256,21 +256,21 @@
     "post": "Post",
     "reply": "Reply",
     "edited": "edited",
-    "deletedPlaceholder": "[deleted]",
+    "deletedPlaceholder": "[excluído]",
     "empty": "No comments yet. Be the first!",
     "signInToComment": "Sign in to join the conversation.",
     "loadMore": "Load more",
     "loadError": "Couldn't load comments.",
     "saveError": "Couldn't save. Try again.",
-    "myComments": "My comments",
-    "myCommentsEmpty": "You haven't commented on anything yet.",
-    "colDate": "Date",
-    "colWhere": "Where",
-    "colComment": "Comment",
-    "typeDeck": "Deck",
-    "typeCard": "Card",
-    "typePattern": "Pattern",
-    "restore": "Restore"
+    "myComments": "Meus comentários",
+    "myCommentsEmpty": "Você ainda não comentou em nada.",
+    "colDate": "Data",
+    "colWhere": "Onde",
+    "colComment": "Comentário",
+    "typeDeck": "Baralho",
+    "typeCard": "Carta",
+    "typePattern": "Tiragem",
+    "restore": "Restaurar"
   },
   "notifications": {
     "title": "Notifications",
@@ -280,10 +280,10 @@
   },
   "profile": {
     "tabs": {
-      "decks": "Decks",
-      "patterns": "Patterns",
-      "comments": "Comments",
-      "settings": "Settings"
+      "decks": "Baralhos",
+      "patterns": "Tiragens",
+      "comments": "Comentários",
+      "settings": "Configurações"
     }
   }
 }

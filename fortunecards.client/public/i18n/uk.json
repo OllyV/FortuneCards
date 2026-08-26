@@ -208,9 +208,9 @@
     "myDecksTitle": "Мої колоди",
     "newDeckButton": "+ Нова колода",
     "loadingDecksState": "Завантаження колод…",
-    "myPatternsTitle": "My patterns",
-    "newPatternButton": "New pattern",
-    "loadingPatternsState": "Loading patterns…",
+    "myPatternsTitle": "Мої розклади",
+    "newPatternButton": "Новий розклад",
+    "loadingPatternsState": "Завантаження розкладів…",
     "publicBadge": "🌐 Публічна",
     "privateBadge": "🔒 Приватна",
     "accountSettingsPageTitle": "Налаштування облікового запису",
@@ -256,21 +256,21 @@
     "post": "Post",
     "reply": "Reply",
     "edited": "edited",
-    "deletedPlaceholder": "[deleted]",
+    "deletedPlaceholder": "[видалено]",
     "empty": "No comments yet. Be the first!",
     "signInToComment": "Sign in to join the conversation.",
     "loadMore": "Load more",
     "loadError": "Couldn't load comments.",
     "saveError": "Couldn't save. Try again.",
-    "myComments": "My comments",
-    "myCommentsEmpty": "You haven't commented on anything yet.",
-    "colDate": "Date",
-    "colWhere": "Where",
-    "colComment": "Comment",
-    "typeDeck": "Deck",
-    "typeCard": "Card",
-    "typePattern": "Pattern",
-    "restore": "Restore"
+    "myComments": "Мої коментарі",
+    "myCommentsEmpty": "Ви ще нічого не прокоментували.",
+    "colDate": "Дата",
+    "colWhere": "Де",
+    "colComment": "Коментар",
+    "typeDeck": "Колода",
+    "typeCard": "Карта",
+    "typePattern": "Розклад",
+    "restore": "Відновити"
   },
   "notifications": {
     "title": "Notifications",
@@ -280,10 +280,10 @@
   },
   "profile": {
     "tabs": {
-      "decks": "Decks",
-      "patterns": "Patterns",
-      "comments": "Comments",
-      "settings": "Settings"
+      "decks": "Колоди",
+      "patterns": "Розклади",
+      "comments": "Коментарі",
+      "settings": "Налаштування"
     }
   }
 }

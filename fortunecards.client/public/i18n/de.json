@@ -208,9 +208,9 @@
     "myDecksTitle": "Meine Decks",
     "newDeckButton": "+ Neues Deck",
     "loadingDecksState": "Decks werden geladen…",
-    "myPatternsTitle": "My patterns",
-    "newPatternButton": "New pattern",
-    "loadingPatternsState": "Loading patterns…",
+    "myPatternsTitle": "Meine Legungen",
+    "newPatternButton": "Neue Legung",
+    "loadingPatternsState": "Legungen werden geladen…",
     "publicBadge": "🌐 Öffentlich",
     "privateBadge": "🔒 Privat",
     "accountSettingsPageTitle": "Kontoeinstellungen",
@@ -256,21 +256,21 @@
     "post": "Post",
     "reply": "Reply",
     "edited": "edited",
-    "deletedPlaceholder": "[deleted]",
+    "deletedPlaceholder": "[gelöscht]",
     "empty": "No comments yet. Be the first!",
     "signInToComment": "Sign in to join the conversation.",
     "loadMore": "Load more",
     "loadError": "Couldn't load comments.",
     "saveError": "Couldn't save. Try again.",
-    "myComments": "My comments",
-    "myCommentsEmpty": "You haven't commented on anything yet.",
-    "colDate": "Date",
-    "colWhere": "Where",
-    "colComment": "Comment",
+    "myComments": "Meine Kommentare",
+    "myCommentsEmpty": "Du hast noch nichts kommentiert.",
+    "colDate": "Datum",
+    "colWhere": "Wo",
+    "colComment": "Kommentar",
     "typeDeck": "Deck",
-    "typeCard": "Card",
-    "typePattern": "Pattern",
-    "restore": "Restore"
+    "typeCard": "Karte",
+    "typePattern": "Legung",
+    "restore": "Wiederherstellen"
   },
   "notifications": {
     "title": "Notifications",
@@ -281,9 +281,9 @@
   "profile": {
     "tabs": {
       "decks": "Decks",
-      "patterns": "Patterns",
-      "comments": "Comments",
-      "settings": "Settings"
+      "patterns": "Legungen",
+      "comments": "Kommentare",
+      "settings": "Einstellungen"
     }
   }
 }

@@ -208,9 +208,9 @@
     "myDecksTitle": "Mis Mazos",
     "newDeckButton": "+ Nuevo Mazo",
     "loadingDecksState": "Cargando mazos…",
-    "myPatternsTitle": "My patterns",
-    "newPatternButton": "New pattern",
-    "loadingPatternsState": "Loading patterns…",
+    "myPatternsTitle": "Mis tiradas",
+    "newPatternButton": "Nueva tirada",
+    "loadingPatternsState": "Cargando tiradas…",
     "publicBadge": "🌐 Público",
     "privateBadge": "🔒 Privado",
     "accountSettingsPageTitle": "Configuración de la cuenta",
@@ -256,21 +256,21 @@
     "post": "Post",
     "reply": "Reply",
     "edited": "edited",
-    "deletedPlaceholder": "[deleted]",
+    "deletedPlaceholder": "[eliminado]",
     "empty": "No comments yet. Be the first!",
     "signInToComment": "Sign in to join the conversation.",
     "loadMore": "Load more",
     "loadError": "Couldn't load comments.",
     "saveError": "Couldn't save. Try again.",
-    "myComments": "My comments",
-    "myCommentsEmpty": "You haven't commented on anything yet.",
-    "colDate": "Date",
-    "colWhere": "Where",
-    "colComment": "Comment",
-    "typeDeck": "Deck",
-    "typeCard": "Card",
-    "typePattern": "Pattern",
-    "restore": "Restore"
+    "myComments": "Mis comentarios",
+    "myCommentsEmpty": "Todavía no has comentado nada.",
+    "colDate": "Fecha",
+    "colWhere": "Dónde",
+    "colComment": "Comentario",
+    "typeDeck": "Mazo",
+    "typeCard": "Carta",
+    "typePattern": "Tirada",
+    "restore": "Restaurar"
   },
   "notifications": {
     "title": "Notifications",
@@ -280,10 +280,10 @@
   },
   "profile": {
     "tabs": {
-      "decks": "Decks",
-      "patterns": "Patterns",
-      "comments": "Comments",
-      "settings": "Settings"
+      "decks": "Mazos",
+      "patterns": "Tiradas",
+      "comments": "Comentarios",
+      "settings": "Ajustes"
     }
   }
 }
