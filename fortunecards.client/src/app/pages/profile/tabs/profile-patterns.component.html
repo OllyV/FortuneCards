@@ -1,0 +1,25 @@
+<ng-container *transloco="let t">
+  <div class="tab-head">
+    <h2>{{ t('pages.myPatternsTitle') }}</h2>
+    <button class="btn-primary" (click)="newPattern()">{{ t('pages.newPatternButton') }}</button>
+  </div>
+
+  @if (loading()) {
+    <p class="state">{{ t('pages.loadingPatternsState') }}</p>
+  } @else if (error()) {
+    <p class="state error">{{ error() }}</p>
+  } @else {
+    <div class="grid">
+      @for (pattern of patterns(); track pattern.id) {
+        <div class="card" [style.background]="gradient(pattern.colorIndex)" (click)="openPattern(pattern.id)">
+          <span class="emoji">{{ pattern.emoji }}</span>
+          <span class="name">{{ pattern.name }}</span>
+          <span class="badge" [class.public]="pattern.isPublic" [class.private]="!pattern.isPublic">
+            {{ pattern.isPublic ? t('pages.publicBadge') : t('pages.privateBadge') }}
+          </span>
+        </div>
+      }
+      <div class="add" (click)="newPattern()">+</div>
+    </div>
+  }
+</ng-container>

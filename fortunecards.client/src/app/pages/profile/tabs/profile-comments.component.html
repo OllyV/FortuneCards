@@ -1,0 +1,39 @@
+<ng-container *transloco="let t">
+  <h2 class="tab-title">{{ t('comments.myComments') }}</h2>
+  @if (myComments().length === 0) {
+    <p class="empty">{{ t('comments.myCommentsEmpty') }}</p>
+  } @else {
+    <div class="table-card">
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ t('comments.colDate') }}</th>
+              <th>{{ t('comments.colWhere') }}</th>
+              <th>{{ t('comments.colComment') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of myComments(); track c.id) {
+              <tr [class.deleted]="c.isDeleted">
+                <td class="date">{{ c.createdAt | date:'d MMM y' }}</td>
+                <td class="where">
+                  <button class="link" (click)="openComment(c.targetRoute)">{{ c.targetLabel }}</button>
+                  <span class="type {{ typeClass(c.targetType) }}">{{ t(typeKey(c.targetType)) }}</span>
+                </td>
+                <td class="body">
+                  @if (c.isDeleted) {
+                    <div><span class="del-tag">{{ t('comments.deletedPlaceholder') }}</span><span class="del-body">{{ c.body }}</span></div>
+                    <button class="restore" (click)="restore(c.id)">↩ {{ t('comments.restore') }}</button>
+                  } @else {
+                    {{ c.body }}
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</ng-container>

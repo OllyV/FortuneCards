@@ -208,6 +208,9 @@
     "myDecksTitle": "My Decks",
     "newDeckButton": "+ New Deck",
     "loadingDecksState": "Loading decks…",
+    "myPatternsTitle": "My patterns",
+    "newPatternButton": "New pattern",
+    "loadingPatternsState": "Loading patterns…",
     "publicBadge": "🌐 Public",
     "privateBadge": "🔒 Private",
     "accountSettingsPageTitle": "Account Settings",
@@ -260,12 +263,27 @@
     "loadError": "Couldn't load comments.",
     "saveError": "Couldn't save. Try again.",
     "myComments": "My comments",
-    "myCommentsEmpty": "You haven't commented on anything yet."
+    "myCommentsEmpty": "You haven't commented on anything yet.",
+    "colDate": "Date",
+    "colWhere": "Where",
+    "colComment": "Comment",
+    "typeDeck": "Deck",
+    "typeCard": "Card",
+    "typePattern": "Pattern",
+    "restore": "Restore"
   },
   "notifications": {
     "title": "Notifications",
     "empty": "No notifications.",
     "replied": "replied to your comment",
     "commented": "commented on your content"
+  },
+  "profile": {
+    "tabs": {
+      "decks": "Decks",
+      "patterns": "Patterns",
+      "comments": "Comments",
+      "settings": "Settings"
+    }
   }
 }

@@ -71,13 +71,15 @@ export const routes: Routes = [
     loadComponent: () => import('./components/TableFortuneTelling/table/table.component').then((c) => c.TableComponent)
   },
   {
-    path: 'profile/settings',
-    loadComponent: () => import('./pages/account-settings/account-settings.component').then((c) => c.AccountSettingsComponent),
-    canActivate: [authGuard]
-  },
-  {
     path: 'profile',
     loadComponent: () => import('./pages/profile/profile.component').then((c) => c.ProfileComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'decks' },
+      { path: 'decks', loadComponent: () => import('./pages/profile/tabs/profile-decks.component').then((c) => c.ProfileDecksComponent) },
+      { path: 'patterns', loadComponent: () => import('./pages/profile/tabs/profile-patterns.component').then((c) => c.ProfilePatternsComponent) },
+      { path: 'comments', loadComponent: () => import('./pages/profile/tabs/profile-comments.component').then((c) => c.ProfileCommentsComponent) },
+      { path: 'settings', loadComponent: () => import('./pages/account-settings/account-settings.component').then((c) => c.AccountSettingsComponent) },
+    ],
   },
 ];

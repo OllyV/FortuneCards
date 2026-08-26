@@ -161,7 +161,7 @@ namespace FortuneCards.Server.Services
             {
                 var (label, route) = await ResolveTargetLinkAsync(c.TargetType, c.TargetId);
                 items.Add(new MyCommentDto(
-                    c.Id, c.TargetType, c.TargetId, c.IsDeleted ? null : c.Body, c.IsDeleted,
+                    c.Id, c.TargetType, c.TargetId, c.Body, c.IsDeleted,
                     c.CreatedAt, c.EditedAt, label, route));
             }
 
@@ -212,7 +212,16 @@ namespace FortuneCards.Server.Services
             if (comment is null || comment.UserId != userId || comment.IsDeleted) return false;
 
             comment.IsDeleted = true;
-            comment.Body = string.Empty;    // scrub stored text; DTO returns null while IsDeleted
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RestoreAsync(int commentId, int userId)
+        {
+            var comment = await _db.Comments.FirstOrDefaultAsync(c => c.Id == commentId);
+            if (comment is null || comment.UserId != userId || !comment.IsDeleted) return false;
+
+            comment.IsDeleted = false;
             await _db.SaveChangesAsync();
             return true;
         }
