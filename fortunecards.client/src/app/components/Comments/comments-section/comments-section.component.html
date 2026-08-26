@@ -1,0 +1,41 @@
+<ng-container *transloco="let t">
+  <section class="comments">
+    <button class="cs-toggle" [class.open]="open()" (click)="toggle()">
+      <span class="cs-ic" aria-hidden="true">💬</span>
+      <span>{{ t('comments.title', { count: total() }) }}</span>
+    </button>
+
+    @if (open()) {
+      <div class="cs-panel">
+        @if (auth.isLoggedIn()) {
+          <div class="cs-composer">
+            <textarea class="cs-input" [value]="draft()" (input)="draft.set($any($event.target).value)"
+                      maxlength="2000" [attr.placeholder]="t('comments.placeholder')"></textarea>
+            <button class="cs-send" (click)="post()" [disabled]="posting() || !draft().trim()"
+                    [attr.aria-label]="t('comments.post')">↑</button>
+          </div>
+        } @else {
+          <p class="cs-hint">{{ t('comments.signInToComment') }}</p>
+        }
+
+        @if (error()) {
+          <p class="cs-err">{{ error() === 'save' ? t('comments.saveError') : t('comments.loadError') }}</p>
+        }
+
+        @if (items().length === 0 && !loading()) {
+          <p class="cs-empty">{{ t('comments.empty') }}</p>
+        }
+
+        <div class="cs-list">
+          @for (c of items(); track c.id) {
+            <comment-item [comment]="c" [canReply]="auth.isLoggedIn()" (changed)="reload()"></comment-item>
+          }
+        </div>
+
+        @if (hasMore()) {
+          <button class="cs-more" (click)="loadMore()" [disabled]="loading()">{{ t('comments.loadMore') }}</button>
+        }
+      </div>
+    }
+  </section>
+</ng-container>

@@ -146,12 +146,25 @@ namespace FortuneCards.Server.Services
             var pattern = await _db.Patterns.FindAsync(id);
             if (pattern is null || pattern.UserId != userId) return false;
 
+            await RemoveCommentsForPatternAsync(id);
             _db.Patterns.Remove(pattern);
             await _db.SaveChangesAsync();
             PublicPatternCache.Bump(_cache);
             _cache.Remove(PatternKey(id));
             _cache.Remove(MineKey(userId));
             return true;
+        }
+
+        private async Task RemoveCommentsForPatternAsync(int patternId)
+        {
+            var comments = await _db.Comments
+                .Where(c => c.TargetType == Models.CommentTargetType.Pattern && c.TargetId == patternId)
+                .ToListAsync();
+            if (comments.Count == 0) return;
+            var commentIds = comments.Select(c => c.Id).ToList();
+            var notifs = await _db.Notifications.Where(n => commentIds.Contains(n.CommentId)).ToListAsync();
+            _db.Notifications.RemoveRange(notifs);
+            _db.Comments.RemoveRange(comments);
         }
 
         public async Task<PatternDetail?> ReplaceCardsAsync(int patternId, IEnumerable<PatternCardInput> cards, int userId)

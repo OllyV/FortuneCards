@@ -5,9 +5,14 @@ import { of } from 'rxjs';
 import { ProfileComponent } from './profile.component';
 import { NavigationBar } from '../../components/Navigation/navigation-bar/navigation-bar';
 import { DeckService } from '../../services/deck.service';
+import { CommentService } from '../../services/comment.service';
 import { AuthService } from '../../services/auth.service';
 import { Deck } from '../../models/deck';
 import { getTranslocoTestingModule } from '../../../testing/transloco-testing';
+
+function commentServiceStub() {
+  return { listMine: vi.fn(() => of({ items: [], totalCount: 0, page: 1, pageSize: 20 })) };
+}
 
 function deck(over: Partial<Deck>): Deck {
   return {
@@ -28,6 +33,7 @@ describe('ProfileComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: DeckService, useValue: svc },
+        { provide: CommentService, useValue: commentServiceStub() },
         { provide: AuthService, useValue: { isLoggedIn: signal(true), currentUser: signal({ displayName: 'Test', email: 't@e.com' }) } },
       ],
     });
@@ -44,6 +50,7 @@ describe('ProfileComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: DeckService, useValue: svc },
+        { provide: CommentService, useValue: commentServiceStub() },
         { provide: AuthService, useValue: { isLoggedIn: signal(true), currentUser: signal(user) } },
       ],
     });

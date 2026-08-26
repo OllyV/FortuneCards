@@ -53,6 +53,42 @@ public sealed class TestDb : IDisposable
 
     public AuthService NewAuthService() => new(Db, AuthConfig(), Images);
 
+    public CommentService NewCommentService() => new(Db, Images);
+
+    public NotificationService NewNotificationService() => new(Db, Images);
+
+    public Card AddCard(int id, int deckId, string title = "Card")
+    {
+        var card = new Card { Id = id, Title = title, Description = "d", ImageKey = $"card-{id}.png", DeckId = deckId };
+        Db.Cards.Add(card);
+        Db.SaveChanges();
+        return card;
+    }
+
+    public Comment AddComment(int id, CommentTargetType type, int targetId, int? userId, int? parentId = null, string body = "hello", bool isDeleted = false)
+    {
+        var c = new Comment
+        {
+            Id = id, TargetType = type, TargetId = targetId, ParentCommentId = parentId,
+            UserId = userId, Body = body, IsDeleted = isDeleted,
+        };
+        Db.Comments.Add(c);
+        Db.SaveChanges();
+        return c;
+    }
+
+    public Notification AddNotification(int id, int recipientId, int commentId, NotificationType type, int? actorId, bool isRead = false)
+    {
+        var n = new Notification
+        {
+            Id = id, RecipientUserId = recipientId, CommentId = commentId, Type = type,
+            ActorUserId = actorId, IsRead = isRead,
+        };
+        Db.Notifications.Add(n);
+        Db.SaveChanges();
+        return n;
+    }
+
     private static IConfiguration AuthConfig() =>
         new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>

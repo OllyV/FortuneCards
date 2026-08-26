@@ -14,6 +14,8 @@ namespace FortuneCards.Server.Data
         public DbSet<Pattern> Patterns => Set<Pattern>();
         public DbSet<PatternCard> PatternCards => Set<PatternCard>();
         public DbSet<FavoritePattern> FavoritePatterns => Set<FavoritePattern>();
+        public DbSet<Comment> Comments => Set<Comment>();
+        public DbSet<Notification> Notifications => Set<Notification>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -109,6 +111,38 @@ namespace FortuneCards.Server.Data
                 e.HasOne(f => f.Pattern)
                  .WithMany(p => p.FavoritedBy)
                  .HasForeignKey(f => f.PatternId)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Comment>(e =>
+            {
+                e.Property(c => c.Body).HasMaxLength(2000).IsRequired();
+                e.HasIndex(c => new { c.TargetType, c.TargetId });
+                e.HasIndex(c => c.ParentCommentId);
+                e.HasOne(c => c.User)
+                 .WithMany()
+                 .HasForeignKey(c => c.UserId)
+                 .OnDelete(DeleteBehavior.SetNull);
+                e.HasOne(c => c.ParentComment)
+                 .WithMany(c => c.Replies)
+                 .HasForeignKey(c => c.ParentCommentId)
+                 .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Notification>(e =>
+            {
+                e.HasIndex(n => new { n.RecipientUserId, n.IsRead });
+                e.HasOne(n => n.RecipientUser)
+                 .WithMany()
+                 .HasForeignKey(n => n.RecipientUserId)
+                 .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(n => n.ActorUser)
+                 .WithMany()
+                 .HasForeignKey(n => n.ActorUserId)
+                 .OnDelete(DeleteBehavior.SetNull);
+                e.HasOne(n => n.Comment)
+                 .WithMany()
+                 .HasForeignKey(n => n.CommentId)
                  .OnDelete(DeleteBehavior.Cascade);
             });
         }

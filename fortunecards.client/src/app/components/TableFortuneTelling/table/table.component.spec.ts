@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterModule, ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { TableComponent } from './table.component';
@@ -21,6 +23,8 @@ describe('TableComponent', () => {
       imports: [TableComponent, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
         {
           provide: DeckService,
@@ -760,6 +764,8 @@ describe('TableComponent pattern query-param auto-load', () => {
       imports: [TableComponent, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
         { provide: DeckService, useValue: { getDeck: () => of(null), getMyDecks: () => of([]), getPublicDecks: () => of({ items: [], totalCount: 0, page: 1, pageSize: 12 }) } },
         { provide: PatternService, useValue: patternService },
@@ -788,6 +794,8 @@ describe('TableComponent pattern query-param auto-load', () => {
       imports: [TableComponent, RouterModule.forRoot([]), getTranslocoTestingModule()],
       providers: [
         provideZonelessChangeDetection(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: AuthService, useValue: { isLoggedIn: signal(false), currentUser: signal(null), login: vi.fn(), logout: vi.fn() } },
         { provide: DeckService, useValue: { getDeck: () => of(null), getMyDecks: () => of([]), getPublicDecks: () => of({ items: [], totalCount: 0, page: 1, pageSize: 12 }) } },
         { provide: PatternService, useValue: patternService },

@@ -43,6 +43,8 @@
       <button *ngIf="p.isOwner && auth.isLoggedIn()" class="btn-primary btn-full edit-cta" (click)="editQuestions()">
         📝 {{ t('pattern.editQuestionsLayoutButton') }}
       </button>
+
+      <comments-section [targetType]="CommentTargetType.Pattern" [targetId]="p.id"></comments-section>
     </main>
   </div>
 

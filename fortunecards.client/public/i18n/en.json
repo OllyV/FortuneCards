@@ -245,5 +245,27 @@
     "patternDeleteFailed": "Failed to delete spread.",
     "saveFailed": "Failed to save.",
     "accountDeleteFailed": "Failed to delete account. Please try again."
+  },
+  "comments": {
+    "title": "Comments ({{count}})",
+    "placeholder": "Write a comment…",
+    "replyPlaceholder": "Write a reply…",
+    "post": "Post",
+    "reply": "Reply",
+    "edited": "edited",
+    "deletedPlaceholder": "[deleted]",
+    "empty": "No comments yet. Be the first!",
+    "signInToComment": "Sign in to join the conversation.",
+    "loadMore": "Load more",
+    "loadError": "Couldn't load comments.",
+    "saveError": "Couldn't save. Try again.",
+    "myComments": "My comments",
+    "myCommentsEmpty": "You haven't commented on anything yet."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications.",
+    "replied": "replied to your comment",
+    "commented": "commented on your content"
   }
 }

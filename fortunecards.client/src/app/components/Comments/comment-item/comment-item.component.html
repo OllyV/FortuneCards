@@ -1,0 +1,71 @@
+<ng-container *transloco="let t">
+  <div class="c-row" [class.mine]="comment.isMine" [class.deleted]="comment.isDeleted">
+    <div class="av">
+      @if (comment.authorAvatarUrl) {
+        <img [src]="comment.authorAvatarUrl" alt="" />
+      } @else {
+        <span class="letter">{{ comment.authorName.charAt(0) }}</span>
+      }
+    </div>
+
+    <div class="c-col">
+      <div class="c-name">
+        <span class="nm">{{ comment.authorName }}</span>
+        @if (comment.editedAt && !comment.isDeleted) {
+          <span class="edited">· {{ t('comments.edited') }}</span>
+        }
+      </div>
+
+      @if (editing()) {
+        <div class="c-editbox">
+          <textarea class="c-input" [value]="draft()" (input)="draft.set($any($event.target).value)" maxlength="2000"></textarea>
+          <div class="c-mini-actions">
+            <button class="btn-pill sm" (click)="saveEdit()" [disabled]="busy() || !draft().trim()">{{ t('common.save') }}</button>
+            <button class="btn-ghost sm" (click)="cancelEdit()" [disabled]="busy()">{{ t('common.cancel') }}</button>
+          </div>
+        </div>
+      } @else {
+        <div class="c-bubble">
+          @if (comment.isDeleted) {
+            <p class="tomb">{{ t('comments.deletedPlaceholder') }}</p>
+          } @else {
+            <p class="c-text">{{ comment.body }}</p>
+          }
+        </div>
+      }
+
+      @if (error()) { <p class="c-err">{{ t('comments.saveError') }}</p> }
+
+      @if (!comment.isDeleted && !editing()) {
+        <div class="c-foot">
+          @if (canReply) {
+            <button class="c-link reply" (click)="startReply()">{{ t('comments.reply') }}</button>
+          }
+          @if (comment.isMine) {
+            <button class="c-link" (click)="startEdit()">{{ t('common.edit') }}</button>
+            <button class="c-link danger" (click)="remove()" [disabled]="busy()">{{ t('common.delete') }}</button>
+          }
+        </div>
+      }
+
+      @if (replying()) {
+        <div class="c-editbox reply">
+          <textarea class="c-input" [value]="draft()" (input)="draft.set($any($event.target).value)"
+                    maxlength="2000" [attr.placeholder]="t('comments.replyPlaceholder')"></textarea>
+          <div class="c-mini-actions">
+            <button class="btn-pill sm" (click)="saveReply()" [disabled]="busy() || !draft().trim()">{{ t('comments.post') }}</button>
+            <button class="btn-ghost sm" (click)="cancelReply()" [disabled]="busy()">{{ t('common.cancel') }}</button>
+          </div>
+        </div>
+      }
+
+      @if (comment.replies.length) {
+        <div class="c-replies">
+          @for (reply of comment.replies; track reply.id) {
+            <comment-item [comment]="reply" [canReply]="canReply" [depth]="depth + 1" (changed)="changed.emit()"></comment-item>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</ng-container>

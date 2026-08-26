@@ -11,18 +11,21 @@ import { Deck } from '../../../models/deck';
 import { DeckService } from '../../../services/deck.service';
 import { AuthService } from '../../../services/auth.service';
 import { getCardAccentColor } from '../../../utils/deck-colors';
+import { CommentsSectionComponent } from '../../Comments/comments-section/comments-section.component';
+import { CommentTargetType } from '../../../models/comment';
 
 @Component({
   selector: 'app-deck-detail',
   templateUrl: './deck-detail.component.html',
   styleUrls: ['./deck-detail.component.css'],
   standalone: true,
-  imports: [CommonModule, NavigationBar, DeckHeroComponent, SkeletonDetailComponent, ErrorStateComponent, TranslocoDirective]
+  imports: [CommonModule, NavigationBar, DeckHeroComponent, SkeletonDetailComponent, ErrorStateComponent, TranslocoDirective, CommentsSectionComponent]
 })
 export class DeckDetailComponent implements OnInit {
   deck = signal<Deck | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
+  protected readonly CommentTargetType = CommentTargetType;
 
   private readonly destroyRef = inject(DestroyRef);
   protected readonly auth = inject(AuthService);

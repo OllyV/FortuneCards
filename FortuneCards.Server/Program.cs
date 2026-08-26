@@ -17,6 +17,8 @@ builder.Services.AddScoped<IDeckService, DeckService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IPatternService, PatternService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 var r2 = builder.Configuration.GetSection("R2").Get<R2Options>()
     ?? throw new InvalidOperationException("R2 configuration section is missing.");

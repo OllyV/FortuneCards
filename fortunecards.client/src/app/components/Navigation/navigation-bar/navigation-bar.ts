@@ -4,13 +4,14 @@ import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { AuthService } from '../../../services/auth.service';
 import { MainMenuComponent } from '../main-menu/main-menu';
+import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
 
 @Component({
   selector: 'navigation-bar',
   standalone: true,
   templateUrl: './navigation-bar.html',
   styleUrl: './navigation-bar.css',
-  imports: [CommonModule, MainMenuComponent, TranslocoDirective],
+  imports: [CommonModule, MainMenuComponent, TranslocoDirective, NotificationBellComponent],
 })
 export class NavigationBar {
   protected readonly auth = inject(AuthService);
