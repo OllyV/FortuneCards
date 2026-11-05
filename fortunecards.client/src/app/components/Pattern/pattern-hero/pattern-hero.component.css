@@ -32,3 +32,10 @@
 
 .hero-btn:hover { opacity: 0.85; }
 .hero-fav.is-fav { color: #ffd54a; }
+
+@media (max-width: 560px) {
+  .pattern-hero {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
