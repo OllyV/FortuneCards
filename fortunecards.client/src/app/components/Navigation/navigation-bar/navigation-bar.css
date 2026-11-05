@@ -74,3 +74,12 @@
   gap: 12px;
 }
 
+/* On mobile these elements don't fit; login & profile stay reachable via the menu */
+@media (max-width: 560px) {
+  .nav-login-btn,
+  .nav-username,
+  .nav-avatar {
+    display: none;
+  }
+}
+
