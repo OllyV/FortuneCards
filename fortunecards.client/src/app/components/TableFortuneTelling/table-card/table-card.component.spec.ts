@@ -104,11 +104,38 @@ describe('TableCardComponent', () => {
     expect(selected).toHaveBeenCalledTimes(1);
   });
 
-  it('emits cardFlip on double click', () => {
+  function tap(): void {
+    // A clean tap: press then release with no movement in between.
+    root().dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 500, clientY: 300 }));
+    root().dispatchEvent(new MouseEvent('pointerup', { bubbles: true }));
+  }
+
+  it('emits cardFlip on a double tap (two quick taps via pointer events)', () => {
+    // iOS Safari never fires `dblclick` from a double-tap, so flip is driven by pointer
+    // taps instead; this is the touch path that was missing on iPad.
     const flipped = vi.fn();
     fixture.componentInstance.cardFlip.subscribe(flipped);
-    root().dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+    tap();
+    tap();
     expect(flipped).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not flip on a single tap', () => {
+    const flipped = vi.fn();
+    fixture.componentInstance.cardFlip.subscribe(flipped);
+    tap();
+    expect(flipped).not.toHaveBeenCalled();
+  });
+
+  it('does not flip when the first press was a drag', () => {
+    const flipped = vi.fn();
+    fixture.componentInstance.cardFlip.subscribe(flipped);
+    // First gesture moves the card (a drag), so it must not pair with the next tap to flip.
+    root().dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 500, clientY: 300 }));
+    root().dispatchEvent(new MouseEvent('pointermove', { bubbles: true, clientX: 600, clientY: 350 }));
+    root().dispatchEvent(new MouseEvent('pointerup', { bubbles: true }));
+    tap();
+    expect(flipped).not.toHaveBeenCalled();
   });
 
   it('emits cardMove with pointer delta converted to % of table width', () => {

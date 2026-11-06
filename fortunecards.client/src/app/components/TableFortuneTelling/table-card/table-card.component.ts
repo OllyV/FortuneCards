@@ -47,6 +47,7 @@ export class TableCardComponent {
 
   private dragging = false;
   private rotating = false;
+  private moved = false;
   private startPointerX = 0;
   private startPointerY = 0;
   private startCardX = 0;
@@ -55,6 +56,12 @@ export class TableCardComponent {
   private centerY = 0;
   private startAngle = 0;
   private startRotation = 0;
+  /** Timestamp (ms) of the last clean tap, for double-tap flip detection; 0 = none pending. */
+  private lastTapTime = 0;
+  /** Max gap between two taps to count as a double-tap. */
+  private readonly doubleTapMs = 300;
+  /** Pointer travel (px) beyond which a press counts as a drag, not a tap. */
+  private readonly tapSlopPx = 6;
 
   onPointerDown(event: PointerEvent): void {
     if (this.pickMode()) {
@@ -63,6 +70,7 @@ export class TableCardComponent {
     }
     this.cardSelect.emit();
     this.dragging = true;
+    this.moved = false;
     this.startPointerX = event.clientX;
     this.startPointerY = event.clientY;
     this.startCardX = this.card().x;
@@ -76,6 +84,9 @@ export class TableCardComponent {
       return;
     }
     if (!this.dragging) return;
+    if (!this.moved && Math.hypot(event.clientX - this.startPointerX, event.clientY - this.startPointerY) > this.tapSlopPx) {
+      this.moved = true;
+    }
     const width = this.tableWidthPx();
     if (width <= 0) return;
     const dx = ((event.clientX - this.startPointerX) / width) * 100;
@@ -84,8 +95,29 @@ export class TableCardComponent {
   }
 
   onPointerUp(): void {
+    // A clean tap (no drag, not rotating) that follows another within the window flips the
+    // card. Using pointer events (not `dblclick`) means this works for touch too — iOS Safari
+    // doesn't fire `dblclick` from a double-tap, which is why flipping was broken on iPad.
+    const wasTap = this.dragging && !this.moved && !this.rotating;
     this.dragging = false;
     this.rotating = false;
+    if (!wasTap) {
+      this.lastTapTime = 0;
+      return;
+    }
+    const now = Date.now();
+    if (this.lastTapTime > 0 && now - this.lastTapTime <= this.doubleTapMs) {
+      this.cardFlip.emit();
+      this.lastTapTime = 0;
+    } else {
+      this.lastTapTime = now;
+    }
+  }
+
+  onPointerCancel(): void {
+    this.dragging = false;
+    this.rotating = false;
+    this.lastTapTime = 0;
   }
 
   onRotateStart(event: PointerEvent): void {

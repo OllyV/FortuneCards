@@ -10,8 +10,7 @@
   (pointerdown)="onPointerDown($event)"
   (pointermove)="onPointerMove($event)"
   (pointerup)="onPointerUp()"
-  (pointercancel)="onPointerUp()"
-  (dblclick)="cardFlip.emit()"
+  (pointercancel)="onPointerCancel()"
   *transloco="let t"
 >
   <div class="flip-inner" [class.flipped]="card().flipped">
