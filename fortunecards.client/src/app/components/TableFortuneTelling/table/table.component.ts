@@ -405,7 +405,7 @@ export class TableComponent implements OnInit, AfterViewInit {
     this.cards.update((cards) =>
       cards.map((c) =>
         c.id === id
-          ? { ...c, x: target.x, y: target.y, z, flipped: true, patternText: `${target.order}. ${target.text}` }
+          ? { ...c, x: target.x, y: target.y, rotation: target.rotation, z, flipped: true, patternText: `${target.order}. ${target.text}` }
           : c
       )
     );

@@ -627,6 +627,7 @@ describe('TableComponent', () => {
       component.addPatternCard(); // order 1
       component.addPatternCard(); // order 2
       component.setPatternText(component.patternCards()[0].id, 'Position 1');
+      component.rotatePatternCard(component.patternCards()[0].id, 90);
       component.loadDeck(deck([card(1), card(2), card(3)]));
       component.startFortuneTelling();
 
@@ -635,7 +636,8 @@ describe('TableComponent', () => {
       component.pickCard(chosen.id);
 
       const placed = component.cards().find((c) => c.id === chosen.id)!;
-      expect(placed).toMatchObject({ x: slot1.x, y: slot1.y, flipped: true, patternText: '1. Position 1' });
+      expect(placed).toMatchObject({ x: slot1.x, y: slot1.y, rotation: slot1.rotation, flipped: true, patternText: '1. Position 1' });
+      expect(placed.rotation).toBe(90);
       // it comes to the front
       expect(placed.z!).toBeGreaterThanOrEqual(Math.max(...component.cards().map((c) => c.z ?? 0)));
       // and the next question is now asked
