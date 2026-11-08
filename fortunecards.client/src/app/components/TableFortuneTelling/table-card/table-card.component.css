@@ -18,6 +18,10 @@
   transform-style: preserve-3d;
   transition: transform 0.5s;
   border-radius: 8px;
+  /* Inherit the card's gesture suppression: a touch resolves to a child (.face), whose
+     default touch-action: auto would otherwise let iOS Safari double-tap-zoom while the
+     double-tap flips the card. */
+  touch-action: none;
 }
 
 .flip-inner.flipped {
@@ -34,6 +38,7 @@
   border-radius: 8px;
   border: 1px solid #8a8a8a;
   font-family: inherit;
+  touch-action: none;
 }
 
 .face.back {
